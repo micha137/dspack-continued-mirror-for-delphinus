@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="DSPackDesign_BCB6.bpl"/>
+    <OBJFILES value="DSPackDesign_BCB6.obj ..\src\DSPack\BaseFilterEditor.obj 
+      ..\src\DSPack\MediaTypeEditor.obj ..\src\DSPack\DSEditors.obj"/>
+    <RESFILES value="DSPackDesign_BCB6.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) ..\src\DSPack\BaseFilterEditor.dfm 
+      ..\src\DSPack\MediaTypeEditor.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value="vcldb.lib"/>
+    <SPARELIBS value="rtl.lib vcldb.lib DirectX9_BCB6.lib DSPack_BCB6.lib"/>
+    <PACKAGES value="rtl.bpi vcl.bpi DirectX9_BCB6.bpi DSPack_BCB6.bpi designide.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;..\src\DSPack"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value=""/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="DSPackDesign_BCB6.cpp"/>
+    <INCLUDEPATH value="..\src\DSPack;..\src\DirectX9;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\src\DSPack;..\src\DirectX9;..\lib;$(BCB)\Projects\Lib;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I..\src\DSPack -I..\src\DirectX9 
+      -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; -I$(BCB)\include 
+      -I$(BCB)\include\vcl -src_suffix cpp -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
+      -tWM"/>
+    <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M -LUDesignIde"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="-D&quot;DSPack 2.3: Multimedia Package for Delphi&quot; -aa -Tpp -Gpd -x -Gn -Gl -Gi 
+      -v"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0pkg32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="DSPackDesign_BCB6.res" FORMNAME="" UNITNAME="DSPackDesign_BCB6.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="DSPackDesign_BCB6.cpp" FORMNAME="" UNITNAME="DSPackDesign_BCB6" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="DirectX9_BCB6.bpi" FORMNAME="" UNITNAME="DirectX9_BCB6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="DSPack_BCB6.bpi" FORMNAME="" UNITNAME="DSPack_BCB6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="designide.bpi" FORMNAME="" UNITNAME="designide" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\DSPack\BaseFilterEditor.pas" FORMNAME="FormBaseFilter" UNITNAME="BaseFilterEditor" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\DSPack\MediaTypeEditor.pas" FORMNAME="FormMediaType" UNITNAME="MediaTypeEditor" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\DSPack\DSEditors.pas" FORMNAME="" UNITNAME="DSEditors" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=2
+MinorVer=3
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1036
+CodePage=1252
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=2.3.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[Excluded Packages]
+c:\program files\borland\cbuilder6\Projects\Bpl\DSPackDesign_BCB6.bpl=DSPack 2.3: Multimedia Package for Delphi
+c:\program files\borland\cbuilder6\Bin\dclado60.bpl=Composants DB ADO Borland
+C:\Program Files\Borland\CBuilder6\Bin\dcldb60.bpl=Composants Base de données Borland
+c:\program files\borland\cbuilder6\Bin\dclbde60.bpl=Composants BD BDE Borland
+C:\Program Files\Borland\CBuilder6\Bin\dbx60.bpl=Paquet d'interface Explorateur SQL Borland
+c:\program files\borland\cbuilder6\Bin\DCLIB60.bpl=Composants Accès données InterBase
+c:\program files\borland\cbuilder6\Bin\dclcds60.bpl=Composant Base Cached ClientDataset Borland
+C:\Program Files\Borland\CBuilder6\Bin\dclmid60.bpl=Composants d'accès aux données MyBase Borland
+c:\program files\borland\cbuilder6\Bin\dclbdecds60.bpl=Composants ClientDataSet DBE local Borland
+c:\program files\borland\cbuilder6\Bin\dclqrt60.bpl=Composants QuickReport
+c:\program files\borland\cbuilder6\Bin\dcltee60.bpl=Composants TeeChart
+c:\program files\borland\cbuilder6\Bin\dcldss60.bpl=Composants Decision Cube Borland
+c:\program files\borland\cbuilder6\Bin\dcltqr60.bpl=Composants TeeChart pour QuickReport
+c:\program files\borland\cbuilder6\Bin\dclclxdb60.bpl=Composants BD CLX Borland
+C:\Program Files\Borland\CBuilder6\Bin\dclclxstd60.bpl=Composants Standard CLX Borland
+c:\program files\borland\cbuilder6\Bin\dclmcn60.bpl=Composants Connexion DataSnap Borland
+c:\program files\borland\cbuilder6\Bin\dclnet60.bpl=Composant Internet Borland
+c:\program files\borland\cbuilder6\Bin\DBWEBXPRT.BPL=Paquet Expert Web Borland
+c:\program files\borland\cbuilder6\Bin\DCLNMF60.bpl=Outils NetMasters Fastnet
+c:\program files\borland\cbuilder6\Bin\dclwbm60.bpl=Composants InternetExpress Borland
+c:\program files\borland\cbuilder6\Bin\dclwebsnap60.bpl=Composants WebSnap Borland
+c:\program files\borland\cbuilder6\Bin\dclsoap60.bpl=Composants SOAP Borland
+c:\program files\borland\cbuilder6\Bin\dclite60.bpl=Environnement de traduction intégré Borland
+c:\program files\borland\cbuilder6\Bin\dcldbx60.bpl=Composants dbExpress Borland
+c:\program files\borland\cbuilder6\Bin\dcldbxcds60.bpl=Composants ClientDataSet DBX local Borland
+c:\program files\borland\cbuilder6\Projects\Bpl\SynEdit_BCB6.bpl=SynEdit component suite
+c:\program files\borland\cbuilder6\Projects\Bpl\JvUIBC6D.bpl=UIB - Unified Interbase Components
+
+[HistoryLists\hlIncludePath]
+Count=2
+Item0=..\src\DSPack;..\src\DirectX9;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+Item1=C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=2
+Item0=..\src\DSPack;..\src\DirectX9;..\lib;$(BCB)\Projects\Lib;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\lib\obj;$(BCB)\lib
+Item1=C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[Linker]
+LibPrefix=
+LibSuffix=
+LibVersion=
+  </IDEOPTIONS>
+</PROJECT>

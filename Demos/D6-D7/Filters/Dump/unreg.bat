@@ -1,0 +1,1 @@
+regsvr32 /U Dump.ax

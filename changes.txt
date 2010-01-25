@@ -1,0 +1,117 @@
+### todo ###
+
+- check TBCDynamicOutputPin
+- check TBCVideoTransformFilter
+- check TBCPullPin
+- check VideoRenderer MediaPosition Interface (JoinFilterGraph workaround atm)
+- VideoInfoHeader2 Bug -> Output Buffer smaller then Input
+
+### changes ###
+
+23. May 2005 * several Shoutcast Changes *
+-added ripper functions
+-added directly use of AsyncEx witout a need to register the Filter
+-fixed OnClose bug
+-fixed prebuffering hangup bug
+
+10. September 2004
+-added TPIDBitsWrapper, TMPEGHeaderVersionBitsWrapper (DSUtil.pas)
+-updated all BDA Records.
+
+6. September 2004
+- added AsyncEx filter
+- added ShoutCast example
+
+09. September 2004
+-added TMPEGHeaderBitsWrapper (DSUtil.pas)
+-IMPEG2PIDMap, SECTION, IBDA_IPSinkInfo, LONG_SECTION updated
+-DSMCC_SECTION, MPEG_HEADER_VERSION_BITS, MPEG_HEADER_BITS updated
+
+24. August 2004
+-IBroadcastEvent Bugfix
+
+
+21. July 2004
+-Bugfixed BaseFilterEditor
+
+
+11. July 2004 (thx to XXX)
+-DVD_SP_EXT_NotSpecified added to tagDVD_SUBPICTURE_LANG_EXT
+-linear Volume/Pan functions improved
+-Int64x32Div32 optimizations bugfix
+-DSVideoWindowEx2 bugfixes
+
+
+03. July 2004
+-bugfixed WMA/WMV Playback (added IServiceProvider)
+
+
+30. May 2004
++Samples
++- added PushSource Conversion
+
+
+05. May 2004
+
++ DirectShow9.pas
++- bugfixed IAMFilterGraphCallback
++- bugfixed IAsyncReader
++- bugfixed TWaveFormatExtendible
++- bugfixed TVideoInfoHeader2
++- added VFW_E_DVD_NO_BUTTON
++- bugfixed IMediaBuffer
+
++ BaseClasses.pas
++- added TMediaBuffer
++- bugfixed TBCBaseFilter
++- replaced private variables with protected to be able to retrieve values from them
++- added TBCDynamicOutputPin
++- added TBCVideoTransformFilter
++- added TBCRendererPosPassThru
++- added TBCAMEvent
++- added TBCAMMsgEvent
++- added TBCAMThread
++- bugfixed TBCSourceStream
++- added TBCRendererInputPin
++- added TBCBaseRenderer
++- added TBCBaseVideoRenderer
++- added TBCPullPin
++- added TBCRefTime
++- added TBCAdvisePacket
++- added TBCAMSchedule
++- added TBCBaseReferenceClock
++- added TBCSystemClock
++- bugfixed AMGetWideString 
++- bugfixed TBCBasePin
++- TBCUnknown moved _AddRef and _Release to public
+
++ DSUtil.pas
++- added GetDirectXVersion conversion
++- added wxutil conversion
++- added namedguid conversion
++- added dshowutil conversion
+
++ Samples
++- added a simple RGB24 Video Renderer
++- added AlphaRenderer conversion
++- added a simple DirectSound Renderer Filter sample
++- added Async Filter conversion
++- added Memfile conversion
+
++ DSPack.pas
++- TFilterGraph added
+ +- Volume, Balance and Rate is the same now when rendering the next file.
+ +- Volume and Balance can use Linear amplification (TFilterGraph.LinearVolume)
+ +- Linear Amplification is enabled as default.
+ +- TFilterGraph.OnSelectedFilter Event added. 
+    Can be used to forbid specific Filters the adding to the filtergraph.
+    Works with the Moniker and is called before the Filter is created.
+ +- TFilterGraph.OnCreatedFilter Event added. 
+    Can be used to forbid specific Filters the adding to the filtergraph.
+    Works with a IBaseFilter interface and is called after the Filter is 
+    created.
+ +- TFilterGraph.OnUnableToRender Event added.
+    Notifys about Pins that couldn't be rendered.
++-TVideoWindow
+ +- TVideoWindow won't give any "Pins not connected" exceptions when
+    playing Audio only Files.

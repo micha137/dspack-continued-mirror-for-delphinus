@@ -1,0 +1,69 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = DVDPlay.exe Compressor.exe FilterEnum.exe NullIP.dll NullNull.ax \
+  WaveDest.ax PlayCap.exe playwin.exe SnapShot.exe Compress.exe VideoCap.exe \
+  VMRMixer.exe VMRBitmap.exe VMRPlayWin.exe VMRSnapShot.exe ASFCap.exe
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+DVDPlay.exe: DVDPlay\DVDPlay.dpr
+  $(DCC)
+
+Compressor.exe: Compress\DIVX Compressor\Compressor.dpr
+  $(DCC)
+
+FilterEnum.exe: Filter Enumerator\FilterEnum.dpr
+  $(DCC)
+
+NullIP.dll: Filters\NullIP\NullIP.dpr
+  $(DCC)
+
+NullNull.ax: Filters\NullNull\NullNull.dpr
+  $(DCC)
+
+WaveDest.ax: Filters\WaveDest\WaveDest.dpr
+  $(DCC)
+
+PlayCap.exe: PlayVideoCap\PlayCap.dpr
+  $(DCC)
+
+playwin.exe: PlayWin\playwin.dpr
+  $(DCC)
+
+SnapShot.exe: SampleGrabber\SnapShot.dpr
+  $(DCC)
+
+VMRMixer.exe: VMR\Mixer\VMRMixer.dpr
+  $(DCC)
+
+Compress.exe: Compress\File Recompressor\Compress.dpr
+  $(DCC)
+
+VideoCap.exe: videocap\VideoCap.dpr
+  $(DCC)
+
+VMRBitmap.exe: VMR\VMRBitmap\VMRBitmap.dpr
+  $(DCC)
+
+VMRPlayWin.exe: VMR\VMRPlayWin\VMRPlayWin.dpr
+  $(DCC)
+
+VMRSnapShot.exe: VMR\VMRSnapShot\VMRSnapShot.dpr
+  $(DCC)
+
+ASFCap.exe: ASF\ASF Capture\ASFCap.dpr
+  $(DCC)
+
+ShoutCast.exe: ShoutCast\ShoutCast.dpr
+  $(DCC)
+

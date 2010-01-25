@@ -1,0 +1,48 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = Compressor.exe Project1.exe DVDPlay.exe FilterEnum.exe NullIP.dll \
+  NullNull.ax WaveDest.ax PlayCap.exe playwin.exe SnapShot.exe
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+Compressor.exe: Compress\DIVX Compressor\Compressor.dpr
+  $(DCC)
+
+Project1.exe: Compress\File Recompressor\Project1.dpr
+  $(DCC)
+
+DVDPlay.exe: DVDPlay\DVDPlay.dpr
+  $(DCC)
+
+FilterEnum.exe: Filter Enumerator\FilterEnum.dpr
+  $(DCC)
+
+NullIP.dll: Filters\NullIP\NullIP.dpr
+  $(DCC)
+
+NullNull.ax: Filters\NullNull\NullNull.dpr
+  $(DCC)
+
+WaveDest.ax: Filters\WaveDest\WaveDest.dpr
+  $(DCC)
+
+PlayCap.exe: PlayVideoCap\PlayCap.dpr
+  $(DCC)
+
+playwin.exe: PlayWin\playwin.dpr
+  $(DCC)
+
+SnapShot.exe: SampleGrabber\SnapShot.dpr
+  $(DCC)
+
+
