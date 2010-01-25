@@ -21,7 +21,7 @@ unit DSoundRenderer;
 interface
 uses
   BaseClass, DirectSound, ActiveX, Math, Windows, SysUtils, Classes,
-  DirectShow9, MMSystem, PropSettings, DSoundDevices, DSUtil;
+  DirectShow9, MMSystem, PropSettings, DSoundDevices, DXSUtil;
 
 const
   CLSID_DelphiDSoundRenderer: TGUID = '{093A27B5-3AA1-4375-9389-71EB9D62BA97}';
@@ -314,6 +314,8 @@ var
   p1, p2 : Pointer;
   s1, s2 : Cardinal;
 begin
+  p1 := nil;
+  p2 := nil;
   FLock.Lock;
   try
     if MediaSample.GetMediaType(pmt) = S_OK then

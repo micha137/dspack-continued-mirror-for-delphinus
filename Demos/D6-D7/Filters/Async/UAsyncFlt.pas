@@ -12,7 +12,7 @@ unit UAsyncFlt;
 interface
 uses
   BaseClass, DirectShow9, Windows, SysUtils, MMSystem, Math, ActiveX,
-  UAsyncRdr, UAsyncIo, DSUtil;
+  UAsyncRdr, UAsyncIo, DXSUtil;
 
 const
   // Setup data for filter registration
@@ -59,7 +59,7 @@ type
     function Size(out ASizeAvailable: LONGLONG): LONGLONG; override;
     function Alignment: DWord; override;
     procedure Lock; override;
-    procedure UnLock; override;
+    procedure Unlock; override;
 
   private
     FCSLock: TBCCritSec;
@@ -195,7 +195,7 @@ begin
   FCSLock.Lock;
 end;
 
-procedure TBCMemStream.UnLock;
+procedure TBCMemStream.Unlock;
 begin
   FCSLock.UnLock;
 end;
@@ -278,7 +278,7 @@ begin
   WideCharToMultiByte(GetACP, 0, AFileName, -1,
     _FileName, cch, nil, nil);
   {$ELSE}
-  ZeroMemory(@_FileName[0], MAX_PATH, 0);
+  ZeroMemory(@_FileName[0], MAX_PATH);
   lstrcpy(_FileName, AFileName);
   {$ENDIF}
 
@@ -375,7 +375,7 @@ begin
   _Size.LowPart := GetFileSize(_File, @_Size.HighPart);
 
   try
-    _Mem := nil;
+//    _Mem := nil;
     GetMem(_Mem, _Size.LowPart);
   except
     CloseHandle(_File);

@@ -75,7 +75,7 @@ object FormMediaType: TFormMediaType
     Width = 145
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
+    ItemHeight = 0
     TabOrder = 2
     OnChange = cbMajorTypesChange
   end
@@ -85,7 +85,7 @@ object FormMediaType: TFormMediaType
     Width = 145
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
+    ItemHeight = 0
     TabOrder = 3
     OnChange = cbSubTypesChange
   end
@@ -124,7 +124,7 @@ object FormMediaType: TFormMediaType
     Width = 145
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
+    ItemHeight = 0
     TabOrder = 7
     OnChange = cbFormatTypeChange
   end

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DSPack, DSUtil, DirectShow9, ComCtrls;
+  Dialogs, StdCtrls, DSPack, DXSUtil, DirectShow9, ComCtrls;
 
 type
   TFormVMRMixer = class(TForm)

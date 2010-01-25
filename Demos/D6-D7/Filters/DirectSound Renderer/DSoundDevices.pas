@@ -21,7 +21,7 @@ unit DSoundDevices;
 interface
 
 uses
-  Windows, Classes, DirectSound, SysUtils, IniFiles, ActiveX, DSUtil;
+  Windows, Classes, DirectSound, SysUtils, IniFiles, ActiveX, DXSUtil;
 
 type
   TDSDeviceItem  = class(TCollectionItem)

@@ -36,7 +36,7 @@ type
     property IO: TAsyncIO read FIO implements IAsyncReader;
   public
     constructor Create(ObjectName: string; Filter: TBCBaseFilter;
-      Lock: TBCCritSec; out hr: HRESULT; Name: WideString; AStream: IStream;
+      Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString; AStream: IStream;
       FwdOnly: boolean = false; const StreamSize: Int64 = 0;
       Loadstream: boolean = false; URLMode: boolean = false);
     // calling the destructor causes crashes, may a bug in BaseClasses
@@ -95,7 +95,7 @@ begin
 end;
 
 constructor TStreamOutPin.Create(ObjectName: string; Filter: TBCBaseFilter;
-  Lock: TBCCritSec; out hr: HRESULT; Name: WideString; AStream: IStream;
+  Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString; AStream: IStream;
   FwdOnly: boolean = false; const StreamSize: Int64 = 0;
   Loadstream: boolean = false; URLMode: boolean = false);
 begin

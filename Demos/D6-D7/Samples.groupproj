@@ -1,0 +1,342 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{AAAD2B5E-56F3-4A02-8A79-3846985B8253}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="ASF\ASF Capture\ASFCap.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Compress\DIVX Compressor\Compressor.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Compress\File Recompressor\Compress.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="DVDPlay\DVDPlay.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filter Enumerator\FilterEnum.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\Alpha Renderer\AlphaRenderer.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\Async\Asyncflt.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\DirectSound Renderer\DelphiDSound.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\Dump\Dump.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\Grabber\grabber.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\NullIP\NullIP.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\NullIP2\NullIP.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\NullNull\NullNull.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\PushSource\PushSource.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\RGB24 Video Renderer\VideoRenderer.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\WaveDest\WaveDest.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="PlayVideoCap\PlayCap.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="PlayWin\playwin.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="SampleGrabber\SnapShot.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="ShoutCast\ShoutCast.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="videocap\VideoCap.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="VMR\Mixer\VMRMixer.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="VMR\VMR9Allocator\Playcap\PlayCap.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="VMR\VMR9Allocator\PlayFile\PlayFile.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="VMR\VMRBitmap\VMRBitmap.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="VMR\VMRPlayWin\VMRPlayWin.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="VMR\VMRSnapShot\VMRSnapShot.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Filters\AsyncEx\AsyncEx.dproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="ASFCap">
+			<MSBuild Projects="ASF\ASF Capture\ASFCap.dproj"/>
+		</Target>
+		<Target Name="ASFCap:Clean">
+			<MSBuild Targets="Clean" Projects="ASF\ASF Capture\ASFCap.dproj"/>
+		</Target>
+		<Target Name="ASFCap:Make">
+			<MSBuild Targets="Make" Projects="ASF\ASF Capture\ASFCap.dproj"/>
+		</Target>
+		<Target Name="Compressor">
+			<MSBuild Projects="Compress\DIVX Compressor\Compressor.dproj"/>
+		</Target>
+		<Target Name="Compressor:Clean">
+			<MSBuild Targets="Clean" Projects="Compress\DIVX Compressor\Compressor.dproj"/>
+		</Target>
+		<Target Name="Compressor:Make">
+			<MSBuild Targets="Make" Projects="Compress\DIVX Compressor\Compressor.dproj"/>
+		</Target>
+		<Target Name="Compress">
+			<MSBuild Projects="Compress\File Recompressor\Compress.dproj"/>
+		</Target>
+		<Target Name="Compress:Clean">
+			<MSBuild Targets="Clean" Projects="Compress\File Recompressor\Compress.dproj"/>
+		</Target>
+		<Target Name="Compress:Make">
+			<MSBuild Targets="Make" Projects="Compress\File Recompressor\Compress.dproj"/>
+		</Target>
+		<Target Name="DVDPlay">
+			<MSBuild Projects="DVDPlay\DVDPlay.dproj"/>
+		</Target>
+		<Target Name="DVDPlay:Clean">
+			<MSBuild Targets="Clean" Projects="DVDPlay\DVDPlay.dproj"/>
+		</Target>
+		<Target Name="DVDPlay:Make">
+			<MSBuild Targets="Make" Projects="DVDPlay\DVDPlay.dproj"/>
+		</Target>
+		<Target Name="FilterEnum">
+			<MSBuild Projects="Filter Enumerator\FilterEnum.dproj"/>
+		</Target>
+		<Target Name="FilterEnum:Clean">
+			<MSBuild Targets="Clean" Projects="Filter Enumerator\FilterEnum.dproj"/>
+		</Target>
+		<Target Name="FilterEnum:Make">
+			<MSBuild Targets="Make" Projects="Filter Enumerator\FilterEnum.dproj"/>
+		</Target>
+		<Target Name="AlphaRenderer">
+			<MSBuild Projects="Filters\Alpha Renderer\AlphaRenderer.dproj"/>
+		</Target>
+		<Target Name="AlphaRenderer:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\Alpha Renderer\AlphaRenderer.dproj"/>
+		</Target>
+		<Target Name="AlphaRenderer:Make">
+			<MSBuild Targets="Make" Projects="Filters\Alpha Renderer\AlphaRenderer.dproj"/>
+		</Target>
+		<Target Name="Asyncflt">
+			<MSBuild Projects="Filters\Async\Asyncflt.dproj"/>
+		</Target>
+		<Target Name="Asyncflt:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\Async\Asyncflt.dproj"/>
+		</Target>
+		<Target Name="Asyncflt:Make">
+			<MSBuild Targets="Make" Projects="Filters\Async\Asyncflt.dproj"/>
+		</Target>
+		<Target Name="DelphiDSound">
+			<MSBuild Projects="Filters\DirectSound Renderer\DelphiDSound.dproj"/>
+		</Target>
+		<Target Name="DelphiDSound:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\DirectSound Renderer\DelphiDSound.dproj"/>
+		</Target>
+		<Target Name="DelphiDSound:Make">
+			<MSBuild Targets="Make" Projects="Filters\DirectSound Renderer\DelphiDSound.dproj"/>
+		</Target>
+		<Target Name="Dump">
+			<MSBuild Projects="Filters\Dump\Dump.dproj"/>
+		</Target>
+		<Target Name="Dump:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\Dump\Dump.dproj"/>
+		</Target>
+		<Target Name="Dump:Make">
+			<MSBuild Targets="Make" Projects="Filters\Dump\Dump.dproj"/>
+		</Target>
+		<Target Name="grabber">
+			<MSBuild Projects="Filters\Grabber\grabber.dproj"/>
+		</Target>
+		<Target Name="grabber:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\Grabber\grabber.dproj"/>
+		</Target>
+		<Target Name="grabber:Make">
+			<MSBuild Targets="Make" Projects="Filters\Grabber\grabber.dproj"/>
+		</Target>
+		<Target Name="NullIP">
+			<MSBuild Projects="Filters\NullIP2\NullIP.dproj"/>
+		</Target>
+		<Target Name="NullIP:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\NullIP2\NullIP.dproj"/>
+		</Target>
+		<Target Name="NullIP:Make">
+			<MSBuild Targets="Make" Projects="Filters\NullIP2\NullIP.dproj"/>
+		</Target>
+		<Target Name="NullNull">
+			<MSBuild Projects="Filters\NullNull\NullNull.dproj"/>
+		</Target>
+		<Target Name="NullNull:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\NullNull\NullNull.dproj"/>
+		</Target>
+		<Target Name="NullNull:Make">
+			<MSBuild Targets="Make" Projects="Filters\NullNull\NullNull.dproj"/>
+		</Target>
+		<Target Name="PushSource">
+			<MSBuild Projects="Filters\PushSource\PushSource.dproj"/>
+		</Target>
+		<Target Name="PushSource:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\PushSource\PushSource.dproj"/>
+		</Target>
+		<Target Name="PushSource:Make">
+			<MSBuild Targets="Make" Projects="Filters\PushSource\PushSource.dproj"/>
+		</Target>
+		<Target Name="VideoRenderer">
+			<MSBuild Projects="Filters\RGB24 Video Renderer\VideoRenderer.dproj"/>
+		</Target>
+		<Target Name="VideoRenderer:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\RGB24 Video Renderer\VideoRenderer.dproj"/>
+		</Target>
+		<Target Name="VideoRenderer:Make">
+			<MSBuild Targets="Make" Projects="Filters\RGB24 Video Renderer\VideoRenderer.dproj"/>
+		</Target>
+		<Target Name="WaveDest">
+			<MSBuild Projects="Filters\WaveDest\WaveDest.dproj"/>
+		</Target>
+		<Target Name="WaveDest:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\WaveDest\WaveDest.dproj"/>
+		</Target>
+		<Target Name="WaveDest:Make">
+			<MSBuild Targets="Make" Projects="Filters\WaveDest\WaveDest.dproj"/>
+		</Target>
+		<Target Name="PlayCap">
+			<MSBuild Projects="VMR\VMR9Allocator\Playcap\PlayCap.dproj"/>
+		</Target>
+		<Target Name="PlayCap:Clean">
+			<MSBuild Targets="Clean" Projects="VMR\VMR9Allocator\Playcap\PlayCap.dproj"/>
+		</Target>
+		<Target Name="PlayCap:Make">
+			<MSBuild Targets="Make" Projects="VMR\VMR9Allocator\Playcap\PlayCap.dproj"/>
+		</Target>
+		<Target Name="playwin">
+			<MSBuild Projects="PlayWin\playwin.dproj"/>
+		</Target>
+		<Target Name="playwin:Clean">
+			<MSBuild Targets="Clean" Projects="PlayWin\playwin.dproj"/>
+		</Target>
+		<Target Name="playwin:Make">
+			<MSBuild Targets="Make" Projects="PlayWin\playwin.dproj"/>
+		</Target>
+		<Target Name="SnapShot">
+			<MSBuild Projects="SampleGrabber\SnapShot.dproj"/>
+		</Target>
+		<Target Name="SnapShot:Clean">
+			<MSBuild Targets="Clean" Projects="SampleGrabber\SnapShot.dproj"/>
+		</Target>
+		<Target Name="SnapShot:Make">
+			<MSBuild Targets="Make" Projects="SampleGrabber\SnapShot.dproj"/>
+		</Target>
+		<Target Name="ShoutCast">
+			<MSBuild Projects="ShoutCast\ShoutCast.dproj"/>
+		</Target>
+		<Target Name="ShoutCast:Clean">
+			<MSBuild Targets="Clean" Projects="ShoutCast\ShoutCast.dproj"/>
+		</Target>
+		<Target Name="ShoutCast:Make">
+			<MSBuild Targets="Make" Projects="ShoutCast\ShoutCast.dproj"/>
+		</Target>
+		<Target Name="VideoCap">
+			<MSBuild Projects="videocap\VideoCap.dproj"/>
+		</Target>
+		<Target Name="VideoCap:Clean">
+			<MSBuild Targets="Clean" Projects="videocap\VideoCap.dproj"/>
+		</Target>
+		<Target Name="VideoCap:Make">
+			<MSBuild Targets="Make" Projects="videocap\VideoCap.dproj"/>
+		</Target>
+		<Target Name="VMRMixer">
+			<MSBuild Projects="VMR\Mixer\VMRMixer.dproj"/>
+		</Target>
+		<Target Name="VMRMixer:Clean">
+			<MSBuild Targets="Clean" Projects="VMR\Mixer\VMRMixer.dproj"/>
+		</Target>
+		<Target Name="VMRMixer:Make">
+			<MSBuild Targets="Make" Projects="VMR\Mixer\VMRMixer.dproj"/>
+		</Target>
+		<Target Name="PlayFile">
+			<MSBuild Projects="VMR\VMR9Allocator\PlayFile\PlayFile.dproj"/>
+		</Target>
+		<Target Name="PlayFile:Clean">
+			<MSBuild Targets="Clean" Projects="VMR\VMR9Allocator\PlayFile\PlayFile.dproj"/>
+		</Target>
+		<Target Name="PlayFile:Make">
+			<MSBuild Targets="Make" Projects="VMR\VMR9Allocator\PlayFile\PlayFile.dproj"/>
+		</Target>
+		<Target Name="VMRBitmap">
+			<MSBuild Projects="VMR\VMRBitmap\VMRBitmap.dproj"/>
+		</Target>
+		<Target Name="VMRBitmap:Clean">
+			<MSBuild Targets="Clean" Projects="VMR\VMRBitmap\VMRBitmap.dproj"/>
+		</Target>
+		<Target Name="VMRBitmap:Make">
+			<MSBuild Targets="Make" Projects="VMR\VMRBitmap\VMRBitmap.dproj"/>
+		</Target>
+		<Target Name="VMRPlayWin">
+			<MSBuild Projects="VMR\VMRPlayWin\VMRPlayWin.dproj"/>
+		</Target>
+		<Target Name="VMRPlayWin:Clean">
+			<MSBuild Targets="Clean" Projects="VMR\VMRPlayWin\VMRPlayWin.dproj"/>
+		</Target>
+		<Target Name="VMRPlayWin:Make">
+			<MSBuild Targets="Make" Projects="VMR\VMRPlayWin\VMRPlayWin.dproj"/>
+		</Target>
+		<Target Name="VMRSnapShot">
+			<MSBuild Projects="VMR\VMRSnapShot\VMRSnapShot.dproj"/>
+		</Target>
+		<Target Name="VMRSnapShot:Clean">
+			<MSBuild Targets="Clean" Projects="VMR\VMRSnapShot\VMRSnapShot.dproj"/>
+		</Target>
+		<Target Name="VMRSnapShot:Make">
+			<MSBuild Targets="Make" Projects="VMR\VMRSnapShot\VMRSnapShot.dproj"/>
+		</Target>
+		<Target Name="AsyncEx">
+			<MSBuild Projects="Filters\AsyncEx\AsyncEx.dproj"/>
+		</Target>
+		<Target Name="AsyncEx:Clean">
+			<MSBuild Targets="Clean" Projects="Filters\AsyncEx\AsyncEx.dproj"/>
+		</Target>
+		<Target Name="AsyncEx:Make">
+			<MSBuild Targets="Make" Projects="Filters\AsyncEx\AsyncEx.dproj"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="ASFCap;Compressor;Compress;DVDPlay;FilterEnum;AlphaRenderer;Asyncflt;DelphiDSound;Dump;grabber;NullIP;NullIP;NullNull;PushSource;VideoRenderer;WaveDest;PlayCap;playwin;SnapShot;ShoutCast;VideoCap;VMRMixer;PlayCap;PlayFile;VMRBitmap;VMRPlayWin;VMRSnapShot;AsyncEx"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="ASFCap:Clean;Compressor:Clean;Compress:Clean;DVDPlay:Clean;FilterEnum:Clean;AlphaRenderer:Clean;Asyncflt:Clean;DelphiDSound:Clean;Dump:Clean;grabber:Clean;NullIP:Clean;NullIP:Clean;NullNull:Clean;PushSource:Clean;VideoRenderer:Clean;WaveDest:Clean;PlayCap:Clean;playwin:Clean;SnapShot:Clean;ShoutCast:Clean;VideoCap:Clean;VMRMixer:Clean;PlayCap:Clean;PlayFile:Clean;VMRBitmap:Clean;VMRPlayWin:Clean;VMRSnapShot:Clean;AsyncEx:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="ASFCap:Make;Compressor:Make;Compress:Make;DVDPlay:Make;FilterEnum:Make;AlphaRenderer:Make;Asyncflt:Make;DelphiDSound:Make;Dump:Make;grabber:Make;NullIP:Make;NullIP:Make;NullNull:Make;PushSource:Make;VideoRenderer:Make;WaveDest:Make;PlayCap:Make;playwin:Make;SnapShot:Make;ShoutCast:Make;VideoCap:Make;VMRMixer:Make;PlayCap:Make;PlayFile:Make;VMRBitmap:Make;VMRPlayWin:Make;VMRSnapShot:Make;AsyncEx:Make"/>
+		</Target>
+		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+	</Project>

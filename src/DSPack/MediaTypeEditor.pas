@@ -33,7 +33,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, DSUtil, StdCtrls, DirectShow9, Mask;
+  Dialogs, DXSUtil, StdCtrls, DirectShow9, Mask;
 
 type
   TFormMediaType = class(TForm)

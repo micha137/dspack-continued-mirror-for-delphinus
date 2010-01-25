@@ -11,7 +11,7 @@ unit UAsyncIo;
 
 interface
 uses
-  Windows, Contnrs, BaseClass, DirectShow9, DSUtil;
+  Windows, Contnrs, BaseClass, DirectShow9, DXSUtil;
 type
   //
   // definition of CAsyncFile object that performs file access. It provides
@@ -633,7 +633,7 @@ var
   Request: TBCAsyncRequest;
   hr: HResult;
 begin
-  Result := E_UNEXPECTED;
+//  Result := E_UNEXPECTED;
 
   if (AContext = nil) then
   begin
@@ -797,7 +797,7 @@ function TBCAsyncIo.BeginFlush: HResult;
 var
   Req: TBCAsyncRequest;
 begin
-  Result := E_UNEXPECTED;
+//  Result := E_UNEXPECTED;
   
   // hold the lock while emptying the work list
   FCSLists.Lock;

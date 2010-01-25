@@ -34,7 +34,7 @@ uses
   Definitions in 'Definitions.pas',
   WorkerThread in '..\Filters\AsyncEx\WorkerThread.pas',
   AsyncReader in '..\Filters\AsyncEx\AsyncReader.pas',
-  config in '..\Filters\AsyncEx\Config.pas',
+  Config in '..\Filters\AsyncEx\Config.pas',
   ICYParser in '..\Filters\AsyncEx\ICYParser.pas',
   Queue in '..\Filters\AsyncEx\Queue.pas',
   ShoutCastStream in '..\Filters\AsyncEx\ShoutCastStream.pas',

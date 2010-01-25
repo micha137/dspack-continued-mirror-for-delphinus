@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DSUtil, StdCtrls, DSPack, DirectShow9, Menus, ExtCtrls;
+  Dialogs, DXSUtil, StdCtrls, DSPack, DirectShow9, Menus, ExtCtrls;
 
 type
   TVideoForm = class(TForm)

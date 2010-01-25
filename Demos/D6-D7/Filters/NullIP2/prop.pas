@@ -3,7 +3,7 @@ unit prop;
 interface
 
 uses
-  Windows, DirectShow9, BaseClass, ActiveX, DSUtil, Messages;
+  Windows, DirectShow9, BaseClass, ActiveX, DXSUtil, Messages;
 
 const
   CLSID_NullIPPropertyPage: TGuid = '{40953494-25BD-40CC-879B-1CCC8B13F70B}';

@@ -6,7 +6,7 @@ unit main;
   {$WARN UNSAFE_CAST OFF}
 {$ENDIF}
 interface
-uses BaseClass, ActiveX, DirectShow9, Windows, DSUtil;
+uses BaseClass, ActiveX, DirectShow9, Windows, DXSUtil;
 
 const
 
@@ -125,7 +125,7 @@ begin
 
   // Copy the media type
   Source.GetMediaType(MediaType);
-  Dest.SetMediaType(MediaType^);
+  Dest.SetMediaType(MediaType);
   DeleteMediaType(MediaType);
 
   // Copy the actual data length

@@ -3,7 +3,7 @@ unit PropEdit;
 interface
 
 uses SysUtils, Windows, Messages, Classes, Graphics, Controls, StdCtrls,
-  ExtCtrls, Forms, BaseClass, ComObj, StdVcl, AxCtrls, DirectShow9, dsutil;
+  ExtCtrls, Forms, BaseClass, ComObj, StdVcl, AxCtrls, DirectShow9, DXSUtil;
 
 type
   TFormPropEdit = class(TFormPropertyPage)

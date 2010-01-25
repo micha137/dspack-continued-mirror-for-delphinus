@@ -35,7 +35,7 @@ Type
   public
     mF:string;
     constructor Create(ObjectName: string; pUnk: IUnKnown; Filter: TBCBaseFilter;
-      Lock: TBCCritSec; out hr: HRESULT; Name: WideString; mpFileN:string);
+      Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString; mpFileN:string);
     function CheckMediaType(mt: PAMMediaType): HRESULT; override;
     function Receive(pSample: IMediaSample): HRESULT; override;
     function EndOfStream: HRESULT; override;
@@ -79,7 +79,7 @@ begin
 end;
 
 constructor TMyPin.Create(ObjectName: string;pUnk: IUnKnown; Filter: TBCBaseFilter;
-      Lock: TBCCritSec; out hr: HRESULT; Name: WideString; mpFileN:string);
+      Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString; mpFileN:string);
 begin
   inherited Create(ObjectName, Filter, Lock, hr, Name);
   mF := mpFileN;

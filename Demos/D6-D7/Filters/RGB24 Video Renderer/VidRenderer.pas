@@ -609,7 +609,7 @@ begin
   // Don't call this with the filter locked
   fRenderer.DoPaintWindow(True);
   {$IFDEF DEBUG}
-  DbgLog(Self,'Changed parent to $' + inttohex(hwndParent,8));
+//  DbgLog(Self,'Changed parent to $' + inttohex(hwndParent,8));
   {$ENDIF}
   Result := NOERROR;
 end;

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DSUTIL, DirectShow9, ComCtrls, DSPack, Menus, BaseFilterEditor;
+  Dialogs, StdCtrls, DXSUtil, DirectShow9, ComCtrls, DSPack, Menus, BaseFilterEditor;
 
 type
   TFormEditor = class(TForm)

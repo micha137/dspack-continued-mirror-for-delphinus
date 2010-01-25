@@ -35,7 +35,7 @@
   @lastmod(Oct 24, 2003)
 }
 
-unit DSUtil;
+unit DXSUtil;
 {$B-}  // needed at least for TSysDevEnum.FilterIndexOfFriendlyName
 {$I jedi.inc}
 {$IFDEF COMPILER7_UP}
@@ -110,6 +110,9 @@ const
 type
 {$IFDEF VER130}
   PPointer = ^Pointer;
+{$ENDIF}
+{$IFNDEF UNICODE}
+  UnicodeString = WideString;
 {$ENDIF}
 
   { Interface to control the Divx Decoder filter.
@@ -326,7 +329,7 @@ const
   function FCC(str: String): Cardinal;
 
   { Create the four-character codes from a Cardinal value. }
-  function MAKEFOURCC(ch0, ch1, ch2, ch3: char): Cardinal;
+  function MAKEFOURCC(ch0, ch1, ch2, ch3: AnsiChar): Cardinal;
 
   { The GetErrorString function retrieves the error message for a given return
     code, using the current language setting.}
@@ -416,13 +419,13 @@ type
   function GetOutPin(pFilter: IBaseFilter; nPin: integer): IPin;
   function FindOtherSplitterPin(pPinIn: IPin; guid: TGUID; nStream: integer; out ppSplitPin: IPin): HRESULT;
   function SeekNextFrame(pSeeking: IMediaSeeking; FPS: Double; Frame: LongInt): HRESULT;
-  procedure ShowFilenameByCLSID(clsid: TGUID; out szFilename: WideString);
-  function GetFileDurationString(pMS: IMediaSeeking; out szDuration: WideString): HRESULT;
+  procedure ShowFilenameByCLSID(clsid: TGUID; out szFilename: UnicodeString);
+  function GetFileDurationString(pMS: IMediaSeeking; out szDuration: UnicodeString): HRESULT;
   function CanFrameStep(pGB: IGraphBuilder): Boolean;
   procedure UtilFreeMediaType(pmt: PAMMediaType);
   procedure UtilDeleteMediaType(pmt: PAMMediaType);
-  function SaveGraphFile(pGraph: IGraphBuilder; wszPath: WideString): HRESULT;
-  function LoadGraphFile(pGraph: IGraphBuilder; const wszName: WideString): HRESULT;
+  function SaveGraphFile(pGraph: IGraphBuilder; wszPath: UnicodeString): HRESULT;
+  function LoadGraphFile(pGraph: IGraphBuilder; const wszName: UnicodeString): HRESULT;
 // milenko end
 
   // Added by Michael. Used to Detect installed DirectX Version. (Source from getdxver.cpp)
@@ -445,7 +448,7 @@ type
   PFilCatNode = ^TFilCatNode;
   {@exclude}
   TFilCatNode = record
-    FriendlyName : Shortstring;
+    FriendlyName : String;
     CLSID        : TGUID;
   end;
 
@@ -785,7 +788,7 @@ type
     { Set or retrieve the moniker interface.}
     property Moniker: IMoniker read GetMoniker write SetMoniker;
     { Read a property bag. For example you can read the GUID identifier (PropertyBag('CLSID'))}
-    function PropertyBag(Name: WideString): OleVariant;
+    function PropertyBag(Name: UnicodeString): OleVariant;
     {Return the IBaseFilter interface corresponding to filter.}
     function CreateFilter: IBaseFilter;
   end;
@@ -1014,7 +1017,7 @@ end;
   var
     Moniker: IMoniker;
     ROT    : IRunningObjectTable;
-    wsz    : WideString;
+    wsz    : UnicodeString;
   begin
     result := GetRunningObjectTable(0, ROT);
     if (result <> S_OK) then exit;
@@ -1247,22 +1250,22 @@ end;
   end;
 
   function GetFOURCC(Fourcc: Cardinal): string;
-  type TFOURCC= array[0..3] of char;
+  type TFOURCC= array[0..3] of AnsiChar;
   var  CC: TFOURCC;
   begin
     case Fourcc of
       0 : result := 'RGB';
       1 : result := 'RLE8';
       2 : result := 'RLE4';
-      3 : result := 'BITFIELDS';   
+      3 : result := 'BITFIELDS';
     else
       PDWORD(@CC)^ := Fourcc; // abracadabra
-      result := CC;
+      result := string(CC);
     end;
   end;
 
   {$NODEFINE MAKEFOURCC}
-  function MAKEFOURCC(ch0, ch1, ch2, ch3: char): Cardinal;
+  function MAKEFOURCC(ch0, ch1, ch2, ch3: AnsiChar): Cardinal;
   begin
     result := Cardinal(BYTE(ch0)) or
     (Cardinal(BYTE(ch1)) shl 8)   or
@@ -1942,7 +1945,9 @@ end;
     i          : integer;
   begin
     if catList.Count > 0 then
-      for i := 0 to (catList.Count - 1) do if assigned(catList.Items[i]) then Dispose(catList.Items[i]);
+      for i := 0 to (catList.Count - 1) do
+        if assigned(catList.Items[i]) then
+          Dispose(PFilCatNode(catList.Items[i]));
     catList.Clear;
     CocreateInstance(CLSID_SystemDeviceEnum, nil, CLSCTX_INPROC, IID_ICreateDevEnum, SysDevEnum);
     hr := SysDevEnum.CreateClassEnumerator(CatGUID, EnumCat, 0);
@@ -1995,12 +2000,14 @@ end;
     inherited Destroy;
     if FCategories.Count > 0 then
       for i := 0 to (FCategories.Count - 1) do
-        if assigned(FCategories.Items[i]) then Dispose(FCategories.items[i]);
+        if assigned(FCategories.Items[i]) then
+          Dispose(PFilCatNode(FCategories.items[i]));
     FCategories.Clear;
     FreeAndNil(FCategories);
     if FFilters.Count > 0 then
       for i := 0 to (FFilters.Count - 1) do
-        if assigned(FFilters.Items[i]) then Dispose(FFilters.Items[i]);
+        if assigned(FFilters.Items[i]) then
+          Dispose(PFilCatNode(FFilters.Items[i]));
     FFilters.Clear;
     FreeAndNil(FFilters);
   end;
@@ -2969,7 +2976,7 @@ end;
       result := nil;
   end;
 
-  function TBaseFilter.PropertyBag(Name: WideString): OleVariant;
+  function TBaseFilter.PropertyBag(Name: UnicodeString): OleVariant;
   var
     AMoniker : IMoniker;
     PropBag  : IPropertyBag;
@@ -3296,7 +3303,7 @@ begin
                                    Pos, AM_SEEKING_NoPositioning);
 end;
 
-procedure ShowFilenameByCLSID(clsid: TGUID; out szFilename: WideString);
+procedure ShowFilenameByCLSID(clsid: TGUID; out szFilename: UnicodeString);
 begin
   szFilename := '<Unknown>';
   with TRegistry.Create do
@@ -3314,7 +3321,7 @@ begin
   end;
 end;
 
-function GetFileDurationString(pMS: IMediaSeeking; out szDuration: WideString): HRESULT;
+function GetFileDurationString(pMS: IMediaSeeking; out szDuration: UnicodeString): HRESULT;
 var
   guidOriginalFormat: TGUID;
   Duration: Int64;
@@ -3432,9 +3439,9 @@ begin
 end;
 
 const
-  wszStreamName: WideString = 'ActiveMovieGraph';
+  wszStreamName: UnicodeString = 'ActiveMovieGraph';
 
-function SaveGraphFile(pGraph: IGraphBuilder; wszPath: WideString): HRESULT;
+function SaveGraphFile(pGraph: IGraphBuilder; wszPath: UnicodeString): HRESULT;
 var
   Storage: IStorage;
   Stream: IStream;
@@ -3460,7 +3467,7 @@ begin
   Storage := nil;
 end;
 
-function LoadGraphFile(pGraph: IGraphBuilder; const wszName: WideString): HRESULT;
+function LoadGraphFile(pGraph: IGraphBuilder; const wszName: UnicodeString): HRESULT;
 var
   Storage: IStorage;
   Stream: IStream;
@@ -4148,13 +4155,13 @@ begin
     if (bSign) then
     begin
       ud[0].QuadPart := DWORDLONG(-d);
-      if (d > 0) then ud[1].QuadPart := DWORDLONG(LONGLONG(-1))
-                 else ud[1].QuadPart := DWORDLONG(0);
+      if (d > 0) then ud[1].QuadPart := $FFFFFFFFFFFFFFFF
+                 else ud[1].QuadPart := 0;
     end else
     begin
       ud[0].QuadPart := DWORDLONG(d);
-      if (d < 0) then ud[1].QuadPart := DWORDLONG(LONGLONG(-1))
-                 else ud[1].QuadPart := DWORDLONG(0);
+      if (d < 0) then ud[1].QuadPart := $FFFFFFFFFFFFFFFF
+                 else ud[1].QuadPart := 0;
     end;
 
     uliTotal.QuadPart  := DWORDLONG(ud[0].LowPart) + p[0].LowPart;
@@ -4795,7 +4802,7 @@ end;
 {$IFDEF VER130}
 function StringToGUID(const S: string): TGUID;
 begin
-  if not Succeeded(CLSIDFromString(PWideChar(WideString(S)), Result))
+  if not Succeeded(CLSIDFromString(PWideChar(UnicodeString(S)), Result))
     then raise Exception.Create('StringToGUID: Error converting String');
 end;
 

@@ -1,7 +1,7 @@
 unit main;
 {$DEFINE DEBUG}
 interface
-uses BaseClass, ActiveX, DirectShow9, Windows, DSUtil;
+uses BaseClass, ActiveX, DirectShow9, Windows, DXSUtil;
 
 const
 

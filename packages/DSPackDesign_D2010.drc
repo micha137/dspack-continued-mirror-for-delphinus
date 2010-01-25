@@ -1,0 +1,19 @@
+/* VER210
+  Généré par le compilateur CodeGear Delphi Pascal
+  car -GD ou --drc a été fourni au compilateur.
+
+  Ce fichier contient des ressources générées par le compilateur qui
+  ont été liées à l'exécutable.
+  Si ce fichier est vide, aucune ressource générée par le
+  compilateur n'est liée à l'exécutable produit.
+*/
+
+STRINGTABLE
+BEGIN
+END
+
+/* D:\dev\dspack\src\DSPack\MediaTypeEditor.dfm */
+/* D:\dev\dspack\src\DSPack\BaseFilterEditor.dfm */
+/* D:\dev\dspack\src\DSPack\BaseFilterEditor.res */
+/* D:\dev\dspack\packages\DSPackDesign_D2010.res */
+/* D:\dev\dspack\packages\DSPackDesign_D2010.drf */

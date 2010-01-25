@@ -1,10 +1,10 @@
 object FormBaseFilter: TFormBaseFilter
   Left = 504
   Top = 199
-  Width = 419
-  Height = 350
   BorderStyle = bsSizeToolWin
   Caption = 'Base Filter Editor'
+  ClientHeight = 326
+  ClientWidth = 411
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,6 +15,9 @@ object FormBaseFilter: TFormBaseFilter
   Position = poScreenCenter
   OnCloseQuery = FormCloseQuery
   OnShow = FormShow
+  DesignSize = (
+    411
+    326)
   PixelsPerInch = 96
   TextHeight = 13
   object InfoBtn: TSpeedButton
@@ -61,6 +64,13 @@ object FormBaseFilter: TFormBaseFilter
     TabOrder = 2
     object SelectorSheet: TTabSheet
       Caption = 'Selector'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      DesignSize = (
+        403
+        264)
       object Label1: TLabel
         Left = 8
         Top = 2
@@ -118,10 +128,10 @@ object FormBaseFilter: TFormBaseFilter
         Top = 165
         Width = 145
         Height = 98
+        Style = lbOwnerDrawVariable
         Anchors = [akRight, akBottom]
         ItemHeight = 14
         PopupMenu = PinMenu
-        Style = lbOwnerDrawVariable
         TabOrder = 2
         OnDrawItem = PinsDrawItem
         OnMeasureItem = PinsMeasureItem
@@ -145,6 +155,13 @@ object FormBaseFilter: TFormBaseFilter
       Caption = 'Pins Details'
       ImageIndex = 1
       OnShow = PinsSheetShow
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      DesignSize = (
+        403
+        264)
       object Label3: TLabel
         Left = 1
         Top = 0
@@ -173,10 +190,10 @@ object FormBaseFilter: TFormBaseFilter
         Top = 16
         Width = 153
         Height = 129
+        Style = lbOwnerDrawVariable
         Anchors = [akLeft, akTop, akRight, akBottom]
         ItemHeight = 13
         PopupMenu = PinMenu
-        Style = lbOwnerDrawVariable
         TabOrder = 0
         OnClick = Pins1Click
         OnDrawItem = PinsDrawItem
@@ -230,6 +247,7 @@ object FormBaseFilter: TFormBaseFilter
           Font.Name = 'Arial'
           Font.Style = []
           ParentFont = False
+          ExplicitWidth = 146
         end
         object Label17: TLabel
           Left = 5
@@ -245,6 +263,7 @@ object FormBaseFilter: TFormBaseFilter
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
+          ExplicitWidth = 53
         end
       end
       object Panel2: TPanel

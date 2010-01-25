@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, DSPack, DirectShow9, StdCtrls, ActiveX, DSUtil, Menus,
+  Dialogs, DSPack, DirectShow9, StdCtrls, ActiveX, DXSUtil, Menus,
   ExtCtrls, ComCtrls, Buttons, ImgList;
 
 type

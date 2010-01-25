@@ -17,7 +17,7 @@ uses
   Windows,
   BaseClass,
   DirectShow9,
-  DSUtil,
+  DXSUtil,
   ActiveX,
   UAsyncIo in '..\UAsyncIo.pas',
   UAsyncRdr in '..\UAsyncRdr.pas',
@@ -159,7 +159,7 @@ begin
                 end;
 
   //  Open the file
-  hFile := CreateFile(PAnsiChar(ParamStr(1)), GENERIC_READ, FILE_SHARE_READ,
+  hFile := CreateFile(PChar(ParamStr(1)), GENERIC_READ, FILE_SHARE_READ,
     nil, OPEN_EXISTING, 0, 0);
   if (hFile = INVALID_HANDLE_VALUE) then
   begin

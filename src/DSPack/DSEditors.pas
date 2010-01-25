@@ -35,8 +35,10 @@ uses
 {$IFDEF VER150} DesignIntf, DesignEditors, {$ELSE}
 {$IFDEF VER170} DesignIntf, DesignEditors, {$ELSE}
 {$IFDEF VER180} DesignIntf, DesignEditors, {$ELSE}
- DsgnIntf, {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
- Forms, Controls, DSUtil, DSPack;
+{$IFDEF VER200} DesignIntf, DesignEditors, {$ELSE}
+{$IFDEF VER210} DesignIntf, DesignEditors, {$ELSE}
+ DsgnIntf, {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
+ Forms, Controls, DXSUtil, DSPack;
 
 type
 

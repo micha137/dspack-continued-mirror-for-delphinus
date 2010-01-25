@@ -35,7 +35,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DSUTIL, DirectShow9, ComCtrls, DSPack, Menus, ExtCtrls,
+  Dialogs, StdCtrls, DXSUTIL, DirectShow9, ComCtrls, DSPack, Menus, ExtCtrls,
   Buttons;
 
 type
@@ -138,7 +138,7 @@ type
   TNodeItem = Record
     Index      : integer;
     Color      : TColor;
-    MonikerStr : WideString;
+    MonikerStr : UnicodeString;
   End;
 
 const
@@ -680,7 +680,7 @@ var
   TmpNode : TTreeNode;
   NodeItem : pNodeItem;
   MonikerStr : PWideChar;
-  Tmp : WideString;
+  Tmp : UnicodeString;
 begin
   Filters.Items.BeginUpdate;
   Filters.Items.Clear;
@@ -957,5 +957,4 @@ begin
 end;
 
 end.
-
 

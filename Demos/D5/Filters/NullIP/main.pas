@@ -1,7 +1,7 @@
 unit main;
 
 interface
-uses BaseClass, ActiveX, DirectShow9, Windows, DSUTil, PropEdit;
+uses BaseClass, ActiveX, DirectShow9, Windows, DXSUtil, PropEdit;
 
 const
   CLSID_NullInPlace        : TGUID = '{52b63860-dc93-11ce-a099-00aa00479a58}';

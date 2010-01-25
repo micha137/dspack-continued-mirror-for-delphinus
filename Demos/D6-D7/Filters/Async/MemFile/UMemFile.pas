@@ -10,7 +10,7 @@ unit UMemFile;
 
 interface
 uses
-  Windows, SysUtils, DSUtil, BaseClass, DirectShow9, MMSystem, Math,
+  Windows, SysUtils, DXSUtil, BaseClass, DirectShow9, MMSystem, Math,
   UAsyncIO, UAsyncRdr;
 
 type
@@ -46,7 +46,7 @@ type
     //  stuff etc
     function Register: HResult; override; stdcall;
 
-    function UnRegister: HResult; override; stdcall;
+    function Unregister: HResult; override; stdcall;
 
     // constructor and destructor
     constructor Create(AStream: TBCMemFileStream; Amt: PAMMediaType;

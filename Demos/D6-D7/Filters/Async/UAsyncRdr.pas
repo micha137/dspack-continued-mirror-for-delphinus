@@ -19,7 +19,7 @@ unit UAsyncRdr;
 
 interface
 uses
-  BaseClass, DirectShow9, DSUtil, ActiveX, Windows, SysUtils,
+  BaseClass, DirectShow9, DXSUtil, ActiveX, Windows, SysUtils,
   UAsyncIo;
 
 const

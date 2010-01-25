@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DSPack, DSUtil, DirectShow9, ComCtrls, ExtCtrls;
+  Dialogs, StdCtrls, DSPack, DXSUtil, DirectShow9, ComCtrls, ExtCtrls;
 
 type
   TMainForm = class(TForm)
@@ -46,7 +46,7 @@ var
   MainForm: TMainForm;
   CapEnum: TSysDevEnum;
   VideoMediaTypes, AudioMediaTypes: TEnumMediaType;
-  CapFile: WideString = 'c:\capture.avi';
+  CapFile: UnicodeString = 'c:\capture.avi';
 implementation
 
 {$R *.dfm}

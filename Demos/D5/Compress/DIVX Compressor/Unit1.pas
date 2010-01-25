@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, DSPack, DSUtil, StdCtrls, DirectShow9;
+  Dialogs, DSPack, DXSUtil, StdCtrls, DirectShow9;
 
 type
   TForm1 = class(TForm)

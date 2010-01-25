@@ -52,7 +52,7 @@ unit DSPack;
 interface
 uses
   Windows, Classes, SysUtils, Messages, Graphics, Forms, Controls, ActiveX, DirectShow9,
-  DirectDraw, DSUtil, ComCtrls, MMSystem, Math, Consts, ExtCtrls,
+  DirectDraw, DXSUtil, ComCtrls, MMSystem, Math, Consts, ExtCtrls,
   MultiMon, Dialogs, Registry, SyncObjs, Direct3D9, WMF9;
 
 const
@@ -144,7 +144,7 @@ type
   TOnGraphEndOfSegment         = procedure(sender: TObject; StreamTime: TReferenceTime; NumSegment: Cardinal) of object ;         {@exclude}
   TOnDSResult                  = procedure(sender: TObject; Result: HRESULT) of object ;                                           {@exclude}
   TOnGraphFullscreenLost       = procedure(sender: TObject; Renderer: IBaseFilter) of object ;                                     {@exclude}
-  TOnGraphOleEvent             = procedure(sender: TObject; String1, String2: WideString) of object ;                              {@exclude}
+  TOnGraphOleEvent             = procedure(sender: TObject; String1, String2: UnicodeString) of object ;                              {@exclude}
   TOnGraphOpeningFile          = procedure(sender: TObject; opening: boolean) of object ;                                          {@exclude}
   TOnGraphSNDDevError          = procedure(sender: TObject; OccurWhen: TSndDevErr; ErrorCode: LongWord) of object ;               {@exclude}
   TOnGraphStreamControl        = procedure(sender: TObject; PinSender: IPin; Cookie: LongWord) of object ;                         {@exclude}
@@ -172,7 +172,7 @@ type
   {@exclude}
   TOnBuffer = procedure(sender: TObject; SampleTime: Double; pBuffer: Pointer; BufferLen: longint) of object ;
 
-  TOnSelectedFilter = function (Moniker: IMoniker; FilterName: WideString; ClassID: TGuid): Boolean of Object;
+  TOnSelectedFilter = function (Moniker: IMoniker; FilterName: UnicodeString; ClassID: TGuid): Boolean of Object;
   TOnCreatedFilter  = function (Filter: IBaseFilter; ClassID: TGuid): Boolean of Object;
   TOnUnableToRender = function (Pin: IPin): Boolean of Object;
 // *****************************************************************************
@@ -437,16 +437,16 @@ type
     { Disconnect and remove all filters from the filter graph excepting the custom components. }
     procedure ClearGraph;
     { Render a single file. }
-    function RenderFile(FileName: WideString): HRESULT;
-    function RenderFileEx(FileName: WideString): HRESULT;
+    function RenderFile(FileName: UnicodeString): HRESULT;
+    function RenderFileEx(FileName: UnicodeString): HRESULT;
     { Render a DVD Video Volume or a File Name if specified. }
     function RenderDVD(out status: TAMDVDRenderStatus;
-      FileName: WideString = ''; Mode: Integer = AM_DVD_HWDEC_PREFER): HRESULT;
+      FileName: UnicodeString = ''; Mode: Integer = AM_DVD_HWDEC_PREFER): HRESULT;
     { Save the current state and position of a DVD movie to a file.<br>
       See also: @link(DVDRestoreBookmark).}
-    procedure DVDSaveBookmark(BookMarkFile: WideString);
+    procedure DVDSaveBookmark(BookMarkFile: UnicodeString);
     { Restore the State and position of a DVD movie saved by @link(DVDSaveBookmark).}
-    procedure DVDRestoreBookmark(BookMarkFile: WideString);
+    procedure DVDRestoreBookmark(BookMarkFile: UnicodeString);
   published
 
     { Specify a File Name to save the Filter Graph Log. }
@@ -1156,7 +1156,7 @@ type
     FPort        : Cardinal;
     FMaxUsers    : Cardinal;
     FProfile     : TWMPofiles8;
-    FFileName    : WideString;
+    FFileName    : UnicodeString;
     FAutoIndex   : boolean;
     FMultiPass   : boolean;
     FDontCompress: boolean;
@@ -1887,7 +1887,7 @@ const
       EC_ERRORABORT                : if assigned(FOnGraphErrorAbort)              then FOnGraphErrorAbort(self, Param1);
       EC_FULLSCREEN_LOST           : if assigned(FOnGraphFullscreenLost)          then FOnGraphFullscreenLost(self, IBaseFilter(Param2));
       EC_GRAPH_CHANGED             : if assigned(FOnGraphChanged)                 then FOnGraphChanged(self);
-      EC_OLE_EVENT                 : if assigned(FOnGraphOleEvent)                then FOnGraphOleEvent(self, WideString(Param1), WideString(Param2));
+      EC_OLE_EVENT                 : if assigned(FOnGraphOleEvent)                then FOnGraphOleEvent(self, UnicodeString(Param1), UnicodeString(Param2));
       EC_OPENING_FILE              : if assigned(FOnGraphOpeningFile)             then FOnGraphOpeningFile(self, (Param1 = 1));
       EC_PALETTE_CHANGED           : if assigned(FOnGraphPaletteChanged)          then FOnGraphPaletteChanged(self);
       EC_PAUSED                    : if assigned(FOnGraphPaused)                  then FOnGraphPaused(self, Param1);
@@ -2047,7 +2047,7 @@ const
   end;
 
   procedure TFilterGraph.InsertFilter(AFilter: IFilter);
-  var FilterName: WideString;
+  var FilterName: UnicodeString;
   begin
     if FFilters = nil then FFilters := TInterfaceList.Create;
     FFilters.Add(AFilter);
@@ -2103,7 +2103,7 @@ const
   procedure TFilterGraph.AddOwnFilters;
   var
     i: integer;
-    FilterName: WideString;
+    FilterName: UnicodeString;
   begin
     if Active and (FFilters <> nil) then
       for i := 0 to FFilters.Count - 1 do
@@ -2323,7 +2323,7 @@ const
     end;
   end;
 
-  function TFilterGraph.RenderFile(FileName: WideString): HRESULT;
+  function TFilterGraph.RenderFile(FileName: UnicodeString): HRESULT;
   begin
     result := S_FALSE;
     if assigned(FFilterGraph) then
@@ -2339,7 +2339,7 @@ const
   end;
 
   { TODO -oHG : Add the audio rendering }
-  function TFilterGraph.RenderFileEx(FileName: WideString): HRESULT;
+  function TFilterGraph.RenderFileEx(FileName: UnicodeString): HRESULT;
   var
     SourceFilter: IBaseFilter;
     PinList: TPinList;
@@ -2369,7 +2369,7 @@ const
   end;
 
   function TFilterGraph.RenderDVD(out status: TAMDVDRenderStatus;
-    FileName: WideString = ''; Mode: Integer = AM_DVD_HWDEC_PREFER): HRESULT;
+    FileName: UnicodeString = ''; Mode: Integer = AM_DVD_HWDEC_PREFER): HRESULT;
   begin
     result := HRESULT(VFW_E_DVD_RENDERFAIL);
     if assigned(FDVDGraph) then
@@ -2441,7 +2441,7 @@ const
     end
   end;
 
-  procedure TFilterGraph.DVDSaveBookmark(BookMarkFile: WideString);
+  procedure TFilterGraph.DVDSaveBookmark(BookMarkFile: UnicodeString);
   var
     DVDInfo2: IDVDInfo2;
     Bookmark: IDvdState;
@@ -2470,7 +2470,7 @@ const
     end;
   end;
 
-  procedure TFilterGraph.DVDRestoreBookmark(BookMarkFile: WideString);
+  procedure TFilterGraph.DVDRestoreBookmark(BookMarkFile: UnicodeString);
   var
     DVDControl2: IDvdControl2;
     pStorage : IStorage;
@@ -4504,7 +4504,7 @@ const
    FilterList: TFilterList;
    i: integer;
    GUID: TGUID;
-   TmpName : WideString;
+   TmpName : UnicodeString;
  begin
    FilterList := nil;
    try

@@ -23,7 +23,7 @@ unit UPushSource;
 
 interface
 uses
-  BaseClass, DirectShow9, DSUtil,
+  BaseClass, DirectShow9, DXSUtil,
   Windows, ActiveX, SysUtils;
 
 const
@@ -101,9 +101,9 @@ const
   DefaultFrameLength: TReferenceTime = FPS_10;
 
   // Filter name strings
-  PushBitmapName: WideString = '_ PushSource Bitmap Filter';
-  PushBitmapSetName: WideString = '_ PushSource BitmapSet Filter';
-  PushDesktopName: WideString = '_ PushSource Desktop Filter';
+  PushBitmapName: UnicodeString = '_ PushSource Bitmap Filter';
+  PushBitmapSetName: UnicodeString = '_ PushSource BitmapSet Filter';
+  PushDesktopName: UnicodeString = '_ PushSource Desktop Filter';
 
   // default bitmap file name
   BITMAP_NAME: string = 'sample.bmp';
@@ -323,8 +323,8 @@ implementation
 constructor TBCPushPinBitmap.Create(out hr: HResult; Filter: TBCSource);
 var
   CurrentDir: array[0..MAX_PATH - 1] of Char;
-  CurrentFileName, MediaFileName: AnsiString;
-  MsgText: AnsiString;
+  CurrentFileName, MediaFileName: string;
+  MsgText: string;
   FileSize, BytesRead: DWord;
   FileHeaderSize: Integer;
   BmpFileHeader: PBITMAPFILEHEADER;
@@ -697,8 +697,8 @@ end;
 constructor TBCPushPinBitmapSet.Create(out hr: HResult; Filter: TBCSource);
 var
   CurrentDir: array[0..MAX_PATH - 1] of Char;
-  CurrentFileName, MediaFileName: AnsiString;
-  MsgText: AnsiString;
+  CurrentFileName, MediaFileName: string;
+  MsgText: string;
   FileSize, BytesRead: DWord;
   FilesLoaded, FileHeaderSize: Integer;
   BmpFileHeader: PBITMAPFILEHEADER;

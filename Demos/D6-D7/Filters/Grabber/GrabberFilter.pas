@@ -14,7 +14,7 @@ unit GrabberFilter;
 interface
 
 uses
-  BaseClass, DirectShow9, Windows, Classes, DSUtil, SysUtils,
+  BaseClass, DirectShow9, Windows, Classes, DXSUtil, SysUtils,
   ActiveX;
 
 //------------------------------------------------------------------------------

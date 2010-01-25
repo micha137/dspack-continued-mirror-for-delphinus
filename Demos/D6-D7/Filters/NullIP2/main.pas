@@ -9,7 +9,7 @@ unit main;
 interface
 
 uses
-  BaseClass, ActiveX, DirectShow9, Windows, DSUTil, prop;
+  BaseClass, ActiveX, DirectShow9, Windows, DXSUtil, prop;
 
 const
   CLSID_NullInPlace        : TGUID = '{C79B7D63-905F-4D84-A59E-F9C9B3398DA8}';
@@ -40,14 +40,14 @@ type
   TNullInPlaceInputPin = class(TBCTransInPlaceInputPin)
   public
     constructor Create(ObjectName: string; TransInPlaceFilter: TBCTransInPlaceFilter;
-      out hr: HRESULT; Name: WideString);
+      out hr: HRESULT; Name: UnicodeString);
     function CheckMediaType(mt: PAMMediaType): HRESULT; override;
   end;
 
   TNullInPlaceOutputPin = class(TBCTransInPlaceOutputPin)
   public
     constructor Create(ObjectName: string; TransInPlaceFilter: TBCTransInPlaceFilter;
-      out hr: HRESULT; Name: WideString);
+      out hr: HRESULT; Name: UnicodeString);
     function CheckMediaType(mt: PAMMediaType): HRESULT; override;
   end;
 
@@ -161,7 +161,7 @@ end;
 
 constructor TNullInPlaceInputPin.Create(ObjectName: string;
   TransInPlaceFilter: TBCTransInPlaceFilter; out hr: HRESULT;
-  Name: WideString);
+  Name: UnicodeString);
 begin
   inherited Create(ObjectName, TransInPlaceFilter, hr, Name);
 end;
@@ -189,7 +189,7 @@ end;
 
 constructor TNullInPlaceOutputPin.Create(ObjectName: string;
   TransInPlaceFilter: TBCTransInPlaceFilter; out hr: HRESULT;
-  Name: WideString);
+  Name: UnicodeString);
 begin
   inherited Create(ObjectName, TransInPlaceFilter, hr, Name);
 end;

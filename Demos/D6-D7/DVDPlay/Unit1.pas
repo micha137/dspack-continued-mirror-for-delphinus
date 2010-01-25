@@ -10,7 +10,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, DSPack,
-  Menus, ExtCtrls, ComCtrls, StdCtrls,directshow9, OleServer, DSUtil,
+  Menus, ExtCtrls, ComCtrls, StdCtrls,directshow9, OleServer, DXSUtil,
   ImgList, ToolWin, shellapi;
 
 type
@@ -107,7 +107,7 @@ type
     { Déclarations privées }
   public
     { Déclarations publiques }
-    procedure PlayDVD(FileName: WideString);
+    procedure PlayDVD(FileName: UnicodeString);
   end;
 
 var
@@ -117,7 +117,7 @@ implementation
 
 {$R *.DFM}
 
-procedure TFormDVDPlayer.PlayDVD(FileName: WideString);
+procedure TFormDVDPlayer.PlayDVD(FileName: UnicodeString);
 var
   Status : TAMDVDRenderStatus;
   DvdCmd: IDvdCmd;

@@ -58,7 +58,7 @@ uses
 {$IFDEF WITH_PROPERTY_PAGE}
   Forms,
 {$ENDIF}
-  ComObj, mmsystem, DSUtil;
+  ComObj, mmsystem, DXSUtil;
 
 const
   OATRUE  = -1;
@@ -204,7 +204,7 @@ type
     FCLSID : TGUID;             // This filters clsid used for serialization
     FLock  : TBCCritSec;          // Object we use for locking
 
-    FFilterName : WideString;   // Full filter name
+    FFilterName : UnicodeString;   // Full filter name
     FGraph : IFilterGraph;      // Graph we belong to
     FSink  : IMediaEventSink;   // Called with notify events
     FPinVersion: Integer;       // Current pin version
@@ -255,7 +255,7 @@ type
     function QueryFilterInfo(out pInfo: TFilterInfo): HRESULT; stdcall;
 // milenko start (added virtual to be able to override it in the renderers)
     function JoinFilterGraph(pGraph: IFilterGraph; pName: PWideChar): HRESULT; virtual; stdcall;
-// milenko end    
+// milenko end
     // return a Vendor information string. Optional - may return E_NOTIMPL.
     // memory returned should be freed using CoTaskMemFree
     // default implementation returns E_NOTIMPL
@@ -300,7 +300,7 @@ type
 
   TBCBasePin = class(TBCUnknown, IPin, IQualityControl)
   protected
-    FPinName: WideString;
+    FPinName: UnicodeString;
     FConnected             : IPin;             // Pin we have connected to
     Fdir                   : TPinDirection;   // Direction of this pin
     FLock                  : TBCCritSec;       // Object we use for locking
@@ -356,7 +356,7 @@ type
                   Filter    : TBCBaseFilter;      // Owning filter who knows about pins
                   Lock      : TBCCritSec;         // Object who implements the lock
                   out hr    : HRESULT;          // General OLE return code
-                  Name      : WideString;       // Pin name for us
+                  Name      : UnicodeString;       // Pin name for us
                   dir       : TPinDirection);  // Either PINDIR_INPUT or PINDIR_OUTPUT
     destructor Destroy; override;
     // --- IPin methods ---
@@ -433,7 +433,7 @@ type
     property CurrentStartTime: TReferenceTime read FStart;
     property CurrentRate: double read FRate;
     //  Access name
-    property Name: WideString read FPinName;
+    property Name: UnicodeString read FPinName;
     property CanReconnectWhenActive: boolean read FCanReconnectWhenActive write FCanReconnectWhenActive;
     // Media type
     property CurrentMediaType: TBCMediaType read GetCurrentMediaType;
@@ -498,7 +498,7 @@ type
     FInputPin : IMemInputPin;
   public
     constructor Create(ObjectName: string; Filter: TBCBaseFilter; Lock: TBCCritSec;
-      out hr: HRESULT; const Name: WideString);
+      out hr: HRESULT; const Name: UnicodeString);
 
     // override CompleteConnect() so we can negotiate an allocator
     function CompleteConnect(ReceivePin: IPin): HRESULT; override;
@@ -573,7 +573,7 @@ type
   public
 
     constructor Create(ObjectName: string; Filter: TBCBaseFilter;
-      Lock: TBCCritSec; out hr: HRESULT; Name: WideString);
+      Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString);
     destructor Destroy; override;
 
     // ----------IMemInputPin--------------
@@ -591,7 +591,7 @@ type
     // do something with this media sample
     function Receive(pSample: IMediaSample): HRESULT; virtual; stdcall;
     // do something with these media samples
-    function ReceiveMultiple(var pSamples: IMediaSample; nSamples: Longint;
+    function ReceiveMultiple(pSamples: PIMediaSampleArray; nSamples: Longint;
         out nSamplesProcessed: Longint): HRESULT; virtual; stdcall;
      // See if Receive() blocks
     function ReceiveCanBlock: HRESULT; virtual; stdcall;
@@ -648,8 +648,8 @@ type
 
   TBCDynamicOutputPin = class(TBCBaseOutputPin, IPinFlowControl)
   public
-    constructor Create(ObjectName: WideString; Filter: TBCBaseFilter;
-                       Lock: TBCCritSec; out hr: HRESULT; Name: WideString);
+    constructor Create(ObjectName: UnicodeString; Filter: TBCBaseFilter;
+                       Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString);
     destructor Destroy; override;
     // IUnknown Methods
     function NonDelegatingQueryInterface(const IID: TGUID; out Obj): HResult; override;
@@ -834,7 +834,7 @@ type
     FTransformFilter: TBCTransformFilter;
   public
     constructor Create(ObjectName: string; TransformFilter: TBCTransformFilter;
-      out hr: HRESULT; Name: WideString);
+      out hr: HRESULT; Name: UnicodeString);
 
     destructor Destroy; override;
     function QueryId(out id: PWideChar): HRESULT; override; stdcall;
@@ -882,7 +882,7 @@ type
     FPosition: IUnknown;
   public
     constructor Create(ObjectName: string; TransformFilter: TBCTransformFilter;
-      out hr: HRESULT; Name: WideString);
+      out hr: HRESULT; Name: UnicodeString);
     destructor Destroy; override;
     // override to expose IMediaPosition
     function NonDelegatingQueryInterface(const IID: TGUID; out Obj): HResult; override;
@@ -915,7 +915,7 @@ type
 // milenko start (added TBCVideoTransformFilter conversion)
   TBCVideoTransformFilter = class(TBCTransformFilter)
   public
-    constructor Create(Name: WideString; Unk: IUnknown; clsid: TGUID);
+    constructor Create(Name: UnicodeString; Unk: IUnknown; clsid: TGUID);
     destructor Destroy; override;
     function EndFlush: HRESULT; override;
 
@@ -1103,7 +1103,7 @@ type
     FReadOnly : boolean;               // incoming stream is read only
   public
     constructor Create(ObjectName: string; Filter: TBCTransInPlaceFilter;
-      out hr: HRESULT; Name: WideString);
+      out hr: HRESULT; Name: UnicodeString);
     // --- IMemInputPin -----
     // Provide an enumerator for media types by getting one from downstream
     function EnumMediaTypes(out ppEnum: IEnumMediaTypes): HRESULT; override; stdcall;
@@ -1139,7 +1139,7 @@ type
     FTIPFilter: TBCTransInPlaceFilter;
   public
     constructor Create(ObjectName: string; Filter: TBCTransInPlaceFilter;
-      out hr: HRESULT; Name: WideString);
+      out hr: HRESULT; Name: UnicodeString);
 
     // --- CBaseOutputPin ------------
 
@@ -1217,10 +1217,10 @@ type
     FWindow: THandle;                // Window handle for the page
     FDialog: THandle;                 // Actual dialog window handle
     FDirty: Boolean;              // Has anything been changed
-    FTitle: WideString;             // Resource identifier for title
+    FTitle: UnicodeString;             // Resource identifier for title
     FDialogID: Integer;            // Dialog resource identifier
   public
-    constructor Create(Name: WideString; pUnk: IUnknown; DialogID: Integer; Title: WideString);
+    constructor Create(Name: UnicodeString; pUnk: IUnknown; DialogID: Integer; Title: UnicodeString);
     destructor Destroy; override;
     function NonDelegatingQueryInterface(const IID: TGUID; out Obj): HResult; override; stdcall;
     function NonDelegatingAddRef: Integer; override; stdcall;
@@ -1487,7 +1487,7 @@ type
     FCompleteNotified : boolean; // Set when we notify for EC_COMPLETE
   public
     constructor Create(ObjectName: string; Filter: TBCBaseFilter;
-      Lock: TBCCritSec; out hr: HRESULT; Name: WideString);
+      Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString);
 
     // Override methods to track end of stream state
     function EndOfStream: HRESULT; override; stdcall;
@@ -1897,7 +1897,7 @@ type
   TBCSourceStream = class(TBCBaseOutputPin)
   public
     constructor Create(const ObjectName: string; out hr: HRESULT;
-      Filter: TBCSource; const Name: WideString);
+      Filter: TBCSource; const Name: UnicodeString);
     destructor Destroy; override;
   protected
     FThread: TBCAMThread;
@@ -1935,7 +1935,7 @@ type
     // thread commands
     function Init: HRESULT;
     function Exit_: HRESULT;
-    function Run: HRESULT; reintroduce; 
+    function Run: HRESULT; reintroduce;
     function Pause: HRESULT;
     function Stop: HRESULT;
 
@@ -2175,7 +2175,7 @@ type
     // Deal with connections and type changes
 
     function BreakConnect: HResult; virtual;
-    function SetMediaType(MediaType: PAMMediaType): HResult; virtual; 
+    function SetMediaType(MediaType: PAMMediaType): HResult; virtual;
     function CompleteConnect(ReceivePin: IPin): HResult; virtual;
 
     // These look after the handling of data samples
@@ -2569,7 +2569,7 @@ type
 
 // milenko start (needed to access functions outside. usefull for Filter Development)
 function CreateMemoryAllocator(out Allocator: IMemAllocator): HRESULT;
-function AMGetWideString(Source: WideString; out Dest: PWideChar): HRESULT;
+function AMGetWideString(Source: UnicodeString; out Dest: PWideChar): HRESULT;
 function CreatePosPassThru(Agg: IUnknown; Renderer: boolean; Pin: IPin; out PassThru: IUnknown): HRESULT; stdcall;
 // milenko end
 
@@ -2844,7 +2844,7 @@ const
 type
   TBCSystemClock = class(TBCBaseReferenceClock, IAMClockAdjust, IPersist)
   public
-    constructor Create(Name: WideString; Unk : IUnknown; out hr : HRESULT);
+    constructor Create(Name: UnicodeString; Unk : IUnknown; out hr : HRESULT);
     function NonDelegatingQueryInterface(const IID: TGUID; out Obj): HResult; override; stdcall;
     // Yield up our class id so that we can be persisted
     // Implement required Ipersist method
@@ -2936,7 +2936,7 @@ type
     FRef: integer;                  (* Reference count *)
 
     constructor Create(
-      pName: WideString;
+      pName: UnicodeString;
       pAllocator: TBCBaseAllocator;
       out phr: HRESULT;
       pBuffer: PBYTE = nil;
@@ -3101,11 +3101,11 @@ type
     procedure _Free; virtual; abstract;
 
     // override to allocate the memory when commit called
-    function Alloc: HRESULT; virtual; 
+    function Alloc: HRESULT; virtual;
 
   public
     constructor Create(
-      pName: WideString;
+      pName: UnicodeString;
       pUnk: IUnknown;
       out phr: HRESULT;
       bEvent: BOOL;
@@ -3212,7 +3212,7 @@ type
     ): HResult; override; stdcall;
 
     constructor Create(
-      pName: WideString;
+      pName: UnicodeString;
       pUnk: IUnknown;
       out phr: HRESULT
     );
@@ -3363,7 +3363,7 @@ var
 
 // -----------------------------------------------------------------------------
 // milenko start
-  function AMGetWideString(Source: WideString; out Dest: PWideChar): HRESULT;
+  function AMGetWideString(Source: UnicodeString; out Dest: PWideChar): HRESULT;
   var NameLen: Cardinal;
   begin
     if not assigned(@Dest) then
@@ -3383,7 +3383,7 @@ var
     Result := NOERROR;
   end;
 {
-  function AMGetWideString(Source: WideString; out Dest: PWideChar): HRESULT;
+  function AMGetWideString(Source: UnicodeString; out Dest: PWideChar): HRESULT;
   type TWideCharArray = array of WideChar;
   var NameLen: Cardinal;
   begin
@@ -3644,7 +3644,7 @@ begin
     RegFilter.dwMerit   := FMerit;
     RegFilter.cPins     := FPinCount;
     RegFilter.rgPins    := FPins;
-    result := Succeeded(FilterMapper.RegisterFilter(FClassID, PWideChar(WideString(FName)),
+    result := Succeeded(FilterMapper.RegisterFilter(FClassID, PWideChar(UnicodeString(FName)),
       nil, @FCategory, nil, RegFilter));
   end;
 end;
@@ -3898,7 +3898,7 @@ begin
     begin
       APin := GetPin(i);
       ASSERT(APin <> nil);
-      if (APin.FPinName = WideString(Id)) then
+      if (APin.FPinName = UnicodeString(Id)) then
       begin
           //  Found one that matches
           //  AddRef() and return it
@@ -3991,7 +3991,7 @@ begin
     end;
 
     FFilterName := '';
-    if assigned(pName) then FFilterName := WideString(pName);
+    if assigned(pName) then FFilterName := UnicodeString(pName);
     result := NOERROR;
   finally
     FLock.UnLock;
@@ -4722,7 +4722,7 @@ begin
 end;
 
 constructor TBCBasePin.Create(ObjectName: string; Filter: TBCBaseFilter;
-  Lock: TBCCritSec; out hr: HRESULT; Name: WideString;
+  Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString;
   dir: TPinDirection);
 begin
   inherited Create(ObjectName, nil);
@@ -4805,7 +4805,7 @@ end;
 procedure TBCBasePin.DisplayPinInfo(ReceivePin: IPin);
 {$IFDEF DEBUG}
 const
-  BadPin : WideString = 'Bad Pin';
+  BadPin : UnicodeString = 'Bad Pin';
 var
   ConnectPinInfo, ReceivePinInfo: TPinInfo;
 begin
@@ -4829,7 +4829,7 @@ begin
   DbgLog(self, 'Trying media type:');
   DbgLog(self, '    major type:  '+ GuidToString(pmt.majortype));
   DbgLog(self, '    sub type  :  '+ GuidToString(pmt.subtype));
-  DbgLog(self, GetMediaTypeDescription(pmt));  
+  DbgLog(self, GetMediaTypeDescription(pmt));
 {$ENDIF}
 end;
 
@@ -5446,7 +5446,7 @@ end;
 
 constructor TBCBaseOutputPin.Create(ObjectName: string;
   Filter: TBCBaseFilter; Lock: TBCCritSec; out hr: HRESULT;
-  const Name: WideString);
+  const Name: UnicodeString);
 begin
   inherited Create(ObjectName, Filter, Lock, hr, Name, PINDIR_OUTPUT);
   FAllocator := nil;
@@ -5704,7 +5704,7 @@ end;
 
 constructor TBCBaseInputPin.Create(ObjectName: string;
   Filter: TBCBaseFilter; Lock: TBCCritSec; out hr: HRESULT;
-  Name: WideString);
+  Name: UnicodeString);
 begin
     inherited create(ObjectName, Filter, Lock, hr, Name, PINDIR_INPUT);
     FAllocator := nil;
@@ -5983,7 +5983,7 @@ end;
 
 //  Receive multiple samples
 
-function TBCBaseInputPin.ReceiveMultiple(var pSamples: IMediaSample;
+function TBCBaseInputPin.ReceiveMultiple(pSamples: PIMediaSampleArray;
   nSamples: Integer; out nSamplesProcessed: Integer): HRESULT;
 type
   TMediaSampleDynArray = array of IMediaSample;
@@ -5993,7 +5993,7 @@ begin
   dec(nSamples);
   while (nSamples >= 0) do
   begin
-    result := Receive(TMediaSampleDynArray(@pSamples)[nSamplesProcessed]);
+    result := Receive(pSamples[nSamplesProcessed]);
     //  S_FALSE means don't send any more
     if (result <> S_OK) then break;
     inc(nSamplesProcessed);
@@ -6029,8 +6029,8 @@ end;
 //    SynchronousBlockOutputPin()
 //    AsynchronousBlockOutputPin()
 //
-constructor TBCDynamicOutputPin.Create(ObjectName: WideString; Filter: TBCBaseFilter;
-                   Lock: TBCCritSec; out hr: HRESULT; Name: WideString);
+constructor TBCDynamicOutputPin.Create(ObjectName: UnicodeString; Filter: TBCBaseFilter;
+                   Lock: TBCCritSec; out hr: HRESULT; Name: UnicodeString);
 begin
   inherited Create(ObjectName,Filter,Lock,hr,Name);
   FStopEvent := 0;
@@ -6540,7 +6540,7 @@ begin
 
     // The output pin can be immediately blocked.
     if not StreamingThreadUsingOutputPin then BlockOutputPin();
-    
+
     Result := S_OK;
   finally
     FBlockStateLock.Unlock;
@@ -6857,7 +6857,7 @@ begin
 end;
 
 constructor TBCTransformInputPin.Create(ObjectName: string;
-  TransformFilter: TBCTransformFilter; out hr: HRESULT; Name: WideString);
+  TransformFilter: TBCTransformFilter; out hr: HRESULT; Name: UnicodeString);
 begin
   inherited  Create(ObjectName, TransformFilter, TransformFilter.FcsFilter, hr, Name);
 {$IFDEF DEBUG}
@@ -7148,8 +7148,8 @@ end;
 
 function TBCTransformFilter.FindPin(Id: PWideChar; out ppPin: IPin): HRESULT;
 begin
-    if(WideString(Id) = 'In')  then ppPin := GetPin(0) else
-    if(WideString(Id) = 'Out') then ppPin := GetPin(1) else
+    if(UnicodeString(Id) = 'In')  then ppPin := GetPin(0) else
+    if(UnicodeString(Id) = 'Out') then ppPin := GetPin(1) else
       begin
         ppPin := nil;
         result := VFW_E_NOT_FOUND;
@@ -7531,7 +7531,7 @@ begin
 end;
 
 constructor TBCTransformOutputPin.Create(ObjectName: string;
-  TransformFilter: TBCTransformFilter; out hr: HRESULT; Name: WideString);
+  TransformFilter: TBCTransformFilter; out hr: HRESULT; Name: UnicodeString);
 begin
   inherited create(ObjectName, TransformFilter, TransformFilter.FcsFilter, hr, Name);
   FPosition := nil;
@@ -7642,7 +7642,7 @@ end;
 // the requirements of video quality control by frame dropping.
 // This is a non-in-place transform, (i.e. it copies the data) such as a decoder.
 
-constructor TBCVideoTransformFilter.Create(Name: WideString; Unk: IUnknown; clsid: TGUID);
+constructor TBCVideoTransformFilter.Create(Name: UnicodeString; Unk: IUnknown; clsid: TGUID);
 begin
   inherited Create(name, Unk, clsid);
   FitrLate := 0;
@@ -8296,7 +8296,7 @@ begin
 end;
 
 constructor TBCTransInPlaceInputPin.Create(ObjectName: string;
-  Filter: TBCTransInPlaceFilter; out hr: HRESULT; Name: WideString);
+  Filter: TBCTransInPlaceFilter; out hr: HRESULT; Name: UnicodeString);
 begin
   inherited Create(ObjectName, Filter, hr, Name);
   FReadOnly := FALSE;
@@ -8336,7 +8336,7 @@ begin
 end;
 
 constructor TBCTransInPlaceOutputPin.Create(ObjectName: string;
-  Filter: TBCTransInPlaceFilter; out hr: HRESULT; Name: WideString);
+  Filter: TBCTransInPlaceFilter; out hr: HRESULT; Name: UnicodeString);
 begin
   inherited Create(ObjectName, Filter, hr, Name);
   FTIPFilter := Filter;
@@ -9660,7 +9660,7 @@ end;
 
 function TBCAMEvent.Check: boolean;
 begin
-  result := Wait(0); 
+  result := Wait(0);
 end;
 
 constructor TBCAMEvent.Create(ManualReset: boolean);
@@ -9707,7 +9707,7 @@ end;
 
 constructor TBCRenderedInputPin.Create(ObjectName: string;
   Filter: TBCBaseFilter; Lock: TBCCritSec; out hr: HRESULT;
-  Name: WideString);
+  Name: UnicodeString);
 begin
    inherited Create(ObjectName, Filter, Lock, hr, Name);
    FAtEndOfStream := FALSE;
@@ -9783,7 +9783,7 @@ begin
   // we can calculate elapsed times.
   if (WaitTime <> INFINITE) then
     StartTime := timeGetTime else
-    StartTime := 0; // don't generate compiler hint 
+    StartTime := 0; // don't generate compiler hint
 
   repeat
     Wait := MsgWaitForMultipleObjects(1, FEvent, FALSE, WaitTime, QS_SENDMESSAGE);
@@ -10585,7 +10585,7 @@ begin
         FFirst.Prev := List.FLast;
 
 
-      // set first and last pointers 
+      // set first and last pointers
       p := pos;
 
       if (List.FFirst = nil) then
@@ -10602,7 +10602,7 @@ begin
       p.Next := nil;
 
 
-      // Adjust the counts 
+      // Adjust the counts
       dec(FCount, m);
       inc(List.FCount, m);
 
@@ -10844,7 +10844,7 @@ begin
   // a Filter calls FindPin with a String instead of a Number in ID.
   // To be sure, capture the Error Handling by using Val and call
   // the inherited function if Val fails.
-  
+
   Val(Id,i,Code);
   if Code = 0 then
   begin
@@ -10994,7 +10994,7 @@ end;
 
 // increments the number of pins present on the filter
 constructor TBCSourceStream.Create(const ObjectName: string;
-  out hr: HRESULT; Filter: TBCSource; const Name: WideString);
+  out hr: HRESULT; Filter: TBCSource; const Name: UnicodeString);
 begin
   FThread := TBCAMThread.Create;
   FThread.FThreadProc := ThreadProc;
@@ -11548,7 +11548,7 @@ end;
 
 function TBCBaseRenderer.GetMediaPositionInterface(IID: TGUID;
   out Obj): HResult;
-var                                       
+var
   hr: HResult;
 
 begin
@@ -11797,7 +11797,7 @@ begin
   // above just cleared the changebit which will cause some messaging
   // calls to block (waitMessage, MsgWaitFor...) now.
   // Post a dummy message to set the QS_POSTMESSAGE bit again
-  
+
   if (HIWORD(GetQueueStatus(QS_POSTMESSAGE)) and QS_POSTMESSAGE) <> 0 then
     //  Send dummy message
     PostThreadMessage(GetCurrentThreadId, WM_NULL, 0, 0);
@@ -12218,7 +12218,7 @@ begin
       QueryInterface(IID_IBaseFilter,Filter);
       NotifyEvent(EC_COMPLETE, S_OK, Integer(Filter));
       Filter := nil;
-// milenko end      
+// milenko end
       FState := State_Running;
       Result := NOERROR;
       Exit;
@@ -12333,17 +12333,17 @@ begin
   end;
 end;
 
-function DumbItDownFor95(const S1, S2: WideString; CmpFlags: Integer): Integer;
+function DumbItDownFor95(const S1, S2: UnicodeString; CmpFlags: Integer): Integer;
 var
   a1, a2: AnsiString;
 begin
-  a1 := s1;
-  a2 := s2;
-  Result := CompareStringA(LOCALE_USER_DEFAULT, CmpFlags, PChar(a1), Length(a1),
-    PChar(a2), Length(a2)) - 2;
+  a1 := AnsiString(s1);
+  a2 := AnsiString(s2);
+  Result := CompareStringA(LOCALE_USER_DEFAULT, CmpFlags, PAnsiChar(a1), Length(a1),
+    PAnsiChar(a2), Length(a2)) - 2;
 end;
 
-function WideCompareText(const S1, S2: WideString): Integer;
+function WideCompareText(const S1, S2: UnicodeString): Integer;
 begin
   SetLastError(0);
   Result := CompareStringW(LOCALE_USER_DEFAULT, NORM_IGNORECASE, PWideChar(S1),
@@ -13054,7 +13054,7 @@ begin
       FEndOfStreamTimer := 0;
 // milenko start (why commented before?)
       SendEndOfStream;
-// milenko end      
+// milenko end
     end;
 
   finally
@@ -13636,7 +13636,7 @@ end;
 
 function TBCRendererInputPin.QueryId(out Id: PWideChar): HRESULT;
 begin
-// milenko start (AMGetWideString bugged before, so this call only will do fine now) 
+// milenko start (AMGetWideString bugged before, so this call only will do fine now)
   Result := AMGetWideString('In', Id);
 // milenko end
 end;
@@ -15821,7 +15821,7 @@ begin
 
     timeBeginPeriod(FTimerResolution);
 
-    // Initialise our system times - the derived clock should set the right values 
+    // Initialise our system times - the derived clock should set the right values
     FPrevSystemTime := timeGetTime;
     FPrivateTime := (UNITS div MILLISECONDS) * FPrevSystemTime;
 
@@ -16122,7 +16122,7 @@ end;
 // milenko end
 
 // milenko start sysclock implementation
-constructor TBCSystemClock.Create(Name: WideString; Unk : IUnknown; out hr : HRESULT);
+constructor TBCSystemClock.Create(Name: UnicodeString; Unk : IUnknown; out hr : HRESULT);
 begin
   inherited Create(Name,Unk,hr);
 end;
@@ -16236,7 +16236,7 @@ end;
 
 (* The last two parameters have default values of NULL and zero *)
 
-constructor TBCMediaSample.Create(pName: WideString; pAllocator: TBCBaseAllocator;
+constructor TBCMediaSample.Create(pName: UnicodeString; pAllocator: TBCBaseAllocator;
   out phr: HRESULT; pBuffer: PBYTE; _length: integer);
 begin
   inherited Create; //(pName, nil);
@@ -16521,7 +16521,7 @@ begin
     else FFlags := FFlags and (not Sample_Preroll);
 
   Result:=NOERROR;
-end;                    
+end;
 
 function TBCMediaSample.SetProperties(cbProperties: DWORD; const pbProperties): HResult;
 
@@ -16878,7 +16878,7 @@ end;
    passed to WaitForSingleObject). Both of the allocator lists also ask for
    object locking, the all list matches the object default settings but I
    have included them here just so it is obvious what kind of list it is *)
-constructor TBCBaseAllocator.Create(pName: WideString; pUnk: IInterface;
+constructor TBCBaseAllocator.Create(pName: UnicodeString; pUnk: IInterface;
   out phr: HRESULT; bEvent, EnableReleaseCallback: BOOL);
 begin
   //CUnknown(pName, pUnk),
@@ -17405,7 +17405,7 @@ begin
   end;
 end;
 
-constructor TBCMemAllocator.Create(pName: WideString; pUnk: IInterface;
+constructor TBCMemAllocator.Create(pName: UnicodeString; pUnk: IInterface;
   out phr: HRESULT);
 begin
   // TBCBaseAllocator(pName, pUnk, phr, TRUE, TRUE)
@@ -17614,7 +17614,7 @@ begin
   Result := PropertyPage.OnReceiveMessage(hwndDlg, uMsg, wParam, lParam);
 end;
 
-constructor TBCBasePropertyPage.Create(Name: WideString; pUnk: IUnknown; DialogID: Integer; Title: WideString);
+constructor TBCBasePropertyPage.Create(Name: UnicodeString; pUnk: IUnknown; DialogID: Integer; Title: UnicodeString);
 begin
   inherited Create(Name, pUnk);
   FDialogID := DialogId;

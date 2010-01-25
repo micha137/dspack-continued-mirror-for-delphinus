@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Graphics, Controls, Forms, Dialogs, DirectShow9,
-  ActiveX, StdCtrls, DSUtil, ExtCtrls, ComCtrls, Buttons, TabNotBk, Classes,
+  ActiveX, StdCtrls, DXSUtil, ExtCtrls, ComCtrls, Buttons, TabNotBk, Classes,
   XPMan, Definitions, Filter;
 
 type
