@@ -33,7 +33,7 @@ requires
 
 contains
   DSPack in '..\src\DSPack\DSPack.pas',
-  DSUtil in '..\src\DSPack\DSUtil.pas',
+  DXSUtil in '..\src\DSPack\DXSUtil.pas',
   BaseClass in '..\src\DSPack\BaseClass.pas';
 
 end.

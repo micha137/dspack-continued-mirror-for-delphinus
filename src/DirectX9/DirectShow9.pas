@@ -907,6 +907,11 @@ type
     function GetFreeCount(out plBuffersFree: LongInt): HResult; stdcall;
   end;
 
+  type
+    TIMediaSampleArray = array[0..High(Integer) div
+                        SizeOf(IMediaSample) - 1] of IMediaSample;
+    PIMediaSampleArray = ^TIMediaSampleArray;
+
   {$HPPEMIT 'typedef System::DelphiInterface<IMemInputPin> _di_IMemInputPin;'}
   {$EXTERNALSYM IMemInputPin}
   IMemInputPin = interface(IUnknown)
@@ -916,7 +921,7 @@ type
     function NotifyAllocator(pAllocator: IMemAllocator; bReadOnly: BOOL): HResult; stdcall;
     function GetAllocatorRequirements(out pProps: TAllocatorProperties): HResult; stdcall;
     function Receive(pSample: IMediaSample): HResult; stdcall;
-    function ReceiveMultiple(var pSamples: IMediaSample; nSamples: Longint;
+    function ReceiveMultiple(pSamples: PIMediaSampleArray; nSamples: Longint;
         out nSamplesProcessed: Longint): HResult; stdcall;
     function ReceiveCanBlock: HResult; stdcall;
   end;
