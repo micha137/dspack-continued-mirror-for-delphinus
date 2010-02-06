@@ -8,9 +8,9 @@
 {$IFDEF TMT}
 {*  DirectX 9.0 TMT pascal adaptation by Alexey Barkovoy                      *}
 {$ELSE}
-{*  DirectX 9.0 Delphi adaptation by Alexey Barkovoy                          *}
+{*  DirectX 9.0 Delphi / FreePascal adaptation by Alexey Barkovoy             *}
 {$ENDIF}
-{*  E-Mail: clootie@ixbt.com                                                  *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
 {*  Modified: 07-Sep-2003                                                     *}
 {*                                                                            *}
@@ -20,9 +20,10 @@
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
 {$IFDEF TMT}
-{*     http://clootie.narod.ru/tmt/index.html                                 *}
+{*    http://clootie.ru/tmt/index.html                                        *}
 {$ELSE}
-{*     http://clootie.narod.ru/delphi/                                        *}
+{*    http://www.clootie.ru                                                   *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {$ENDIF}
 {*                                                                            *}
 {******************************************************************************}
@@ -158,7 +159,7 @@ interface
 uses
   Windows;
 
-  
+
 (*==========================================================================;
  *
  *  Copyright (C) Microsoft Corporation.  All Rights Reserved.
@@ -261,7 +262,7 @@ type
   {$HPPEMIT 'DECLARE_DINTERFACE_TYPE(IDirectDrawClipper);'}
   {$HPPEMIT 'DECLARE_DINTERFACE_TYPE(IDirectDrawColorControl);'}
   {$HPPEMIT 'DECLARE_DINTERFACE_TYPE(IDirectDrawGammaControl);'}
-  
+
   IDirectDraw = interface;
   {$EXTERNALSYM IDirectDraw}
   IDirectDraw2 = interface;
@@ -336,14 +337,9 @@ type
   {$EXTERNALSYM DDCOLORKEY}
   TDDColorKey = _DDCOLORKEY;
 
-// Delphi 5 and up don't allow interfaces in variant records
-// so we have to use pointers instead (which can be type-casted into interfaces):
-
-{$IFDEF COMPILER5_UP}
+  // Delphi 5 and up don't allow interfaces in variant records
+  // so we have to use pointers instead (which can be type-casted into interfaces):
   PDirectDrawSurface = Pointer;
-{$ELSE}
-  PDirectDrawSurface = IDirectDrawSurface;
-{$ENDIF}
 
 (*
  * TDDBltFX
@@ -2507,6 +2503,30 @@ const
   DDSCAPS3_DMAP                           = $00001000;
   {$EXTERNALSYM DDSCAPS3_DMAP}
 
+{$IFDEF DIRECT3D_VERSION_9_VISTA}
+(*
+ * This indicates that this surface is to be shared by processes
+ *)
+  DDSCAPS3_CREATESHAREDRESOURCE           = $00002000;
+  {$EXTERNALSYM DDSCAPS3_CREATESHAREDRESOURCE}
+
+(*
+ * This indicates that this surface need to be initialized before being
+ * shared, this bit implies that this surface is read only after initialization
+ * absence of this bit implies that this surface allows both read and write
+ *)
+  DDSCAPS3_READONLYRESOURCE               = $00004000;
+  {$EXTERNALSYM DDSCAPS3_READONLYRESOURCE}
+
+(*
+ * This indicates that this surface is to share an existing video memory with
+ * another surface created with DDSCAPS3_CREATESHAREDRESOURCE, This bit is never
+ * used with DDSCAPS3_CREATESHAREDRESOURCE
+ *)
+  DDSCAPS3_OPENSHAREDRESOURCE             = $00008000;
+  {$EXTERNALSYM DDSCAPS3_OPENSHAREDRESOURCE}
+
+{$ENDIF}
 
  (****************************************************************************
  *
@@ -2936,6 +2956,14 @@ const
   DDCAPS2_CANAUTOGENMIPMAP              = $40000000;
   {$EXTERNALSYM DDCAPS2_CANAUTOGENMIPMAP}
 
+{$IFDEF DIRECT3D_VERSION_9_VISTA}
+(*
+ * Driver supports sharing of cross process resouces
+ *)
+  DDCAPS2_CANSHARERESOURCE              = $80000000;
+  {$EXTERNALSYM DDCAPS2_CANSHARERESOURCE}
+
+{$ENDIF}
 
 (****************************************************************************
  *
@@ -4523,6 +4551,26 @@ const
   DDOVER_DEGRADEARGBSCALING               = $04000000;
   {$EXTERNALSYM DDOVER_DEGRADEARGBSCALING}
 
+{$IFDEF DIRECT3D_VERSION_9_VISTA}
+(****************************************************************************
+ *
+ * DIRECTDRAWSURFACE SETSURFACEDESC FLAGS
+ *
+ ****************************************************************************)
+
+(*
+ * The default.  The GDI DC will be tore down.
+ *)
+  DDSETSURFACEDESC_RECREATEDC             = $00000000;     // default
+  {$EXTERNALSYM DDSETSURFACEDESC_RECREATEDC}
+
+(*
+ * The default.  The GDI DC will be kept.
+ *)
+  DDSETSURFACEDESC_PRESERVEDC             = $00000001;
+  {$EXTERNALSYM DDSETSURFACEDESC_PRESERVEDC}
+
+{$ENDIF}
 
 (****************************************************************************
  *
@@ -7183,4 +7231,3 @@ finalization
 {$ENDIF}
 {$ENDIF}
 end.
-

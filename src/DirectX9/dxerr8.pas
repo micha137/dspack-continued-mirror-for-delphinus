@@ -3,26 +3,18 @@
 {*  Copyright (C) Microsoft Corporation.  All Rights Reserved.                *}
 {*                                                                            *}
 {*  File:       dxerr8.h                                                      *}
-{*                                                                            *}
 {*  Content:    DirectX Error Library Include File                            *}
 {*                                                                            *}
-{$IFDEF TMT}
-{*  DirectX 8.x TMT pascal adaptation by Alexey Barkovoy                      *}
-{$ELSE}
 {*  DirectX 8.x Delphi adaptation by Alexey Barkovoy                          *}
-{$ENDIF}
-{*  E-Mail: clootie@ixbt.com                                                  *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
 {*  Modified: 19-Jan-2004                                                     *}
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
-{$IFDEF TMT}
-{*     http://clootie.narod.ru/tmt/index.html                                 *}
-{$ELSE}
-{*     http://clootie.narod.ru/delphi                                         *}
-{$ENDIF}
+{*    http://clootie.ru                                                       *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {*                                                                            *}
-{******************************************************************************)
+{******************************************************************************}
 {                                                                              }
 { Obtained through: Joint Endeavour of Delphi Innovators (Project JEDI)        }
 {                                                                              }
@@ -138,4 +130,3 @@ function DXTrace(strFile: PChar; dwLine: DWORD; hr: HRESULT; strMsg: PChar; bPop
 implementation
 
 end.
-

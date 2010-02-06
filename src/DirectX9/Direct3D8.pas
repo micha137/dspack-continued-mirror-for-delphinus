@@ -22,7 +22,7 @@
 {*  DirectX 8.0 Delphi adaptation by Alexey Barkovoy                          *}
 {$ENDIF}
 {$ENDIF}
-{*  E-Mail: clootie@ixbt.com                                                  *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
 {*  Modified: 19-Jan-2004                                                     *}
 {*                                                                            *}
@@ -34,9 +34,10 @@
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
 {$IFDEF TMT}
-{*     http://clootie.narod.ru/tmt/index.html                                 *}
+{*    http://clootie.ru/tmt/index.html                                        *}
 {$ELSE}
-{*     http://clootie.narod.ru/delphi                                         *}
+{*    http://clootie.ru                                                       *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {$ENDIF}
 {*                                                                            *}
 {*  This File contains only Direct3D 8.x definitions.                         *}
@@ -79,7 +80,7 @@ unit D3D8;
 
 interface
 
-// Global level dynamic loading support    
+// Global level dynamic loading support
 {$IFDEF DYNAMIC_LINK_ALL}
   {$DEFINE DIRECT3D8_DYNAMIC_LINK}
 {$ENDIF}

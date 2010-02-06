@@ -1,4 +1,4 @@
-{******************************************************************************}
+ï»¿{******************************************************************************}
 {*                                                                            *}
 {$IFDEF DX81}
 {*  Copyright (C) Microsoft Corporation.  All Rights Reserved.                *}
@@ -29,25 +29,26 @@
 {*  Direct3DX 8.0b Delphi adaptation by Alexey Barkovoy                       *}
 {$ENDIF}
 {$ENDIF}
-{*  E-Mail: clootie@ixbt.com                                                  *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
-{*  Modified: 12-Aug-2004                                                     *}
+{*  Modified: 12-Feb-2005                                                     *}
 {*                                                                            *}
 {*  Partly based upon :                                                       *}
 {*    Direct3DX 7.0 Delphi adaptation by                                      *}
-{*      Arne Schäpers, e-Mail: [look at www.delphi-jedi.org/DelphiGraphics/]  *}
+{*      Arne Schï¿½pers, e-Mail: [look at www.delphi-jedi.org/DelphiGraphics/]  *}
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
 {$IFDEF TMT}
-{*     http://clootie.narod.ru/tmt/index.html                                 *}
+{*    http://clootie.ru/tmt/index.html                                        *}
 {$ELSE}
-{*     http://clootie.narod.ru/delphi                                         *}
+{*    http://clootie.ru                                                       *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {$ENDIF}
 {*                                                                            *}
 {*  This File contains only Direct3DX 8.x Definitions.                        *}
-{*  If you want to use D3DX7 version of D3DX use translation by Arne Schäpers *}
+{*  If you want to use D3DX7 version of D3DX use translation by Arne Schï¿½pers *}
 {*                                                                            *}
-{******************************************************************************)
+{******************************************************************************}
 {                                                                              }
 { Obtained through: Joint Endeavour of Delphi Innovators (Project JEDI)        }
 {                                                                              }
@@ -1613,11 +1614,11 @@ overload D3DXGetErrorStringA = D3DXGetErrorStringPascalA;
 overload D3DXGetErrorString = D3DXGetErrorStringPascalA;
 
 {$ELSE}
-function D3DXGetErrorStringA(hr: HResult; pBuffer: PAnsiChar; BufferLen: LongWord): HResult; stdcall; external d3dx8dll name 'D3DXGetErrorStringA'; overload; 
+function D3DXGetErrorStringA(hr: HResult; pBuffer: PAnsiChar; BufferLen: LongWord): HResult; stdcall; external d3dx8dll name 'D3DXGetErrorStringA'; overload;
 {$EXTERNALSYM D3DXGetErrorStringA}
-function D3DXGetErrorStringW(hr: HResult; pBuffer: PWideChar; BufferLen: LongWord): HResult; stdcall; external d3dx8dll name 'D3DXGetErrorStringW'; overload; 
+function D3DXGetErrorStringW(hr: HResult; pBuffer: PWideChar; BufferLen: LongWord): HResult; stdcall; external d3dx8dll name 'D3DXGetErrorStringW'; overload;
 {$EXTERNALSYM D3DXGetErrorStringW}
-function D3DXGetErrorString(hr: HResult; pBuffer: PChar; BufferLen: LongWord): HResult; stdcall; external d3dx8dll name 'D3DXGetErrorStringA'; overload; 
+function D3DXGetErrorString(hr: HResult; pBuffer: PChar; BufferLen: LongWord): HResult; stdcall; external d3dx8dll name 'D3DXGetErrorStringA'; overload;
 {$EXTERNALSYM D3DXGetErrorString}
 
 // Object Pascal support functions for D3DXGetErrorString
@@ -2233,7 +2234,7 @@ type
     ['{9D84AC46-6B90-49a9-A721-085C7A3E3DAE}']
     {$ENDIF}
     // ID3DXMesh
-    function LockAttributeBuffer(Flags: DWord; out ppData: PByte): HResult; stdcall;
+    function LockAttributeBuffer(Flags: DWord; out ppData: PDWORD): HResult; stdcall;
     function UnlockAttributeBuffer: HResult; stdcall;
     {$IFNDEF DX81}
     function ConvertPointRepsToAdjacency(pPRep: PDWord; pAdjacency: PDWord): HResult; stdcall;
@@ -2411,7 +2412,7 @@ type
     function UnlockVertexBuffer: HResult; stdcall;
     function LockIndexBuffer(Flags: DWord; out ppData: PByte): HResult; stdcall;
     function UnlockIndexBuffer: HResult; stdcall;
-    function LockAttributeBuffer(Flags: DWord; out ppData: PByte): HResult; stdcall;
+    function LockAttributeBuffer(Flags: DWord; out ppData: PDWORD): HResult; stdcall;
     function UnlockAttributeBuffer: HResult; stdcall;
     // ID3DXSkinMesh
     function GetNumBones: DWord; stdcall;
@@ -2699,7 +2700,7 @@ function D3DXIntersectTri(
     out pU: Single;                   // Barycentric Hit Coordinates
     out pV: Single;                   // Barycentric Hit Coordinates
     out pDist: Single                 // Ray-Intersection Parameter Distance
- ): HResult; stdcall; external d3dx8dll;
+ ): BOOL; stdcall; external d3dx8dll;
 {$EXTERNALSYM D3DXIntersectTri}
 
 {$ENDIF}
@@ -5662,7 +5663,7 @@ end;
 // Minimize each component.  x = min(x1, x2), y = min(y1, y2)
 function D3DXVec2Minimize(out vOut: TD3DXVector2; const v1, v2: TD3DXVEctor2): PD3DXVector2;
 begin
-  if v1.x < v2.x then vOut.x:= v1.x else vOut.y:= v2.x;
+  if v1.x < v2.x then vOut.x:= v1.x else vOut.x:= v2.x;
   if v1.y < v2.y then vOut.y:= v1.y else vOut.y:= v2.y;
   Result:= @vOut;
 end;
@@ -5670,7 +5671,7 @@ end;
 // Maximize each component.  x = max(x1, x2), y = max(y1, y2)
 function D3DXVec2Maximize(out vOut: TD3DXVector2; const v1, v2: TD3DXVector2): PD3DXVector2;
 begin
-  if v1.x > v2.x then vOut.x:= v1.x else vOut.y:= v2.x;
+  if v1.x > v2.x then vOut.x:= v1.x else vOut.x:= v2.x;
   if v1.y > v2.y then vOut.y:= v1.y else vOut.y:= v2.y;
   Result:= @vOut;
 end;
@@ -6051,7 +6052,7 @@ function {$IFDEF TMT}D3DXGetErrorStringPascalA{$ELSE}D3DXGetErrorStringA{$ENDIF}
 var
   Buffer: array [0..254] of Char;
 begin
-  D3DXGetErrorString(hr, PAnsiChar(@Buffer), 255);
+  D3DXGetErrorString(hr, PChar(@Buffer), 255);
   SetLength(Result, StrLen(PAnsiChar(@Buffer)));
   Move(Buffer, Result[1], Length(Result));
 end;
@@ -6106,4 +6107,3 @@ end;
 {$ENDIF}
 
 end.
-

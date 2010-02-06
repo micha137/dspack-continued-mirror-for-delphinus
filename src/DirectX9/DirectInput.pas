@@ -8,19 +8,19 @@
 {$IFDEF TMT}
 {*  DirectX 9.0 TMT pascal adaptation by Alexey Barkovoy                      *}
 {$ELSE}
-{*  DirectX 9.0 Delphi adaptation by Alexey Barkovoy                          *}
+{*  DirectX 9.0 Delphi / FreePascal adaptation by Alexey Barkovoy             *}
 {$ENDIF}
-{*  E-Mail: clootie@ixbt.com                                                  *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
-{*  Modified: 13-Sep-2004                                                     *}
+{*  Modified: 30-Nov-2004                                                     *}
 {*                                                                            *}
 {*  Compatible with :                                                         *}
 {*    DirectX 7.0 Object Pascal adaptation by                                 *}
 {*      Erik Unger, e-Mail: DelphiDirectX@next-reality.com                    *}
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
-{*     http://clootie.narod.ru                                                *}
-{*     http://sourceforge.net/projects/delphi-dx9sdk                          *}
+{*    http://clootie.ru                                                       *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {*                                                                            *}
 {******************************************************************************}
 {                                                                              }
@@ -320,7 +320,7 @@ const
   SID_IDirectInputDevice8A = '{54D41080-DC15-4833-A41B-748F73A38179}';
   SID_IDirectInputDevice8W = '{54D41081-DC15-4833-A41B-748F73A38179}';
   SID_IDirectInputEffect   = '{E7E1F7C0-88D2-11D0-9AD0-00A0C9A06E35}';
-  
+
 (****************************************************************************
  *
  *      Predefined object types
@@ -408,7 +408,7 @@ const
   GUID_CustomForce   : TGUID = '{13541C2B-8E33-11D0-9AD0-00A0C9A06E35}';
   {$EXTERNALSYM GUID_CustomForce}
 
-  
+
 (****************************************************************************
  *
  *      Interfaces and Structures...
@@ -1807,7 +1807,7 @@ const
 
 // #define DISEQUENCE_COMPARE(dwSequence1, cmp, dwSequence2) \
 //                         ((int)((dwSequence1) - (dwSequence2)) cmp 0)
-// Translator: This is not convertable to pascal   
+// Translator: This is not convertable to pascal
 
 const
   DISCL_EXCLUSIVE     = $00000001;
@@ -6497,7 +6497,7 @@ begin
     DirectInput8Lib:= LoadLibrary(DirectInput8Dll);
     if (DirectInput8Lib<>0) then
     begin
-      DirectInput8Create:= GetProcAddress(DirectInputLib, 'DirectInput8Create');
+      DirectInput8Create:= GetProcAddress(DirectInput8Lib, 'DirectInput8Create');
     end;
 
     WinMMLib:= LoadLibrary(WinMMDll);
@@ -6561,4 +6561,3 @@ finalization
 {$ENDIF}
 {$ENDIF}
 end.
-

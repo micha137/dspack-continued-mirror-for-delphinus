@@ -8,17 +8,18 @@
 {$IFDEF TMT}
 {*  DirectX 9.0 TMT pascal adaptation by Alexey Barkovoy                      *}
 {$ELSE}
-{*  DirectX 9.0 Delphi adaptation by Alexey Barkovoy                          *}
+{*  DirectX 9.0 Delphi / FreePascal adaptation by Alexey Barkovoy             *}
 {$ENDIF}
-{*  E-Mail: clootie@ixbt.com                                                  *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
 {*  Modified: 22-Aug-2004                                                     *}
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
 {$IFDEF TMT}
-{*     http://clootie.narod.ru/tmt/index.html                                 *}
+{*    http://clootie.ru/tmt/index.html                                        *}
 {$ELSE}
-{*     http://clootie.narod.ru/delphi                                         *}
+{*    http://clootie.ru                                                       *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {$ENDIF}
 {*                                                                            *}
 {******************************************************************************}
@@ -83,7 +84,7 @@ const
   CLSID_DirectPlay8Address: TGUID = '{934a9523-a3ca-4bc5-ada0-d6d95d979421}';
   {$EXTERNALSYM CLSID_DirectPlay8Address}
 
-  
+
 (****************************************************************************
  *
  * DirectPlay8Address Interface IIDs
@@ -440,7 +441,7 @@ type
   IID_IDirectPlay8Address = IDirectPlay8Address;
   {$EXTERNALSYM IID_IDirectPlay8Address}
   // {E5A0E990-2BAD-430b-87DA-A142CF75DE58}
-  IID_IDirectPlay8AddressIP = IDirectPlay8AddressIP; 
+  IID_IDirectPlay8AddressIP = IDirectPlay8AddressIP;
   {$EXTERNALSYM IID_IDirectPlay8AddressIP}
 
 
@@ -1566,7 +1567,7 @@ type
  * extern HRESULT WINAPI DirectPlay8Create( const GUID * pcIID, void **ppvInterface, IUnknown *pUnknown);
  *
  *)
- 
+
 
 (****************************************************************************
  *
@@ -1730,7 +1731,7 @@ type
     function SetSPCaps(const pguidSP: TGUID; const pdpspCaps: TDPNSpCaps; dwFlags: DWORD): HResult; stdcall;
     function GetSPCaps(const pguidSP: TGUID; var pdpspCaps: TDPNSpCaps; dwFlags: DWORD): HResult; stdcall;
     function GetConnectionInfo(dpnid: TDPNID; var pdpConnectionInfo: TDPNConnectionInfo; dwFlags: DWORD): HResult; stdcall;
-    function RegisterLobby(dpnHandle: TDPNHandle; pIDP8LobbiedApplication: IDirectPlay8LobbiedApplication; dwFlags: DWORD): HResult; stdcall; 
+    function RegisterLobby(dpnHandle: TDPNHandle; pIDP8LobbiedApplication: IDirectPlay8LobbiedApplication; dwFlags: DWORD): HResult; stdcall;
     function TerminateSession(pvTerminateData: Pointer; dwTerminateDataSize, dwFlags: DWORD): HResult; stdcall;
   end;
 
@@ -1983,7 +1984,7 @@ type
  * DirectPlay8Lobby Create
  *
  ****************************************************************************)
- 
+
 (*
  * This function is no longer supported.  It is recommended that CoCreateInstance be used to create
  * DirectPlay8 lobby objects.
@@ -3460,4 +3461,3 @@ begin
 end;
 
 end.
-

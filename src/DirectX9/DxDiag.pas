@@ -5,14 +5,14 @@
 {*  File:       DxDiag.h                                                      *}
 {*  Content:    DirectX Diagnostic Tool include file                          *}
 {*                                                                            *}
-{*  DirectX 9.0 Summer 2004 Delphi/FreePascal adaptation by Alexey Barkovoy   *}
-{*  E-Mail: clootie@ixbt.com                                                  *}
+{*  DirectX 9.0 Delphi / FreePascal adaptation by Alexey Barkovoy             *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
 {*  Release: 11-Sep-2004                                                      *}
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
-{*     http://clootie.narod.ru                                                *}
-{*     http://sourceforge.net/projects/delphi-dx9sdk                          *}
+{*    http://clootie.ru                                                       *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {*                                                                            *}
 {******************************************************************************}
 {                                                                              }
@@ -40,6 +40,8 @@
 { For more information about the LGPL: http://www.gnu.org/copyleft/lesser.html }
 {                                                                              }
 {******************************************************************************}
+
+{$I DirectX.inc}
 
 unit DxDiag;
 
@@ -164,4 +166,3 @@ type
 implementation
 
 end.
-

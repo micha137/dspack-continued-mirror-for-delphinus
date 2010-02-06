@@ -5,16 +5,16 @@
 {*  File:       dxerr9.h                                                      *}
 {*  Content:    DirectX Error Library Include File                            *}
 {*                                                                            *}
-{*  DirectX 9.0 Delphi/FreePascal/TMT pascal adaptation by Alexey Barkovoy    *}
-{*  E-Mail: clootie@ixbt.com                                                  *}
-{*                                                                            *}
-{*  Release: 10-Sep-2004                                                      *}
+{*  DirectX 9.0 Delphi / FreePascal adaptation by Alexey Barkovoy             *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
-{*     http://clootie.narod.ru                                                *}
-{*     http://sourceforge.net/projects/delphi-dx9sdk                          *}
+{*    http://clootie.ru                                                       *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {*                                                                            *}
-{******************************************************************************)
+{*----------------------------------------------------------------------------*}
+{*  $Id: DXErr9.pas,v 1.8 2006/01/15 21:09:29 clootie Exp $ }
+{******************************************************************************}
 {                                                                              }
 { Obtained through: Joint Endeavour of Delphi Innovators (Project JEDI)        }
 {                                                                              }
@@ -43,7 +43,7 @@
 
 {$I DirectX.inc}
 
-unit dxerr9;
+unit DXErr9;
 
 interface
 
@@ -63,7 +63,16 @@ uses
 const
   //////////// DLL export definitions ///////////////////////////////////////
   dxerr9dll = 'dxerr9ab.dll';
-  {$EXTERNALSYM dxerr9dll}
+
+
+type
+  TDXGetError9A = function (hr: HRESULT): PAnsiChar; stdcall;
+  TDXGetError9W = function (hr: HRESULT): PWideChar; stdcall;
+  TDXGetError9 = {$IFDEF UNICODE}TDXGetError9W{$ELSE}TDXGetError9A{$ENDIF};
+
+function Dummy_DXGetError9A(hr: HRESULT): PAnsiChar; stdcall;
+function Dummy_DXGetError9W(hr: HRESULT): PWideChar; stdcall;
+
 
 //
 //  DXGetErrorString9
@@ -75,15 +84,10 @@ const
 //
 //  Return: Converted string
 //
-
-function DXGetErrorString9A(hr: HRESULT): PAnsiChar; stdcall; external dxerr9dll;
-{$EXTERNALSYM DXGetErrorString9A}
-function DXGetErrorString9W(hr: HRESULT): PWideChar; stdcall; external dxerr9dll;
-{$EXTERNALSYM DXGetErrorString9W}
-
-function DXGetErrorString9(hr: HRESULT): PChar;  stdcall; external dxerr9dll
-  name {$IFDEF UNICODE}'DXGetErrorString9W'{$ELSE}'DXGetErrorString9A'{$ENDIF};
-{$EXTERNALSYM DXGetErrorString9}
+var
+  DXGetErrorString9A: TDXGetError9A = Dummy_DXGetError9A;
+  DXGetErrorString9W: TDXGetError9W = Dummy_DXGetError9W;
+  DXGetErrorString9: TDXGetError9 = {$IFDEF UNICODE}Dummy_DXGetError9W{$ELSE}Dummy_DXGetError9A{$ENDIF};
 
 
 //
@@ -96,14 +100,10 @@ function DXGetErrorString9(hr: HRESULT): PChar;  stdcall; external dxerr9dll
 //
 //  Return: String description
 //
-function DXGetErrorDescription9A(hr: HRESULT): PAnsiChar; stdcall; external dxerr9dll;
-{$EXTERNALSYM DXGetErrorDescription9A}
-function DXGetErrorDescription9W(hr: HRESULT): PWideChar; stdcall; external dxerr9dll;
-{$EXTERNALSYM DXGetErrorDescription9W}
-
-function DXGetErrorDescription9(hr: HRESULT): PChar;  stdcall; external dxerr9dll
-  name {$IFDEF UNICODE}'DXGetErrorDescription9W'{$ELSE}'DXGetErrorDescription9A'{$ENDIF};
-{$EXTERNALSYM DXGetErrorDescription9}
+var
+  DXGetErrorDescription9A: TDXGetError9A = Dummy_DXGetError9A;
+  DXGetErrorDescription9W: TDXGetError9W = Dummy_DXGetError9W;
+  DXGetErrorDescription9: TDXGetError9 = {$IFDEF UNICODE}Dummy_DXGetError9W{$ELSE}Dummy_DXGetError9A{$ENDIF};
 
 
 //
@@ -121,39 +121,81 @@ function DXGetErrorDescription9(hr: HRESULT): PChar;  stdcall; external dxerr9dl
 //
 //  Return: The hr that was passed in.
 //
+type
+  TDXTraceA = function (strFile: PAnsiChar; dwLine: DWORD; hr: HRESULT; strMsg: PAnsiChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
+  TDXTraceW = function (strFile: PWideChar; dwLine: DWORD; hr: HRESULT; strMsg: PWideChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
+  TDXTrace = {$IFDEF UNICODE}TDXTraceW{$ELSE}TDXTraceA{$ENDIF};
 
-function DXTraceA(strFile: PAnsiChar; dwLine: DWORD; hr: HRESULT; strMsg: PAnsiChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall; external dxerr9dll;
-{$EXTERNALSYM DXTraceA}
-function DXTraceW(strFile: PAnsiChar; dwLine: DWORD; hr: HRESULT; strMsg: PWideChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall; external dxerr9dll;
-{$EXTERNALSYM DXTraceW}
+function Dummy_DXTraceA(strFile: PAnsiChar; dwLine: DWORD; hr: HRESULT; strMsg: PAnsiChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
+function Dummy_DXTraceW(strFile: PChar; dwLine: DWORD; hr: HRESULT; strMsg: PWideChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
 
-function DXTrace(strFile: PChar; dwLine: DWORD; hr: HRESULT; strMsg: PChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall; external dxerr9dll
-  name {$IFDEF UNICODE}'DXTraceW'{$ELSE}'DXTraceA'{$ENDIF};
-{$EXTERNALSYM DXTrace}
+var
+  DXTraceA: TDXTraceA = Dummy_DXTraceA;
+  DXTraceW: TDXTraceW = Dummy_DXTraceW;
+  DXTrace: TDXTrace = {$IFDEF UNICODE}Dummy_DXTraceW{$ELSE}Dummy_DXTraceA{$ENDIF};
 
 
 //
 // Helper macros
 //
-function DXTRACE_MSG(str: PChar; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;
+function DXTRACE_MSG(str: PChar; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;{$IFDEF SUPPORTS_INLINE} inline;{$ENDIF}
 {$EXTERNALSYM DXTRACE_MSG}
-function DXTRACE_ERR(str: PChar; hr: HRESULT; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;
+function DXTRACE_ERR(str: PChar; hr: HRESULT; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;{$IFDEF SUPPORTS_INLINE} inline;{$ENDIF}
 {$EXTERNALSYM DXTRACE_ERR}
-function DXTRACE_ERR_MSGBOX(str: PChar; hr: HRESULT; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;
+function DXTRACE_ERR_MSGBOX(str: PChar; hr: HRESULT; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;{$IFDEF SUPPORTS_INLINE} inline;{$ENDIF}
 {$EXTERNALSYM DXTRACE_ERR_MSGBOX}
 
 
 implementation
 
+uses SysUtils;
+
+resourcestring
+  SDXGetErrorString9 = dxerr9dll + ' library is not found. Description for 0x%x is not available.';
+
+var
+  TempStringA: AnsiString;
+  TempStringW: WideString;
+
+function Dummy_DXGetError9A(hr: HRESULT): PAnsiChar; stdcall;
+begin
+  TempStringA:= AnsiString(Format(SDXGetErrorString9, [hr]));
+  Result:= PAnsiChar(TempStringA);
+end;
+
+function Dummy_DXGetError9W(hr: HRESULT): PWideChar; stdcall;
+begin
+{$IFDEF BORLAND}{$IFNDEF COMPILER6_UP}
+  {$DEFINE D5_OR_LOWER}
+{$ENDIF}{$ENDIF}
+{$IFDEF D5_OR_LOWER}
+  TempStringW:= Format(SDXGetErrorString9, [hr]);
+{$ELSE}
+  TempStringW:= WideFormat(SDXGetErrorString9, [hr]);
+{$ENDIF}
+  Result:= PWideChar(TempStringW);
+end;
+
+function Dummy_DXTraceA(strFile: PAnsiChar; dwLine: DWORD; hr: HRESULT; strMsg: PAnsiChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
+begin
+  Result:= hr;
+end;
+
+function Dummy_DXTraceW(strFile: PChar; dwLine: DWORD; hr: HRESULT; strMsg: PWideChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
+begin
+  Result:= hr;
+end;
+
+
 {$IFNDEF DEBUG}
 function DXTRACE_MSG(str: PChar; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;
-begin Result:= S_OK; end;
+begin Result:= 0; end;
 
 function DXTRACE_ERR(str: PChar; hr: HRESULT; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;
-begin Result:= S_OK; end;
+begin Result:= hr; end;
 
 function DXTRACE_ERR_MSGBOX(str: PChar; hr: HRESULT; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;
-begin Result:= S_OK; end;
+begin Result:= hr; end;
 {$ELSE}
 function DXTRACE_MSG(str: PChar; FileName: PChar{$IFDEF SUPPORTS_DEFAULTPARAMS} = nil{$ENDIF}; Line: DWORD{$IFDEF SUPPORTS_DEFAULTPARAMS} = $FFFFFFFF{$ENDIF}): HRESULT;
 begin
@@ -171,4 +213,35 @@ begin
 end;
 {$ENDIF}
 
+var
+  dxerr9DllInstance: THandle = 0;
+  temp: Pointer;
+
+initialization
+  dxerr9DllInstance := LoadLibrary(dxerr9dll);
+  if (dxerr9DllInstance <> 0) then
+  begin
+    temp:= GetProcAddress(dxerr9DllInstance, 'DXGetErrorString9A'); if (temp<>nil) then DXGetErrorString9A:= temp;
+    temp:= GetProcAddress(dxerr9DllInstance, 'DXGetErrorString9W'); if (temp<>nil) then DXGetErrorString9W:= temp;
+    temp:= GetProcAddress(dxerr9DllInstance, 'DXGetErrorDescription9A'); if (temp<>nil) then DXGetErrorDescription9A:= temp;
+    temp:= GetProcAddress(dxerr9DllInstance, 'DXGetErrorDescription9W'); if (temp<>nil) then DXGetErrorDescription9W:= temp;
+    temp:= GetProcAddress(dxerr9DllInstance, 'DXTraceA'); if (temp<>nil) then DXTraceA:= temp;
+    temp:= GetProcAddress(dxerr9DllInstance, 'DXTraceW'); if (temp<>nil) then DXTraceW:= temp;
+
+    {$IFDEF UNICODE}
+    DXGetErrorString9 := DXGetErrorString9W;
+    DXGetErrorDescription9 := DXGetErrorDescription9W;
+    DXTrace := DXTraceW;
+    {$ELSE}
+    DXGetErrorString9 := DXGetErrorString9A;
+    DXGetErrorDescription9 := DXGetErrorDescription9A;
+    DXTrace := DXTraceA;
+    {$ENDIF}
+  end;
+finalization
+  if (dxerr9DllInstance <> 0) then
+  begin
+    FreeLibrary(dxerr9DllInstance);
+    dxerr9DllInstance := 0;
+  end;
 end.

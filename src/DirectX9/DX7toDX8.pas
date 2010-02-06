@@ -1,4 +1,4 @@
-{******************************************************************************}
+ï»¿{******************************************************************************}
 {*                                                                            *}
 {*  Copyright (C) 1999 Microsoft Corporation.  All Rights Reserved.           *}
 {*                                                                            *}
@@ -10,20 +10,20 @@
 {$ELSE}
 {*  Direct3D 8.x Delphi adaptation by Alexey Barkovoy                         *}
 {$ENDIF}
-{*  E-Mail: clootie@ixbt.com                                                  *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
 {*  Modified: 16-Feb-2002                                                     *}
 {*                                                                            *}
 {*  Partly based upon :                                                       *}
 {*    Direct3DX 7.0 Delphi adaptation by                                      *}
-{*      Arne Schäpers, e-Mail: [look at www.delphi-jedi.org/DelphiGraphics/]  *}
+{*      Arne Schï¿½pers, e-Mail: [look at www.delphi-jedi.org/DelphiGraphics/]  *}
 {*                                                                            *}
 {*  Lastest version can be downloaded from:                                   *}
 {$IFDEF TMT}
-{*     http://clootie.narod.ru/tmt/index.html                                 *}
+{*    http://clootie.ru/tmt/index.html                                        *}
 {$ELSE}
-{*     http://clootie.narod.ru/DelphiGraphics/index.html                      *}
-{*     http://delphi-jedi.org                                                 *}
+{*    http://clootie.ru                                                       *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {$ENDIF}
 {*                                                                            *}
 {******************************************************************************}

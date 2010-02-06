@@ -9,30 +9,19 @@
 {*  Content:    Direct3DX 9.0 headers                                         *}
 {*                                                                            *}
 {$IFDEF DX92}
-{$IFDEF FPC}
-{*  Direct3DX 9.0 October 2004 FreePascal adaptation by Alexey Barkovoy       *}
-{$ELSE}
-{*  Direct3DX 9.0 October 2004 Delphi adaptation by Alexey Barkovoy           *}
-{$ENDIF}
-{$ELSE}
-{$IFDEF TMT}
-{*  Direct3DX 9.0 Summer 2003 TMT pascal adaptation by Alexey Barkovoy        *}
+{*  Direct3DX 9.0 April 2007 Delphi adaptation by Alexey Barkovoy          *}
 {$ELSE}
 {*  Direct3DX 9.0 Summer 2003 Delphi adaptation by Alexey Barkovoy            *}
 {$ENDIF}
-{$ENDIF}
-{*  E-Mail: clootie@ixbt.com                                                  *}
-{*                                                                            *}
-{*  Release: 13-Oct-2004                                                      *}
+{*  E-Mail: directx@clootie.ru                                                *}
 {*                                                                            *}
 {*  Latest version can be downloaded from:                                    *}
-{*     http://clootie.narod.ru                                                *}
-{*     http://sourceforge.net/projects/delphi-dx9sdk                          *}
+{*    http://www.clootie.ru                                                   *}
+{*    http://sourceforge.net/projects/delphi-dx9sdk                           *}
 {*                                                                            *}
-{*  This File contains only Direct3DX 9.0 Definitions.                        *}
-{*  If you want to use previous versions - use D3DX.pas and D3DX8.pas         *}
-{*                                                                            *}
-{******************************************************************************)
+{*----------------------------------------------------------------------------*}
+{*  $Id: D3DX9.pas,v 1.35 2007/04/14 21:35:00 clootie Exp $ }
+{******************************************************************************}
 {                                                                              }
 { Obtained through: Joint Endeavour of Delphi Innovators (Project JEDI)        }
 {                                                                              }
@@ -72,7 +61,7 @@ interface
 {.$DEFINE DEBUG}
 
 // Remove "dot" below to link with separate DLL's (one DLL per part of D3DX9 API)
-// instead of monolithic "all-in-one" version of D3DX9
+// instead of monolithic "all-in-one" version of D3DX9 (not supported currently)
 {.$DEFINE D3DX_SEPARATE}
 {$IFNDEF TMT}
 
@@ -89,6 +78,8 @@ interface
 (*$HPPEMIT '{' *)
 {$ENDIF}
 
+//Clootie: has to temporary disable INLINE support for FreePascal
+//         due to bug in compiler
 {$IFDEF SUPPORTS_INLINE}{$IFNDEF FPC}
   {$DEFINE ALLOW_INLINE}
 {$ENDIF}{$ENDIF}
@@ -100,12 +91,16 @@ uses
 const
   //////////// DLL export definitions ///////////////////////////////////////
 {$IFDEF DX92}
-  d3dx9BorlandDLL = 'D3DX92ab.dll';
+  d3dx9MicrosoftDLL = 'd3dx9_33.dll';
+  d3dx9MicrosoftDebugDLL = 'd3dx9d_33.dll';
+  d3dx9BorlandDLL = d3dx9MicrosoftDLL; // Compatibility with previous header releases
+  d3dx9dll = {$IFDEF DEBUG}d3dx9MicrosoftDebugDLL{$ELSE}d3dx9MicrosoftDLL{$ENDIF};
+  {$UNDEF D3DX_SEPARATE}
 {$ELSE}
   d3dx9BorlandDLL = 'D3DX9Sab.dll';
-{$ENDIF}
   d3dx9dll ={$IFDEF DEBUG} 'd3dx9d.dll'{$ELSE} d3dx9BorlandDll{$ENDIF};
   {$IFDEF DEBUG}{$UNDEF D3DX_SEPARATE}{$ENDIF}
+{$ENDIF}
   d3dx9mathDLL   = {$IFDEF D3DX_SEPARATE}'d3dx9abMath.dll'{$ELSE}d3dx9dll{$ENDIF};
   d3dx9coreDLL   = {$IFDEF D3DX_SEPARATE}'d3dx9abCore.dll'{$ELSE}d3dx9dll{$ENDIF};
   d3dx9shaderDLL = {$IFDEF D3DX_SEPARATE}'d3dx9abShader.dll'{$ELSE}d3dx9dll{$ENDIF};
@@ -182,7 +177,7 @@ const
   D3DXERR_DUPLICATENAMEDFRAGMENT        = HResult(MAKE_D3DHRESULT_R or 2907);
   {$EXTERNALSYM D3DXERR_DUPLICATENAMEDFRAGMENT}
 {$IFDEF DX92}
-  D3DXERR_CANNOTREMOVELASTITEM		      = HResult(MAKE_D3DHRESULT_R or 2908);
+  D3DXERR_CANNOTREMOVELASTITEM          = HResult(MAKE_D3DHRESULT_R or 2908);
   {$EXTERNALSYM D3DXERR_CANNOTREMOVELASTITEM}
 {$ENDIF}
 
@@ -241,7 +236,7 @@ const
   {$EXTERNALSYM D3DX_16F_MIN}
   D3DX_16F_MIN_10_EXP   = -4;              // min decimal exponent
   {$EXTERNALSYM D3DX_16F_MIN_10_EXP}
-  D3DX_16F_MIN_EXP      = -12;             // min binary exponent
+  D3DX_16F_MIN_EXP      = -14;             // min binary exponent
   {$EXTERNALSYM D3DX_16F_MIN_EXP}
   D3DX_16F_RADIX        = 2;               // exponent radix
   {$EXTERNALSYM D3DX_16F_RADIX}
@@ -1464,6 +1459,43 @@ function D3DXSHScale(pOut: PSingle; Order: LongWord;
 function D3DXSHDot(Order: LongWord; pA, pB: PSingle): Single; stdcall; external d3dx9mathDLL;
 {$EXTERNALSYM D3DXSHDot}
 
+{$IFDEF DX92}
+//============================================================================
+//
+//  D3DXSHMultiply[O]:
+//  --------------------
+//  Computes the product of two functions represented using SH (f and g), where:
+//  pOut[i] = int(y_i(s) * f(s) * g(s)), where y_i(s) is the ith SH basis
+//  function, f(s) and g(s) are SH functions (sum_i(y_i(s)*c_i)).  The order O
+//  determines the lengths of the arrays, where there should always be O^2
+//  coefficients.  In general the product of two SH functions of order O generates
+//  and SH function of order 2*O - 1, but we truncate the result.  This means
+//  that the product commutes (f*g == g*f) but doesn't associate
+//  (f*(g*h) != (f*g)*h.
+//
+//  Parameters:
+//   pOut
+//      Output SH coefficients - basis function Ylm is stored at l*l + m+l
+//      This is the pointer that is returned.
+//   pF
+//      Input SH coeffs for first function.
+//   pG
+//      Second set of input SH coeffs.
+//
+//============================================================================
+
+function D3DXSHMultiply2(pOut: PSingle; const pF, pG: PSingle): PSingle; stdcall; external d3dx9mathDLL;
+{$EXTERNALSYM D3DXSHMultiply2}
+function D3DXSHMultiply3(pOut: PSingle; const pF, pG: PSingle): PSingle; stdcall; external d3dx9mathDLL;
+{$EXTERNALSYM D3DXSHMultiply3}
+function D3DXSHMultiply4(pOut: PSingle; const pF, pG: PSingle): PSingle; stdcall; external d3dx9mathDLL;
+{$EXTERNALSYM D3DXSHMultiply4}
+function D3DXSHMultiply5(pOut: PSingle; const pF, pG: PSingle): PSingle; stdcall; external d3dx9mathDLL;
+{$EXTERNALSYM D3DXSHMultiply5}
+function D3DXSHMultiply6(pOut: PSingle; const pF, pG: PSingle): PSingle; stdcall; external d3dx9mathDLL;
+{$EXTERNALSYM D3DXSHMultiply6}
+
+{$ENDIF}
 //============================================================================
 //
 //  Basic Spherical Harmonic lighting routines
@@ -1474,7 +1506,7 @@ function D3DXSHDot(Order: LongWord; pA, pB: PSingle): Single; stdcall; external 
 //
 //  D3DXSHEvalDirectionalLight:
 //  --------------------
-//  Evaluates a directional light and returns spectral SH data.  The output 
+//  Evaluates a directional light and returns spectral SH data.  The output
 //  vector is computed so that if the intensity of R/G/B is unit the resulting
 //  exit radiance of a point directly under the light on a diffuse object with
 //  an albedo of 1 would be 1.0.  This will compute 3 spectral samples, pROut
@@ -1579,7 +1611,7 @@ function D3DXSHEvalConeLight(Order: LongWord; const pDir: TD3DXVector3; Radius: 
     RIntensity: Single; GIntensity: Single; BIntensity: Single;
     pROut, pGOut, pBOut: PSingle): HResult; stdcall; external d3dx9mathDLL;
 {$EXTERNALSYM D3DXSHEvalConeLight}
-      
+
 //============================================================================
 //
 //  D3DXSHEvalHemisphereLight:
@@ -1591,7 +1623,7 @@ function D3DXSHEvalConeLight(Order: LongWord; const pDir: TD3DXVector3; Radius: 
 //  is normalized so that a point on a perfectly diffuse surface with no
 //  shadowing and a normal pointed in the direction pDir would result in exit
 //  radiance with a value of 1 if the top color was white and the bottom color
-//  was black.  This is a very simple model where Top represents the intensity 
+//  was black.  This is a very simple model where Top represents the intensity
 //  of the "sky" and Bottom represents the intensity of the "ground".
 //
 //  Parameters:
@@ -1608,7 +1640,7 @@ function D3DXSHEvalConeLight(Order: LongWord; const pDir: TD3DXVector3; Radius: 
 //   pGOut
 //      Output SH vector for Green
 //   pBOut
-//      Output SH vector for Blue        
+//      Output SH vector for Blue
 //
 //============================================================================
 
@@ -1670,14 +1702,14 @@ function D3DXSHProjectCubeMap(Order: LongWord; pCubeMap: IDirect3DCubeTexture9;
 // application was built against the correct header files and lib files.
 // This number is incremented whenever a header (or other) change would
 // require applications to be rebuilt. If the version doesn't match,
-// D3DXCreateVersion will return FALSE. (The number itself has no meaning.)
+// D3DXCheckVersion will return FALSE. (The number itself has no meaning.)
 ///////////////////////////////////////////////////////////////////////////
 
 const
 {$IFDEF DX92}
   D3DX_VERSION          = $0902;
   {$EXTERNALSYM D3DX_VERSION}
-  D3DX_SDK_VERSION      = 22;
+  D3DX_SDK_VERSION      = 33;
   {$EXTERNALSYM D3DX_SDK_VERSION}
 {$ELSE}
   D3DX_VERSION          = $0901;
@@ -1715,8 +1747,12 @@ function D3DXDebugMute(Mute: BOOL): BOOL; stdcall; external d3dx9coreDLL;
 //    900 - DX9 level driver
 ///////////////////////////////////////////////////////////////////////////
 
+{$IFDEF DX92}
+function D3DXGetDriverLevel(pDevice: IDirect3DDevice9): LongWord; stdcall; external d3dx9coreDLL;
+{$ELSE}
 //Clootie: This function is not included in MS debug D3DX library - so it's always taken from Borland compatibility DLL
 function D3DXGetDriverLevel(pDevice: IDirect3DDevice9): LongWord; stdcall; external {$IFDEF DEBUG}d3dx9BorlandDll{$ELSE}d3dx9coreDLL{$ENDIF};
+{$ENDIF}
 {$EXTERNALSYM D3DXGetDriverLevel}
 
 
@@ -1758,7 +1794,7 @@ type
 //   Specifies device state is not to be saved and restored in Begin/End.
 // D3DXSPRITE_DONOTMODIFY_RENDERSTATE
 //   Specifies device render state is not to be changed in Begin.  The device
-//   is assumed to be in a valid state to draw vertices containing POSITION0, 
+//   is assumed to be in a valid state to draw vertices containing POSITION0,
 //   TEXCOORD0, and COLOR0 data.
 // D3DXSPRITE_OBJECTSPACE
 //   The WORLD, VIEW, and PROJECTION transforms are NOT modified.  The
@@ -1781,6 +1817,11 @@ type
 // D3DXSPRITE_SORT_DEPTH_BACKTOFRONT
 //   Sprites are sorted by depth back-to-front prior to drawing.  This is
 //   recommended when drawing transparent sprites of varying depths.
+{$IFDEF DX92}
+// D3DXSPRITE_DO_NOT_ADDREF_TEXTURE
+//   Disables calling AddRef() on every draw, and Release() on Flush() for
+//   better performance.
+{$ENDIF}
 //////////////////////////////////////////////////////////////////////////////
 
 const
@@ -1800,6 +1841,10 @@ const
   {$EXTERNALSYM D3DXSPRITE_SORT_DEPTH_FRONTTOBACK}
   D3DXSPRITE_SORT_DEPTH_BACKTOFRONT       = (1 shl 7);
   {$EXTERNALSYM D3DXSPRITE_SORT_DEPTH_BACKTOFRONT}
+{$IFDEF DX92}
+  D3DXSPRITE_DO_NOT_ADDREF_TEXTURE        = (1 shl 8);
+  {$EXTERNALSYM D3DXSPRITE_DO_NOT_ADDREF_TEXTURE}
+{$ENDIF}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1866,7 +1911,7 @@ function D3DXCreateSprite(pDevice: IDirect3DDevice9;
 //////////////////////////////////////////////////////////////////////////////
 // ID3DXFont:
 // ----------
-// Font objects contain the textures and resources needed to render a specific 
+// Font objects contain the textures and resources needed to render a specific
 // font on a specific device.
 //
 // GetGlyphData -
@@ -1876,8 +1921,8 @@ function D3DXCreateSprite(pDevice: IDirect3DDevice9;
 //    Preloads glyphs into the glyph cache textures.
 //
 // DrawText -
-//    Draws formatted text on a D3D device.  Some parameters are 
-//    surprisingly similar to those of GDI's DrawText function.  See GDI 
+//    Draws formatted text on a D3D device.  Some parameters are
+//    surprisingly similar to those of GDI's DrawText function.  See GDI
 //    documentation for a detailed description of these parameters.
 //    If pSprite is NULL, an internal sprite object will be used.
 //
@@ -1968,6 +2013,7 @@ type
   end;
 
   IID_ID3DXFont = ID3DXFont;
+  {$EXTERNALSYM IID_ID3DXFont}
 
 
 function D3DXCreateFontA(
@@ -2018,19 +2064,19 @@ function D3DXCreateFont(
 
 function D3DXCreateFontIndirectA(
   pDevice: IDirect3DDevice9;
-  pDesc: TD3DXFontDescA;
+  const pDesc: TD3DXFontDescA;
   out ppFont: ID3DXFont): HResult; stdcall; external d3dx9coreDLL name 'D3DXCreateFontIndirectA';
 {$EXTERNALSYM D3DXCreateFontIndirectA}
 
 function D3DXCreateFontIndirectW(
   pDevice: IDirect3DDevice9;
-  pDesc: TD3DXFontDescW;
+  const pDesc: TD3DXFontDescW;
   out ppFont: ID3DXFont): HResult; stdcall; external d3dx9coreDLL name 'D3DXCreateFontIndirectW';
 {$EXTERNALSYM D3DXCreateFontIndirectW}
 
 function D3DXCreateFontIndirect(
   pDevice: IDirect3DDevice9;
-  pDesc: TD3DXFontDesc;
+  const pDesc: TD3DXFontDesc;
   out ppFont: ID3DXFont): HResult; stdcall; external d3dx9coreDLL name 'D3DXCreateFontIndirectA';
 {$EXTERNALSYM D3DXCreateFontIndirect}
 
@@ -2201,15 +2247,15 @@ function D3DXCreateRenderToEnvMap(ppDevice: IDirect3DDevice9;
 //
 // Draw -
 //    Draws a line strip in screen-space.
-//    Input is in the form of a array defining points on the line strip. of D3DXVECTOR2 
+//    Input is in the form of a array defining points on the line strip. of D3DXVECTOR2
 //
 // DrawTransform -
 //    Draws a line in screen-space with a specified input transformation matrix.
 //
-// End - 
+// End -
 //     Restores device state to how it was when Begin was called.
 //
-// SetPattern - 
+// SetPattern -
 //     Applies a stipple pattern to the line.  Input is one 32-bit
 //     DWORD which describes the stipple pattern. 1 is opaque, 0 is
 //     transparent.
@@ -2219,16 +2265,16 @@ function D3DXCreateRenderToEnvMap(ppDevice: IDirect3DDevice9;
 //     floating-point value.  0.0f is no scaling, whereas 1.0f doubles
 //     the length of the stipple pattern.
 //
-// SetWidth - 
+// SetWidth -
 //     Specifies the thickness of the line in the v direction.  Input is
 //     one floating-point value.
 //
-// SetAntialias - 
+// SetAntialias -
 //     Toggles line antialiasing.  Input is a BOOL.
 //     TRUE  = Antialiasing on.
 //     FALSE = Antialiasing off.
 //
-// SetGLLines - 
+// SetGLLines -
 //     Toggles non-antialiased OpenGL line emulation.  Input is a BOOL.
 //     TRUE  = OpenGL line emulation on.
 //     FALSE = OpenGL line emulation off.
@@ -2337,9 +2383,9 @@ function D3DXTX_VERSION(_Major, _Minor: Byte): DWORD;
 //   Shaders are always validated by D3D before they are set to the device.
 //
 {$IFDEF DX92}
-// D3DXSHADER_SKIPOPTIMIZATION 
+// D3DXSHADER_SKIPOPTIMIZATION
 //   Instructs the compiler to skip optimization steps during code generation.
-//   Unless you are trying to isolate a problem in your code using this option 
+//   Unless you are trying to isolate a problem in your code using this option
 //   is not recommended.
 {$ELSE}
 // D3DXSHADER_SKIPOPTIMIZATION (valid for D3DXCompileShader calls only)
@@ -2364,17 +2410,17 @@ function D3DXTX_VERSION(_Major, _Minor: Byte): DWORD;
 //
 // D3DXSHADER_FORCE_VS_SOFTWARE_NOOPT
 //   Force compiler to compile against the next highest available software
-//   target for vertex shaders.  This flag also turns optimizations off, 
+//   target for vertex shaders.  This flag also turns optimizations off,
 //   and debugging on.
 //
 // D3DXSHADER_FORCE_PS_SOFTWARE_NOOPT
 //   Force compiler to compile against the next highest available software
-//   target for pixel shaders.  This flag also turns optimizations off, 
+//   target for pixel shaders.  This flag also turns optimizations off,
 //   and debugging on.
 //
 {$IFDEF DX92}
 // D3DXSHADER_NO_PRESHADER
-//   Disables Preshaders. Using this flag will cause the compiler to not 
+//   Disables Preshaders. Using this flag will cause the compiler to not
 //   pull out static expression for evaluation on the host cpu
 //
 // D3DXSHADER_AVOID_FLOW_CONTROL
@@ -2409,6 +2455,23 @@ const
   {$EXTERNALSYM D3DXSHADER_AVOID_FLOW_CONTROL}
   D3DXSHADER_PREFER_FLOW_CONTROL      = (1 shl 10);
   {$EXTERNALSYM D3DXSHADER_PREFER_FLOW_CONTROL}
+  D3DXSHADER_ENABLE_BACKWARDS_COMPATIBILITY = (1 shl 12);
+  {$EXTERNALSYM D3DXSHADER_ENABLE_BACKWARDS_COMPATIBILITY}
+  D3DXSHADER_IEEE_STRICTNESS          = (1 shl 13);
+  {$EXTERNALSYM D3DXSHADER_IEEE_STRICTNESS}
+  D3DXSHADER_USE_LEGACY_D3DX9_31_DLL  = (1 shl 16);
+  {$EXTERNALSYM D3DXSHADER_USE_LEGACY_D3DX9_31_DLL}
+
+
+  // optimization level flags
+  D3DXSHADER_OPTIMIZATION_LEVEL0            = (1 shl 14);
+  {$EXTERNALSYM D3DXSHADER_OPTIMIZATION_LEVEL0}
+  D3DXSHADER_OPTIMIZATION_LEVEL1            = 0;
+  {$EXTERNALSYM D3DXSHADER_OPTIMIZATION_LEVEL1}
+  D3DXSHADER_OPTIMIZATION_LEVEL2            = ((1 shl 14) or (1 shl 15));
+  {$EXTERNALSYM D3DXSHADER_OPTIMIZATION_LEVEL2}
+  D3DXSHADER_OPTIMIZATION_LEVEL3            = (1 shl 15);
+  {$EXTERNALSYM D3DXSHADER_OPTIMIZATION_LEVEL3}
 {$ENDIF}
 
 
@@ -2536,7 +2599,8 @@ type
     D3DXPT_PIXELSHADER,
     D3DXPT_VERTEXSHADER,
     D3DXPT_PIXELFRAGMENT,
-    D3DXPT_VERTEXFRAGMENT
+    D3DXPT_VERTEXFRAGMENT,
+    D3DXPT_UNSUPPORTED
   );
   {$EXTERNALSYM _D3DXPARAMETER_TYPE}
   D3DXPARAMETER_TYPE = _D3DXPARAMETER_TYPE;
@@ -2737,6 +2801,17 @@ type
   {$EXTERNALSYM D3DXINCLUDE_TYPE}
   TD3DXIncludeType = _D3DXINCLUDE_TYPE;
 
+{$IFDEF FPC}
+
+  //----------------------------------------------------------------------------
+  // To expose FreePascal class as abstract C++ class
+  {$INTERFACES CORBA}
+  ID3DXInclude_FPC = interface
+    function Open(IncludeType: TD3DXIncludeType; pFileName: PAnsiChar; pParentData: Pointer; out ppData: Pointer; out pBytes: LongWord): HResult; stdcall;
+    function Close(pData: Pointer): HResult; stdcall;
+  end;
+  {$INTERFACES DEFAULT}
+{$ENDIF}
 
 //----------------------------------------------------------------------------
 // ID3DXInclude:
@@ -2756,7 +2831,7 @@ type
 
   PID3DXInclude = ^ID3DXInclude;
   {$EXTERNALSYM ID3DXInclude}
-  ID3DXInclude = {$IFDEF TMT}object{$ELSE}class{$ENDIF}
+  ID3DXInclude = {$IFDEF TMT}object{$ELSE}class{$ENDIF}{$IFDEF FPC}(ID3DXInclude_FPC){$ENDIF}
     function Open(IncludeType: TD3DXIncludeType; pFileName: PAnsiChar; pParentData: Pointer; out ppData: Pointer; out pBytes: LongWord): HResult; {$IFNDEF TMT}virtual; stdcall; abstract;{$ELSE}stdcall; virtual;{$ENDIF}
     function Close(pData: Pointer): HResult; {$IFNDEF TMT}virtual; stdcall; abstract;{$ELSE}stdcall; virtual;{$ENDIF}
   end;
@@ -2804,7 +2879,7 @@ type
 function D3DXAssembleShaderFromFileA(
   pSrcFile: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   ppShader: PID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXAssembleShaderFromFileA';
@@ -2813,7 +2888,7 @@ function D3DXAssembleShaderFromFileA(
 function D3DXAssembleShaderFromFileW(
   pSrcFile: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   ppShader: PID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXAssembleShaderFromFileW';
@@ -2822,7 +2897,7 @@ function D3DXAssembleShaderFromFileW(
 function D3DXAssembleShaderFromFile(
   pSrcFile: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   ppShader: PID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXAssembleShaderFromFileA';
@@ -2833,7 +2908,7 @@ function D3DXAssembleShaderFromResourceA(
   hSrcModule: HModule;
   pSrcResource: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWord;
   ppShader: PID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXAssembleShaderFromResourceA';
@@ -2843,7 +2918,7 @@ function D3DXAssembleShaderFromResourceW(
   hSrcModule: HModule;
   pSrcResource: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWord;
   ppShader: PID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXAssembleShaderFromResourceW';
@@ -2853,7 +2928,7 @@ function D3DXAssembleShaderFromResource(
   hSrcModule: HModule;
   pSrcResource: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWord;
   ppShader: PID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXAssembleShaderFromResourceA';
@@ -2864,14 +2939,14 @@ function D3DXAssembleShader(
   pSrcData: PAnsiChar;
   SrcDataLen: LongWord;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWord;
   ppShader: PID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL;
 {$EXTERNALSYM D3DXAssembleShader}
 
 
-  
+
 //----------------------------------------------------------------------------
 // D3DXCompileShader:
 // ------------------
@@ -2920,7 +2995,7 @@ function D3DXAssembleShader(
 function D3DXCompileShaderFromFileA(
   pSrcFile: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   pFunctionName: PAnsiChar;
   pProfile: PAnsiChar;
   Flags: DWORD;
@@ -2932,7 +3007,7 @@ function D3DXCompileShaderFromFileA(
 function D3DXCompileShaderFromFileW(
   pSrcFile: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   pFunctionName: PAnsiChar;
   pProfile: PAnsiChar;
   Flags: DWORD;
@@ -2944,7 +3019,7 @@ function D3DXCompileShaderFromFileW(
 function D3DXCompileShaderFromFile(
   pSrcFile: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   pFunctionName: PAnsiChar;
   pProfile: PAnsiChar;
   Flags: DWORD;
@@ -2958,7 +3033,7 @@ function D3DXCompileShaderFromResourceA(
   hSrcModule: HModule;
   pSrcResource: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   pFunctionName: PAnsiChar;
   pProfile: PAnsiChar;
   Flags: DWORD;
@@ -2971,7 +3046,7 @@ function D3DXCompileShaderFromResourceW(
   hSrcModule: HModule;
   pSrcResource: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   pFunctionName: PAnsiChar;
   pProfile: PAnsiChar;
   Flags: DWORD;
@@ -2984,7 +3059,7 @@ function D3DXCompileShaderFromResource(
   hSrcModule: HModule;
   pSrcResource: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   pFunctionName: PAnsiChar;
   pProfile: PAnsiChar;
   Flags: DWORD;
@@ -2998,7 +3073,7 @@ function D3DXCompileShader(
   pSrcData: PAnsiChar;
   SrcDataLen: LongWord;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   pFunctionName: PAnsiChar;
   pProfile: PAnsiChar;
   Flags: DWORD;
@@ -3246,7 +3321,7 @@ function D3DXCreateTextureShader(
 function D3DXGatherFragmentsFromFileA(
   pSrcFile: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppShader: ID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXGatherFragmentsFromFileA';
@@ -3255,7 +3330,7 @@ function D3DXGatherFragmentsFromFileA(
 function D3DXGatherFragmentsFromFileW(
   pSrcFile: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppShader: ID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXGatherFragmentsFromFileW';
@@ -3264,7 +3339,7 @@ function D3DXGatherFragmentsFromFileW(
 function D3DXGatherFragmentsFromFile(
   pSrcFile: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppShader: ID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXGatherFragmentsFromFileA';
@@ -3275,7 +3350,7 @@ function D3DXGatherFragmentsFromResourceA(
   hSrcModule: HModule;
   pSrcResource: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWord;
   out ppShader: ID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXGatherFragmentsFromResourceA';
@@ -3285,7 +3360,7 @@ function D3DXGatherFragmentsFromResourceW(
   hSrcModule: HModule;
   pSrcResource: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWord;
   out ppShader: ID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXGatherFragmentsFromResourceW';
@@ -3295,7 +3370,7 @@ function D3DXGatherFragmentsFromResource(
   hSrcModule: HModule;
   pSrcResource: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWord;
   out ppShader: ID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXGatherFragmentsFromResourceA';
@@ -3306,7 +3381,7 @@ function D3DXGatherFragments(
   pSrcData: PAnsiChar;
   SrcDataLen: LongWord;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWord;
   out ppShader: ID3DXBuffer;
   ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL;
@@ -3335,7 +3410,105 @@ function D3DXCreateFragmentLinker(
   out ppFragmentLinker: ID3DXFragmentLinker): HResult; stdcall; external d3dx9shaderDLL;
 {$EXTERNALSYM D3DXCreateFragmentLinker}
 
+{$IFDEF DX92}
 
+//----------------------------------------------------------------------------
+// D3DXPreprocessShader:
+// ---------------------
+// Runs the preprocessor on the specified shader or effect, but does
+// not actually compile it.  This is useful for evaluating the #includes
+// and #defines in a shader and then emitting a reformatted token stream
+// for debugging purposes or for generating a self-contained shader.
+//
+// Parameters:
+//  pSrcFile
+//      Source file name
+//  hSrcModule
+//      Module handle. if NULL, current module will be used
+//  pSrcResource
+//      Resource name in module
+//  pSrcData
+//      Pointer to source code
+//  SrcDataLen
+//      Size of source code, in bytes
+//  pDefines
+//      Optional NULL-terminated array of preprocessor macro definitions.
+//  pInclude
+//      Optional interface pointer to use for handling #include directives.
+//      If this parameter is NULL, #includes will be honored when assembling
+//      from file, and will error when assembling from resource or memory.
+//  ppShaderText
+//      Returns a buffer containing a single large string that represents
+//      the resulting formatted token stream
+//  ppErrorMsgs
+//      Returns a buffer containing a listing of errors and warnings that were
+//      encountered during assembly.  If you are running in a debugger,
+//      these are the same messages you will see in your debug output.
+//----------------------------------------------------------------------------
+
+function D3DXPreprocessShaderFromFileA(
+  pSrcFile: PAnsiChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  out ppShaderText: ID3DXBuffer;
+  ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXPreprocessShaderFromFileA';
+{$EXTERNALSYM D3DXPreprocessShaderFromFileA}
+
+function D3DXPreprocessShaderFromFileW(
+  pSrcFile: PWideChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  out ppShaderText: ID3DXBuffer;
+  ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXPreprocessShaderFromFileW';
+{$EXTERNALSYM D3DXPreprocessShaderFromFileW}
+
+function D3DXPreprocessShaderFromFile(
+  pSrcFile: PChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  out ppShaderText: ID3DXBuffer;
+  ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXPreprocessShaderFromFileA';
+{$EXTERNALSYM D3DXPreprocessShaderFromFile}
+
+
+function D3DXPreprocessShaderFromResourceA(
+  hSrcModule: HModule;
+  pSrcResource: PAnsiChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  out ppShaderText: ID3DXBuffer;
+  ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXPreprocessShaderFromResourceA';
+{$EXTERNALSYM D3DXPreprocessShaderFromResourceA}
+
+function D3DXPreprocessShaderFromResourceW(
+  hSrcModule: HModule;
+  pSrcResource: PWideChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  out ppShaderText: ID3DXBuffer;
+  ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXPreprocessShaderFromResourceW';
+{$EXTERNALSYM D3DXPreprocessShaderFromResourceW}
+
+function D3DXPreprocessShaderFromResource(
+  hSrcModule: HModule;
+  pSrcResource: PChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  out ppShaderText: ID3DXBuffer;
+  ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL name 'D3DXPreprocessShaderFromResourceA';
+{$EXTERNALSYM D3DXPreprocessShaderFromResource}
+
+
+function D3DXPreprocessShader(
+  pSrcData: PAnsiChar;
+  SrcDataSize: LongWord;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  out ppShaderText: ID3DXBuffer;
+  ppErrorMsgs: PID3DXBuffer): HResult; stdcall; external d3dx9shaderDLL;
+{$EXTERNALSYM D3DXPreprocessShader}
+
+{$ENDIF}
 
 //////////////////////////////////////////////////////////////////////////////
 // Shader comment block layouts //////////////////////////////////////////////
@@ -3435,6 +3608,12 @@ type
 // D3DXFX_DONOTSAVESAMPLERSTATE
 //   This flag is used as a parameter to ID3DXEffect::Begin(). When this flag
 //   is specified, sampler device state is not saved or restored in Begin/End.
+// D3DXFX_NOT_CLONEABLE
+//   This flag is used as a parameter to the D3DXCreateEffect family of APIs.
+//   When this flag is specified, the effect will be non-cloneable and will not
+//   contain any shader binary data.
+//   Furthermore, GetPassDesc will not return shader function pointers.
+//   Setting this flag reduces effect memory usage by about 50%.
 //----------------------------------------------------------------------------
 {$ELSE}
 //----------------------------------------------------------------------------
@@ -3455,6 +3634,8 @@ const
 {$IFDEF DX92}
   D3DXFX_DONOTSAVESAMPLERSTATE  = (1 shl 2);
   {$EXTERNALSYM D3DXFX_DONOTSAVESAMPLERSTATE}
+  D3DXFX_NOT_CLONEABLE          = (1 shl 11);
+  {$EXTERNALSYM D3DXFX_NOT_CLONEABLE}
 {$ENDIF}
 
 
@@ -3578,7 +3759,7 @@ type
   {$EXTERNALSYM ID3DXEffectPool}
   ID3DXEffectPool = interface(IUnknown)
   {$IFDEF DX92}
-    ['{3B7A6FFB-3A69-46d7-BC01-A6B2AD4C2BB0}']
+    ['{9537AB04-3250-412e-8213-FCD2F8677933}']
   {$ELSE}
     ['{53CA7768-C0D0-4664-8E79-D156E4F5B7E0}']
   {$ENDIF}
@@ -3596,7 +3777,11 @@ type
   {$HPPEMIT 'DECLARE_DINTERFACE_TYPE(ID3DXBaseEffect);'}
   {$EXTERNALSYM ID3DXBaseEffect}
   ID3DXBaseEffect = interface(IUnknown)
+  {$IFDEF DX92}
+    ['{017C18AC-103F-4417-8C51-6BF6EF1E56BE}']
+  {$ELSE}
     ['{804EF574-CCC1-4bf6-B06A-B1404ABDEADE}']
+  {$ENDIF}
     // Descs
     function GetDesc(out pDesc: TD3DXEffectDesc): HResult; stdcall;
     function GetParameterDesc(hParameter: TD3DXHandle; out pDesc: TD3DXParameterDesc): HResult; stdcall;
@@ -3654,15 +3839,19 @@ type
     function GetString(hParameter: TD3DXHandle; out ppString: PAnsiChar): HResult; stdcall;
     function SetTexture(hParameter: TD3DXHandle; pTexture: IDirect3DBaseTexture9): HResult; stdcall;
     function GetTexture(hParameter: TD3DXHandle; out ppTexture: IDirect3DBaseTexture9): HResult; stdcall;
+  {$IFNDEF DX92}
     function SetPixelShader(hParameter: TD3DXHandle; pPShader: IDirect3DPixelShader9): HResult; stdcall;
+  {$ENDIF}
     function GetPixelShader(hParameter: TD3DXHandle; out ppPShader: IDirect3DPixelShader9): HResult; stdcall;
+  {$IFNDEF DX92}
     function SetVertexShader(hParameter: TD3DXHandle; pVShader: IDirect3DVertexShader9): HResult; stdcall;
+  {$ENDIF}
     function GetVertexShader(hParameter: TD3DXHandle; out ppVShader: IDirect3DVertexShader9): HResult; stdcall;
   {$IFDEF DX92}
 
     //Set Range of an Array to pass to device
     //Useful for sending only a subrange of an array down to the device
-    function SetArrayRange(hParameter: TD3DXHandle; uStart, uEnd: LongWord): HResult; stdcall; 
+    function SetArrayRange(hParameter: TD3DXHandle; uStart, uEnd: LongWord): HResult; stdcall;
   {$ENDIF}
   end;
 
@@ -3719,7 +3908,7 @@ type
   {$EXTERNALSYM ID3DXEffect}
   ID3DXEffect = interface(ID3DXBaseEffect)
   {$IFDEF DX92}
-    ['{0F0DCC9F-6152-4117-A933-FFAC29C43AA4}']
+    ['{F6CEB4B3-4E4C-40dd-B883-8D8DE5EA0CD5}']
   {$ELSE}
     ['{B589B04A-293D-4516-AF0B-3D7DBCF5AC54}']
   {$ENDIF}
@@ -3764,9 +3953,17 @@ type
     function BeginParameterBlock: HResult; stdcall;
     function EndParameterBlock: TD3DXHandle; stdcall;
     function ApplyParameterBlock(hParameterBlock: TD3DXHandle): HResult; stdcall;
+    {$IFDEF DX92}
+    function DeleteParameterBlock(hParameterBlock: TD3DXHandle): HResult; stdcall;
+    {$ENDIF}
 
     // Cloning
     function CloneEffect(pDevice: IDirect3DDevice9; out ppEffect: ID3DXEffect): HResult; stdcall;
+    {$IFDEF DX92}
+
+    // Fast path for setting variables directly in ID3DXEffect
+    function SetRawValue(hParameter: TD3DXHandle; pData: Pointer; ByteOffset, Bytes: LongWord): HResult; stdcall;
+    {$ENDIF}
   end;
 
 
@@ -3778,7 +3975,7 @@ type
   {$EXTERNALSYM ID3DXEffectCompiler}
   ID3DXEffectCompiler = interface(ID3DXBaseEffect)
   {$IFDEF DX92}
-    ['{15A709EB-5A8E-40a0-86A9-0C024124339B}']
+    ['{51B8A949-1A31-47e6-BEA0-4B30DB53F1E0}']
   {$ELSE}
     ['{F8EE90D3-FCC6-4f14-8AE8-6374AE968E33}']
   {$ENDIF}
@@ -3845,6 +4042,16 @@ function D3DXCreateEffectPool(
 //      Size of the effect description in bytes
 //  pDefines
 //      Optional NULL-terminated array of preprocessor macro definitions.
+//  Flags
+//      See D3DXSHADER_xxx flags.
+{$IFDEF DX92}
+//  pSkipConstants
+//      A list of semi-colon delimited variable names.  The effect will
+//      not set these variables to the device when they are referenced
+//      by a shader.  NOTE: the variables specified here must be
+//      register bound in the file and must not be used in expressions
+//      in passes or samplers or the file will not load.
+{$ENDIF}
 //  pInclude
 //      Optional interface pointer to use for handling #include directives.
 //      If this parameter is NULL, #includes will be honored when compiling
@@ -3864,7 +4071,7 @@ function D3DXCreateEffectFromFileA(
   pDevice: IDirect3DDevice9;
   pSrcFile: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   pPool: ID3DXEffectPool;
   out ppEffect: ID3DXEffect;
@@ -3875,7 +4082,7 @@ function D3DXCreateEffectFromFileW(
   pDevice: IDirect3DDevice9;
   pSrcFile: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   pPool: ID3DXEffectPool;
   out ppEffect: ID3DXEffect;
@@ -3886,7 +4093,7 @@ function D3DXCreateEffectFromFile(
   pDevice: IDirect3DDevice9;
   pSrcFile: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   pPool: ID3DXEffectPool;
   out ppEffect: ID3DXEffect;
@@ -3899,7 +4106,7 @@ function D3DXCreateEffectFromResourceA(
   hSrcModule: HModule;
   pSrcResource: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   pPool: ID3DXEffectPool;
   out ppEffect: ID3DXEffect;
@@ -3911,7 +4118,7 @@ function D3DXCreateEffectFromResourceW(
   hSrcModule: HModule;
   pSrcResource: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   pPool: ID3DXEffectPool;
   out ppEffect: ID3DXEffect;
@@ -3923,7 +4130,7 @@ function D3DXCreateEffectFromResource(
   hSrcModule: HModule;
   pSrcResource: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   pPool: ID3DXEffectPool;
   out ppEffect: ID3DXEffect;
@@ -3936,13 +4143,110 @@ function D3DXCreateEffect(
   pSrcData: Pointer;
   SrcDataLen: LongWord;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   pPool: ID3DXEffectPool;
   out ppEffect: ID3DXEffect;
   ppCompilationErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL;
 {$EXTERNALSYM D3DXCreateEffect}
 
+{$IFDEF DX92}
+
+//
+// Ex functions that accept pSkipConstants in addition to other parameters
+//
+
+function D3DXCreateEffectFromFileExA(
+  pDevice: IDirect3DDevice9;
+  pSrcFile: PAnsiChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  pSkipConstants: PAnsiChar;
+  Flags: DWORD;
+  pPool: ID3DXEffectPool;
+  out ppEffect: ID3DXEffect;
+  ppCompilationErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectFromFileExA';
+{$EXTERNALSYM D3DXCreateEffectFromFileExA}
+
+function D3DXCreateEffectFromFileExW(
+  pDevice: IDirect3DDevice9;
+  pSrcFile: PWideChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  pSkipConstants: PAnsiChar;
+  Flags: DWORD;
+  pPool: ID3DXEffectPool;
+  out ppEffect: ID3DXEffect;
+  ppCompilationErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectFromFileExW';
+{$EXTERNALSYM D3DXCreateEffectFromFileExW}
+
+function D3DXCreateEffectFromFileEx(
+  pDevice: IDirect3DDevice9;
+  pSrcFile: PChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  pSkipConstants: PAnsiChar;
+  Flags: DWORD;
+  pPool: ID3DXEffectPool;
+  out ppEffect: ID3DXEffect;
+  ppCompilationErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectFromFileExA';
+{$EXTERNALSYM D3DXCreateEffectFromFileEx}
+
+
+function D3DXCreateEffectFromResourceExA(
+  pDevice: IDirect3DDevice9;
+  hSrcModule: HModule;
+  pSrcResource: PAnsiChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  pSkipConstants: PAnsiChar;
+  Flags: DWORD;
+  pPool: ID3DXEffectPool;
+  out ppEffect: ID3DXEffect;
+  ppCompilationErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectFromResourceExA';
+{$EXTERNALSYM D3DXCreateEffectFromResourceExA}
+
+function D3DXCreateEffectFromResourceExW(
+  pDevice: IDirect3DDevice9;
+  hSrcModule: HModule;
+  pSrcResource: PWideChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  pSkipConstants: PAnsiChar;
+  Flags: DWORD;
+  pPool: ID3DXEffectPool;
+  out ppEffect: ID3DXEffect;
+  ppCompilationErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectFromResourceExW';
+{$EXTERNALSYM D3DXCreateEffectFromResourceExW}
+
+function D3DXCreateEffectFromResourceEx(
+  pDevice: IDirect3DDevice9;
+  hSrcModule: HModule;
+  pSrcResource: PChar;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  pSkipConstants: PAnsiChar;
+  Flags: DWORD;
+  pPool: ID3DXEffectPool;
+  out ppEffect: ID3DXEffect;
+  ppCompilationErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectFromResourceExA';
+{$EXTERNALSYM D3DXCreateEffectFromResourceEx}
+
+
+function D3DXCreateEffectEx(
+  pDevice: IDirect3DDevice9;
+  pSrcData: Pointer;
+  SrcDataLen: LongWord;
+  pDefines: PD3DXMacro;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
+  pSkipConstants: PAnsiChar;
+  Flags: DWORD;
+  pPool: ID3DXEffectPool;
+  out ppEffect: ID3DXEffect;
+  ppCompilationErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL;
+{$EXTERNALSYM D3DXCreateEffectEx}
+
+{$ENDIF}
 
 
 //----------------------------------------------------------------------------
@@ -3981,7 +4285,7 @@ function D3DXCreateEffect(
 function D3DXCreateEffectCompilerFromFileA(
   pSrcFile: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppCompiler: ID3DXEffectCompiler;
   ppParseErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectCompilerFromFileA';
@@ -3990,7 +4294,7 @@ function D3DXCreateEffectCompilerFromFileA(
 function D3DXCreateEffectCompilerFromFileW(
   pSrcFile: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppCompiler: ID3DXEffectCompiler;
   ppParseErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectCompilerFromFileW';
@@ -3999,7 +4303,7 @@ function D3DXCreateEffectCompilerFromFileW(
 function D3DXCreateEffectCompilerFromFile(
   pSrcFile: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppCompiler: ID3DXEffectCompiler;
   ppParseErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectCompilerFromFileA';
@@ -4010,7 +4314,7 @@ function D3DXCreateEffectCompilerFromResourceA(
   hSrcModule: HModule;
   pSrcResource: PAnsiChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppCompiler: ID3DXEffectCompiler;
   ppParseErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectCompilerFromResourceA';
@@ -4020,7 +4324,7 @@ function D3DXCreateEffectCompilerFromResourceW(
   hSrcModule: HModule;
   pSrcResource: PWideChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppCompiler: ID3DXEffectCompiler;
   ppParseErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectCompilerFromResourceW';
@@ -4030,7 +4334,7 @@ function D3DXCreateEffectCompilerFromResource(
   hSrcModule: HModule;
   pSrcResource: PChar;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppCompiler: ID3DXEffectCompiler;
   ppParseErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL name 'D3DXCreateEffectCompilerFromResourceA';
@@ -4041,7 +4345,7 @@ function D3DXCreateEffectCompiler(
   pSrcData: Pointer;
   SrcDataLen: LongWord;
   pDefines: PD3DXMacro;
-  pInclude: ID3DXInclude;
+  pInclude: {$IFDEF FPC}ID3DXInclude_FPC{$ELSE}ID3DXInclude{$ENDIF};
   Flags: DWORD;
   out ppCompiler: ID3DXEffectCompiler;
   ppParseErrors: PID3DXBuffer): HResult; stdcall; external d3dx9effectDLL;
@@ -4111,7 +4415,7 @@ type
   {$EXTERNALSYM D3DXF_FILESAVEOPTIONS}
   TD3DXFFileSaveOptions = D3DXF_FILESAVEOPTIONS;
 
-const  
+const
   D3DXF_FILESAVE_TOFILE     = $00;
   {$EXTERNALSYM D3DXF_FILESAVE_TOFILE}
   D3DXF_FILESAVE_TOWFILE    = $01;
@@ -4164,7 +4468,7 @@ type
   PD3DXFFileLoadMemory = ^TD3DXFFileLoadMemory;
   _D3DXF_FILELOADMEMORY = record
     lpMemory: Pointer; // Desc
-    dSize:  SIZE_T;    // Desc
+    dSize: SIZE_T;     // Desc
   end;
   {$EXTERNALSYM _D3DXF_FILELOADMEMORY}
   D3DXF_FILELOADMEMORY = _D3DXF_FILELOADMEMORY;
@@ -4172,7 +4476,7 @@ type
   TD3DXFFileLoadMemory = _D3DXF_FILELOADMEMORY;
 
 
-const  
+const
   IID_ID3DXFile: TGUID = '{cef08cf9-7b4f-4429-9624-2a690a933201}';
   {$EXTERNALSYM IID_ID3DXFile}
   IID_ID3DXFileSaveObject: TGUID = '{cef08cfa-7b4f-4429-9624-2a690a933201}';
@@ -4436,15 +4740,15 @@ type
 const
   D3DXCLEAN_BACKFACING  = $00000001;
   {$EXTERNALSYM D3DXCLEAN_BACKFACING}
-  D3DXCLEAN_BOWTIES	    = $00000002;
+  D3DXCLEAN_BOWTIES     = $00000002;
   {$EXTERNALSYM D3DXCLEAN_BOWTIES}
 
-	// Helper options
-	D3DXCLEAN_SKINNING		     = D3DXCLEAN_BACKFACING;	// Bowtie cleaning modifies geometry and breaks skinning
+  // Helper options
+  D3DXCLEAN_SKINNING         = D3DXCLEAN_BACKFACING;  // Bowtie cleaning modifies geometry and breaks skinning
   {$EXTERNALSYM D3DXCLEAN_SKINNING}
-	D3DXCLEAN_OPTIMIZATION	   = D3DXCLEAN_BACKFACING;
+  D3DXCLEAN_OPTIMIZATION     = D3DXCLEAN_BACKFACING;
   {$EXTERNALSYM D3DXCLEAN_OPTIMIZATION}
-	D3DXCLEAN_SIMPLIFICATION   = D3DXCLEAN_BACKFACING + D3DXCLEAN_BOWTIES;
+  D3DXCLEAN_SIMPLIFICATION   = D3DXCLEAN_BACKFACING + D3DXCLEAN_BOWTIES;
   {$EXTERNALSYM D3DXCLEAN_SIMPLIFICATION}
 
 type
@@ -4452,13 +4756,13 @@ type
   {$EXTERNALSYM _D3DXCLEANTYPE}
 {$ELSE}
   _D3DXCLEANTYPE = (
-    D3DXCLEAN_BACKFACING	   = $00000001,
-    D3DXCLEAN_BOWTIES		     = $00000002,
+    D3DXCLEAN_BACKFACING     = $00000001,
+    D3DXCLEAN_BOWTIES        = $00000002,
 
     // Helper options
-	  D3DXCLEAN_SKINNING		   = D3DXCLEAN_BACKFACING,	// Bowtie cleaning modifies geometry and breaks skinning
-	  D3DXCLEAN_OPTIMIZATION	 = D3DXCLEAN_BACKFACING,
-	  D3DXCLEAN_SIMPLIFICATION = D3DXCLEAN_BACKFACING + D3DXCLEAN_BOWTIES
+    D3DXCLEAN_SKINNING       = D3DXCLEAN_BACKFACING,  // Bowtie cleaning modifies geometry and breaks skinning
+    D3DXCLEAN_OPTIMIZATION   = D3DXCLEAN_BACKFACING,
+    D3DXCLEAN_SIMPLIFICATION = D3DXCLEAN_BACKFACING + D3DXCLEAN_BOWTIES
   );
   {$EXTERNALSYM _D3DXCLEANTYPE}
 
@@ -4477,6 +4781,76 @@ const
 type
   TFVFDeclaration = array [0..MAX_FVF_DECL_SIZE-1] of TD3DVertexElement9;
 
+{$IFDEF DX92}
+const
+  D3DXTANGENT_WRAP_U =                    $01;
+  {$EXTERNALSYM D3DXTANGENT_WRAP_U}
+  D3DXTANGENT_WRAP_V =                    $02;
+  {$EXTERNALSYM D3DXTANGENT_WRAP_V}
+  D3DXTANGENT_WRAP_UV =                   $03;
+  {$EXTERNALSYM D3DXTANGENT_WRAP_UV}
+  D3DXTANGENT_DONT_NORMALIZE_PARTIALS =   $04;
+  {$EXTERNALSYM D3DXTANGENT_DONT_NORMALIZE_PARTIALS}
+  D3DXTANGENT_DONT_ORTHOGONALIZE =        $08;
+  {$EXTERNALSYM D3DXTANGENT_DONT_ORTHOGONALIZE}
+  D3DXTANGENT_ORTHOGONALIZE_FROM_V =      $010;
+  {$EXTERNALSYM D3DXTANGENT_ORTHOGONALIZE_FROM_V}
+  D3DXTANGENT_ORTHOGONALIZE_FROM_U =      $020;
+  {$EXTERNALSYM D3DXTANGENT_ORTHOGONALIZE_FROM_U}
+  D3DXTANGENT_WEIGHT_BY_AREA =            $040;
+  {$EXTERNALSYM D3DXTANGENT_WEIGHT_BY_AREA}
+  D3DXTANGENT_WEIGHT_EQUAL =              $080;
+  {$EXTERNALSYM D3DXTANGENT_WEIGHT_EQUAL}
+  D3DXTANGENT_WIND_CW =                   $0100;
+  {$EXTERNALSYM D3DXTANGENT_WIND_CW}
+  D3DXTANGENT_CALCULATE_NORMALS =         $0200;
+  {$EXTERNALSYM D3DXTANGENT_CALCULATE_NORMALS}
+  D3DXTANGENT_GENERATE_IN_PLACE =         $0400;
+  {$EXTERNALSYM D3DXTANGENT_GENERATE_IN_PLACE}
+
+type
+  _D3DXTANGENT = DWord;
+  {$EXTERNALSYM _D3DXTANGENT}
+  D3DXTANGENT = _D3DXTANGENT;
+  {$EXTERNALSYM D3DXCLEANTYPE}
+  TD3DXTangent = _D3DXTANGENT;
+
+  // D3DXIMT_WRAP_U means the texture wraps in the U direction
+  // D3DXIMT_WRAP_V means the texture wraps in the V direction
+  // D3DXIMT_WRAP_UV means the texture wraps in both directions
+  _D3DXIMT = (
+  {$IFNDEF SUPPORTS_EXPL_ENUMS}
+    D3DXIMT_WRAP_invalid_0,
+    D3DXIMT_WRAP_U                   {= $01},
+    D3DXIMT_WRAP_V                   {= $02},
+    D3DXIMT_WRAP_UV                  {= $03}
+  {$ELSE}
+    D3DXIMT_WRAP_U                    = $01,
+    D3DXIMT_WRAP_V                    = $02,
+    D3DXIMT_WRAP_UV                   = $03
+  {$ENDIF}
+  );
+  {$EXTERNALSYM _D3DXIMT}
+  D3DXIMT = _D3DXIMT;
+  {$EXTERNALSYM D3DXIMT}
+  TD3DXIMT = _D3DXIMT;
+
+
+  // These options are only valid for UVAtlasCreate and UVAtlasPartition, we may add more for UVAtlasPack if necessary
+  // D3DXUVATLAS_DEFAULT - Meshes with more than 25k faces go through fast, meshes with fewer than 25k faces go through quality
+  // D3DXUVATLAS_GEODESIC_FAST - Uses approximations to improve charting speed at the cost of added stretch or more charts.
+  // D3DXUVATLAS_GEODESIC_QUALITY - Provides better quality charts, but requires more time and memory than fast.
+  _D3DXUVATLAS = (
+    D3DXUVATLAS_DEFAULT               {= $00},
+    D3DXUVATLAS_GEODESIC_FAST         {= $01},
+    D3DXUVATLAS_GEODESIC_QUALITY      {= $02}
+   );
+   {$EXTERNALSYM _D3DXUVATLAS}
+   D3DXUVATLAS = _D3DXUVATLAS;
+   {$EXTERNALSYM D3DXUVATLAS}
+   TD3DXUVAtlas = D3DXUVATLAS;
+
+{$ENDIF}
   PD3DXAttributeRange = ^TD3DXAttributeRange;
   _D3DXATTRIBUTERANGE = record
     AttribId:    DWord;
@@ -4646,7 +5020,7 @@ type
     ['{29E3EB8D-4DD6-4524-B1A2-1EF0581E778D}']
     {$ENDIF}
     // ID3DXMesh
-    function LockAttributeBuffer(Flags: DWord; out ppData: PByte): HResult; stdcall;
+    function LockAttributeBuffer(Flags: DWord; out ppData: PDWORD): HResult; stdcall;
     function UnlockAttributeBuffer: HResult; stdcall;
     function Optimize(Flags: DWord; pAdjacencyIn, pAdjacencyOut: PDWord;
       pFaceRemap: PDWord; ppVertexRemap: PID3DXBuffer;
@@ -4817,7 +5191,7 @@ type
     function GetDevice(out ppDevice: IDirect3DDevice9): HResult; stdcall;
     function GetPatchInfo(out PatchInfo: TD3DXPatchInfo): HResult; stdcall;
 
-    // Control mesh access    
+    // Control mesh access
     function GetVertexBuffer(out ppVB: IDirect3DVertexBuffer9): HResult; stdcall;
     function GetIndexBuffer(out ppIB: IDirect3DIndexBuffer9): HResult; stdcall;
     function LockVertexBuffer(flags: DWORD; out ppData: Pointer): HResult; stdcall;
@@ -4865,8 +5239,8 @@ type
                               out MipFilter: TD3DTextureFilterType;
                               out Wrap: TD3DTextureAddress;
                               out dwLODBias: DWORD): HResult; stdcall;
-        
-    // Performs the uniform tessellation based on the tessellation level. 
+
+    // Performs the uniform tessellation based on the tessellation level.
     // This function will perform more efficiently if the patch mesh has been optimized using the Optimize() call.
     function Tessellate(fTessLevel: Single; pMesh: ID3DXMesh): HResult; stdcall;
 
@@ -4897,12 +5271,12 @@ type
     function GetNumBoneInfluences(bone: DWORD): DWORD; stdcall;
     function GetBoneInfluence(bone: DWORD; vertices: PDWORD; weights: PSingle): HResult; stdcall;
     {$IFDEF DX92}
-	  function GetBoneVertexInfluence(boneNum, influenceNum: DWORD; out pWeight: Single; out pVertexNum: DWORD): HResult; stdcall;
+    function GetBoneVertexInfluence(boneNum, influenceNum: DWORD; out pWeight: Single; out pVertexNum: DWORD): HResult; stdcall;
     {$ENDIF}
     function GetMaxVertexInfluences(out maxVertexInfluences: DWORD): HResult; stdcall;
     function GetNumBones: DWORD; stdcall;
     {$IFDEF DX92}
-	  function FindBoneVertexInfluenceIndex(boneNum, vertexNum: DWORD; out pInfluenceIndex: DWORD): HResult; stdcall;
+    function FindBoneVertexInfluenceIndex(boneNum, vertexNum: DWORD; out pInfluenceIndex: DWORD): HResult; stdcall;
     {$ENDIF}
 
     // This gets the max face influences based on a triangle mesh with the specified index buffer
@@ -4955,7 +5329,7 @@ type
       out ppBoneCombinationTable: ID3DXBuffer;
       out ppMesh: ID3DXMesh): HResult; stdcall;
 
-    // Takes a mesh and returns a new mesh with per vertex blend weights and indices 
+    // Takes a mesh and returns a new mesh with per vertex blend weights and indices
     // and a bone combination table that describes which bones palettes affect which subsets of the mesh
     function ConvertToIndexedBlendedMesh(
       pMesh: ID3DXMesh;
@@ -5360,14 +5734,14 @@ function D3DXSplitMesh(pMeshIn: ID3DXMesh; pAdjacencyIn: PDWord;
 {$EXTERNALSYM D3DXSplitMesh}
 
 function D3DXIntersectTri(
-    const p0: TD3DXVector3;           // Triangle vertex 0 position
-    const p1: TD3DXVector3;           // Triangle vertex 1 position
-    const p2: TD3DXVector3;           // Triangle vertex 2 position
-    const pRayPos: TD3DXVector3;      // Ray origin
-    const pRayDir: TD3DXVector3;      // Ray direction
-    out pU: Single;                   // Barycentric Hit Coordinates
-    out pV: Single;                   // Barycentric Hit Coordinates
-    out pDist: Single                 // Ray-Intersection Parameter Distance
+  const p0: TD3DXVector3;           // Triangle vertex 0 position
+  const p1: TD3DXVector3;           // Triangle vertex 1 position
+  const p2: TD3DXVector3;           // Triangle vertex 2 position
+  const pRayPos: TD3DXVector3;      // Ray origin
+  const pRayDir: TD3DXVector3;      // Ray direction
+  out pU: Single;                   // Barycentric Hit Coordinates
+  out pV: Single;                   // Barycentric Hit Coordinates
+  out pDist: Single                 // Ray-Intersection Parameter Distance
  ): BOOL; stdcall; external d3dx9meshDLL;
 {$EXTERNALSYM D3DXIntersectTri}
 
@@ -5380,7 +5754,30 @@ function D3DXBoxBoundProbe(const pMin, pMax: TD3DXVector3;
 {$EXTERNALSYM D3DXBoxBoundProbe}
 
 
+{$IFDEF DX92}
+function D3DXComputeTangentFrame(pMesh: ID3DXMesh; dwOptions: DWORD): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXComputeTangentFrame}
 
+function D3DXComputeTangentFrameEx(pMesh: ID3DXMesh;
+                                   dwTextureInSemantic: DWORD;
+                                   dwTextureInIndex: DWORD;
+                                   dwUPartialOutSemantic: DWORD;
+                                   dwUPartialOutIndex: DWORD;
+                                   dwVPartialOutSemantic: DWORD;
+                                   dwVPartialOutIndex: DWORD;
+                                   dwNormalOutSemantic: DWORD;
+                                   dwNormalOutIndex: DWORD;
+                                   dwOptions: DWORD;
+                                   {CONST} pdwAdjacency: PDWORD;
+                                   fPartialEdgeThreshold: Single;
+                                   fSingularPointThreshold: Single;
+                                   fNormalEdgeThreshold: Single;
+                                   out ppMeshOut: ID3DXMesh;
+                                   ppVertexMapping: PID3DXBuffer
+ ): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXComputeTangentFrameEx}
+
+{$ENDIF}
 //D3DXComputeTangent
 //
 //Computes the Tangent vectors for the TexStage texture coordinates
@@ -5388,11 +5785,11 @@ function D3DXBoxBoundProbe(const pMin, pMax: TD3DXVector3;
 //puts the binorm in BINORM[BinormIndex] also specified in the decl.
 //
 //If neither the binorm or the tangnet are in the meshes declaration,
-//the function will fail. 
+//the function will fail.
 //
 //If a tangent or Binorm field is in the Decl, but the user does not
 //wish D3DXComputeTangent to replace them, then D3DX_DEFAULT specified
-//in the TangentIndex or BinormIndex will cause it to ignore the specified 
+//in the TangentIndex or BinormIndex will cause it to ignore the specified
 //semantic.
 //
 //Wrap should be specified if the texture coordinates wrap.
@@ -5406,6 +5803,321 @@ function D3DXComputeTangent(
   Adjacency: PDWORD): HResult; stdcall; external d3dx9meshDLL;
 {$EXTERNALSYM D3DXComputeTangent}
 
+{$IFDEF DX92}
+//============================================================================
+//
+// UVAtlas apis
+//
+//============================================================================
+type
+  TD3DXUVAtlasCB = function (fPercentDone: Single; lpUserContext: Pointer): HRESULT; stdcall;
+  {$NODEFINE TD3DXUVAtlasCB}
+  {$HPPEMIT 'typedef LPD3DXUVATLASCB TD3DXUVAtlasCB;'}
+
+// This function creates atlases for meshes. There are two modes of operation,
+// either based on the number of charts, or the maximum allowed stretch. If the
+// maximum allowed stretch is 0, then each triangle will likely be in its own
+// chart.
+
+//
+// The parameters are as follows:
+//  pMesh - Input mesh to calculate an atlas for. This must have a position
+//          channel and at least a 2-d texture channel.
+//  uMaxChartNumber - The maximum number of charts required for the atlas.
+//                    If this is 0, it will be parameterized based solely on
+//                    stretch.
+//  fMaxStretch - The maximum amount of stretch, if 0, no stretching is allowed,
+//                if 1, then any amount of stretching is allowed.
+//  uWidth - The width of the texture the atlas will be used on.
+//  uHeight - The height of the texture the atlas will be used on.
+//  fGutter - The minimum distance, in texels between two charts on the atlas.
+//            this gets scaled by the width, so if fGutter is 2.5, and it is
+//            used on a 512x512 texture, then the minimum distance will be
+//            2.5 / 512 in u-v space.
+//  dwTextureIndex - Specifies which texture coordinate to write to in the
+//                   output mesh (which is cloned from the input mesh). Useful
+//                   if your vertex has multiple texture coordinates.
+//  pdwAdjacency - a pointer to an array with 3 DWORDs per face, indicating
+//                 which triangles are adjacent to each other.
+//  pdwFalseEdgeAdjacency - a pointer to an array with 3 DWORDS per face, indicating
+//                          at each face, whether an edge is a false edge or not (using
+//                          the same ordering as the adjacency data structure). If this
+//                          is NULL, then it is assumed that there are no false edges. If
+//                          not NULL, then a non-false edge is indicated by -1 and a false
+//                          edge is indicated by any other value (it is not required, but
+//                          it may be useful for the caller to use the original adjacency
+//                          value). This allows you to parameterize a mesh of quads, and
+//                          the edges down the middle of each quad will not be cut when
+//                          parameterizing the mesh.
+//  pfIMTArray - a pointer to an array with 3 FLOATs per face, describing the
+//               integrated metric tensor for that face. This lets you control
+//               the way this triangle may be stretched in the atlas. The IMT
+//               passed in will be 3 floats (a,b,c) and specify a symmetric
+//               matrix (a b) that, given a vector (s,t), specifies the
+//                      (b c)
+//               distance between a vector v1 and a vector v2 = v1 + (s,t) as
+//               sqrt((s, t) * M * (s, t)^T).
+//               In other words, this lets one specify the magnitude of the
+//               stretch in an arbitrary direction in u-v space. For example
+//               if a = b = c = 1, then this scales the vector (1,1) by 2, and
+//               the vector (1,-1) by 0. Note that this is multiplying the edge
+//               length by the square of the matrix, so if you want the face to
+//               stretch to twice its
+//               size with no shearing, the IMT value should be (2, 0, 2), which
+//               is just the identity matrix times 2.
+//               Note that this assumes you have an orientation for the triangle
+//               in some 2-D space. For D3DXUVAtlas, this space is created by
+//               letting S be the direction from the first to the second
+//               vertex, and T be the cross product between the normal and S.
+//
+//  pStatusCallback - Since the atlas creation process can be very CPU intensive,
+//                    this allows the programmer to specify a function to be called
+//                    periodically, similarly to how it is done in the PRT simulation
+//                    engine.
+//  fCallbackFrequency - This lets you specify how often the callback will be
+//                       called. A decent default should be 0.0001f.
+//  pUserContext - a void pointer to be passed back to the callback function
+//  dwOptions - A combination of flags in the D3DXUVATLAS enum
+//  ppMeshOut - A pointer to a location to store a pointer for the newly created
+//              mesh.
+//  ppFacePartitioning - A pointer to a location to store a pointer for an array,
+//                       one DWORD per face, giving the final partitioning
+//                       created by the atlasing algorithm.
+//  ppVertexRemapArray - A pointer to a location to store a pointer for an array,
+//                       one DWORD per vertex, giving the vertex it was copied
+//                       from, if any vertices needed to be split.
+//  pfMaxStretchOut - A location to store the maximum stretch resulting from the
+//                    atlasing algorithm.
+//  puNumChartsOut - A location to store the number of charts created, or if the
+//                   maximum number of charts was too low, this gives the minimum
+//                    number of charts needed to create an atlas.
+
+function D3DXUVAtlasCreate(
+  pMesh: ID3DXMesh;
+  uMaxChartNumber: LongWord;
+  fMaxStretch: Single;
+  uWidth: LongWord;
+  uHeight: LongWord;
+  fGutter: Single;
+  dwTextureIndex: DWORD;
+  {CONST} pdwAdjacency: PDWORD;
+  {CONST} pdwFalseEdgeAdjacency: PDWORD;
+  {CONST} pfIMTArray: PSingle;
+  pStatusCallback: TD3DXUVAtlasCB;
+  fCallbackFrequency: Single;
+  pUserContext: Pointer;
+  dwOptions: TD3DXUVAtlas;
+  out ppMeshOut: ID3DXMesh;
+  ppFacePartitioning: PID3DXBuffer;
+  ppVertexRemapArray: PID3DXBuffer;
+  pfMaxStretchOut: PSingle;
+  puNumChartsOut: PLongWord): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXUVAtlasCreate}
+
+// This has the same exact arguments as Create, except that it does not perform the
+// final packing step. This method allows one to get a partitioning out, and possibly
+// modify it before sending it to be repacked. Note that if you change the
+// partitioning, you'll also need to calculate new texture coordinates for any faces
+// that have switched charts.
+//
+// The partition result adjacency output parameter is meant to be passed to the
+// UVAtlasPack function, this adjacency cuts edges that are between adjacent
+// charts, and also can include cuts inside of a chart in order to make it
+// equivalent to a disc. For example:
+//
+// _______
+// | ___ |
+// | |_| |
+// |_____|
+//
+// In order to make this equivalent to a disc, we would need to add a cut, and it
+// Would end up looking like:
+// _______
+// | ___ |
+// | |_|_|
+// |_____|
+//
+// The resulting partition adjacency parameter cannot be NULL, because it is
+// required for the packing step.
+
+
+
+function D3DXUVAtlasPartition(
+  pMesh: ID3DXMesh;
+  uMaxChartNumber: LongWord;
+  fMaxStretch: Single;
+  dwTextureIndex: DWORD;
+  {CONST} pdwAdjacency: PDWORD;
+  {CONST} pdwFalseEdgeAdjacency: PDWORD;
+  {CONST} pfIMTArray: PSingle;
+  pStatusCallback: TD3DXUVAtlasCB;
+  fCallbackFrequency: Single;
+  pUserContext: Pointer;
+  dwOptions: TD3DXUVAtlas;
+  out ppMeshOut: ID3DXMesh;
+  ppFacePartitioning: PID3DXBuffer;
+  ppVertexRemapArray: PID3DXBuffer;
+  ppPartitionResultAdjacency: PID3DXBuffer;
+  pfMaxStretchOut: PSingle;
+  puNumChartsOut: PLongWord): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXUVAtlasPartition}
+
+// This takes the face partitioning result from Partition and packs it into an
+// atlas of the given size. pdwPartitionResultAdjacency should be derived from
+// the adjacency returned from the partition step. This value cannot be NULL
+// because Pack needs to know where charts were cut in the partition step in
+// order to find the edges of each chart.
+// The options parameter is currently reserved.
+function D3DXUVAtlasPack(
+  pMesh: ID3DXMesh;
+  uWidth: LongWord;
+  uHeight: LongWord;
+  fGutter: Single;
+  dwTextureIndex: DWORD;
+  {CONST} pdwPartitionResultAdjacency: PDWORD;
+  pStatusCallback: TD3DXUVAtlasCB;
+  fCallbackFrequency: Single;
+  pUserContext: Pointer;
+  dwOptions: TD3DXUVAtlas;
+  pFacePartitioning: ID3DXBuffer): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXUVAtlasPack}
+
+
+//============================================================================
+//
+// IMT Calculation apis
+//
+// These functions all compute the Integrated Metric Tensor for use in the
+// UVAtlas API. They all calculate the IMT with respect to the canonical
+// triangle, where the coordinate system is set up so that the u axis goes
+// from vertex 0 to 1 and the v axis is N x u. So, for example, the second
+// vertex's canonical uv coordinates are (d,0) where d is the distance between
+// vertices 0 and 1. This way the IMT does not depend on the parameterization
+// of the mesh, and if the signal over the surface doesn't change, then
+// the IMT doesn't need to be recalculated.
+//============================================================================
+
+type
+  // This callback is used by D3DXComputeIMTFromSignal.
+  //
+  // uv               - The texture coordinate for the vertex.
+  // uPrimitiveID     - Face ID of the triangle on which to compute the signal.
+  // uSignalDimension - The number of floats to store in pfSignalOut.
+  // pUserData        - The pUserData pointer passed in to ComputeIMTFromSignal.
+  // pfSignalOut      - A pointer to where to store the signal data.
+  TD3DXIMTSignalCallback = function (const uv: PD3DXVector2; uPrimitiveID: LongWord;
+    uSignalDimension: LongWord; pUserData: Pointer; pfSignalOut: PSingle): HRESULT; stdcall;
+  {$NODEFINE TD3DXIMTSignalCallback}
+  {$HPPEMIT 'typedef LPD3DXIMTSIGNALCALLBACK TD3DXIMTSignalCallback;'}
+
+// This function is used to calculate the IMT from per vertex data. It sets
+// up a linear system over the triangle, solves for the jacobian J, then
+// constructs the IMT from that (J^TJ).
+// This function allows you to calculate the IMT based off of any value in a
+// mesh (color, normal, etc) by specifying the correct stride of the array.
+// The IMT computed will cause areas of the mesh that have similar values to
+// take up less space in the texture.
+//
+// pMesh            - The mesh to calculate the IMT for.
+// pVertexSignal    - A float array of size uSignalStride * v, where v is the
+//                    number of vertices in the mesh.
+// uSignalDimension - How many floats per vertex to use in calculating the IMT.
+// uSignalStride    - The number of bytes per vertex in the array. This must be
+//                    a multiple of sizeof(float)
+// ppIMTData        - Where to store the buffer holding the IMT data
+
+function D3DXComputeIMTFromPerVertexSignal(
+  pMesh: ID3DXMesh;
+  const pfVertexSignal: PSingle; // uSignalDimension floats per vertex
+  uSignalDimension: LongWord;
+  uSignalStride: LongWord;       // stride of signal in bytes
+  dwOptions: DWORD;              // reserved for future use
+  pStatusCallback: TD3DXUVAtlasCB;
+  pUserContext: Pointer;
+  out ppIMTData: ID3DXBuffer): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXComputeIMTFromPerVertexSignal}
+
+// This function is used to calculate the IMT from data that varies over the
+// surface of the mesh (generally at a higher frequency than vertex data).
+// This function requires the mesh to already be parameterized (so it already
+// has texture coordinates). It allows the user to define a signal arbitrarily
+// over the surface of the mesh.
+//
+// pMesh            - The mesh to calculate the IMT for.
+// dwTextureIndex   - This describes which set of texture coordinates in the
+//                    mesh to use.
+// uSignalDimension - How many components there are in the signal.
+// fMaxUVDistance   - The subdivision will continue until the distance between
+//                    all vertices is at most fMaxUVDistance.
+// dwOptions        - reserved for future use
+// pSignalCallback  - The callback to use to get the signal.
+// pUserData        - A pointer that will be passed in to the callback.
+// ppIMTData        - Where to store the buffer holding the IMT data
+function D3DXComputeIMTFromSignal(
+  pMesh: ID3DXMesh;
+  dwTextureIndex: DWORD;
+  uSignalDimension: LongWord;
+  fMaxUVDistance: Single;
+  dwOptions: DWORD; // reserved for future use
+  pSignalCallback: TD3DXIMTSignalCallback;
+  pUserData: Pointer;
+  pStatusCallback: TD3DXUVAtlasCB;
+  pUserContext: Pointer;
+  out ppIMTData: ID3DXBuffer): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXComputeIMTFromSignal}
+
+// This function is used to calculate the IMT from texture data. Given a texture
+// that maps over the surface of the mesh, the algorithm computes the IMT for
+// each face. This will cause large areas that are very similar to take up less
+// room when parameterized with UVAtlas. The texture is assumed to be
+// interpolated over the mesh bilinearly.
+//
+// pMesh            - The mesh to calculate the IMT for.
+// pTexture         - The texture to load data from.
+// dwTextureIndex   - This describes which set of texture coordinates in the
+//                    mesh to use.
+// dwOptions        - Combination of one or more D3DXIMT flags.
+// ppIMTData        - Where to store the buffer holding the IMT data
+function D3DXComputeIMTFromTexture(
+  pMesh: ID3DXMesh;
+  pTexture: IDirect3DTexture9;
+  dwTextureIndex: DWORD;
+  dwOptions: DWORD;
+  pStatusCallback: TD3DXUVAtlasCB;
+  pUserContext: Pointer;
+  out ppIMTData: ID3DXBuffer): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXComputeIMTFromTexture}
+
+// This function is very similar to ComputeIMTFromTexture, but it uses a
+// float array to pass in the data, and it can calculate higher dimensional
+// values than 4.
+//
+// pMesh            - The mesh to calculate the IMT for.
+// dwTextureIndex   - This describes which set of texture coordinates in the
+//                    mesh to use.
+// pfFloatArray     - a pointer to a float array of size
+//                    uWidth*uHeight*uComponents
+// uWidth           - The width of the texture
+// uHeight          - The height of the texture
+// uSignalDimension - The number of floats per texel in the signal
+// uComponents      - The number of floats in each texel
+// dwOptions        - Combination of one or more D3DXIMT flags
+// ppIMTData        - Where to store the buffer holding the IMT data
+function D3DXComputeIMTFromPerTexelSignal(
+  pMesh: ID3DXMesh;
+  dwTextureIndex: DWORD;
+  pfTexelSignal: PSingle;
+  uWidth: LongWord;
+  uHeight: LongWord;
+  uSignalDimension: LongWord;
+  uComponents: LongWord;
+  dwOptions: DWORD;
+  pStatusCallback: TD3DXUVAtlasCB;
+  pUserContext: Pointer;
+  out ppIMTData: ID3DXBuffer): HResult; stdcall; external d3dx9meshDLL;
+{$EXTERNALSYM D3DXComputeIMTFromPerTexelSignal}
+
+{$ENDIF}
 function D3DXConvertMeshSubsetToSingleStrip(
   MeshIn: ID3DXBaseMesh;
   AttribId: DWord;
@@ -5460,7 +6172,7 @@ function D3DXOptimizeFaces(
 //
 //  D3DXOptimizeVertices:
 //  --------------------
-//  Generate a vertex remapping to optimize for in order use of vertices for 
+//  Generate a vertex remapping to optimize for in order use of vertices for
 //    a given set of indices.  This is commonly used after applying the face
 //    remap generated by D3DXOptimizeFaces
 //
@@ -5683,7 +6395,7 @@ type
     // regions of a texture by interpolating "internal" values
     function AttachGH(pGH: ID3DXTextureGutterHelper): HResult; stdcall;
     function ReleaseGH: HResult; stdcall;
-    
+
     // Evaluates attached gutter helper on the contents of this buffer
     function EvalGH: HResult; stdcall;
 
@@ -5769,9 +6481,9 @@ type
   {$HPPEMIT 'DECLARE_DINTERFACE_TYPE(ID3DXTextureGutterHelper);'}
   {$EXTERNALSYM ID3DXTextureGutterHelper}
   ID3DXTextureGutterHelper = interface(IUnknown)
-    ['{06F57E0A-BD95-43f1-A3DA-791CF6CA297B}']
+    ['{838F01EC-9729-4527-AADB-DF70ADE7FEA9}']
     // ID3DXTextureGutterHelper
-    
+
     // dimensions of texture this is bound too
     function GetWidth: LongWord; stdcall;
     function GetHeight: LongWord; stdcall;
@@ -5791,6 +6503,25 @@ type
     // Applies gutters to a D3DXPRTBuffer
     // Dimensions must match GutterHelper
     function ApplyGuttersPRT(pBuffer: ID3DXPRTBuffer): HResult; stdcall;
+
+    // Resamples a texture from a mesh onto this gutterhelpers
+    // parameterization.  It is assumed that the UV coordinates
+    // for this gutter helper are in TEXTURE 0 (usage/usage index)
+    // and the texture coordinates should all be within [0,1] for
+    // both sets.
+    //
+    // pTextureIn - texture represented using parameterization in pMeshIn
+    // pMeshIn    - Mesh with texture coordinates that represent pTextureIn
+    //              pTextureOut texture coordinates are assumed to be in
+    //              TEXTURE 0
+    // Usage      - field in DECL for pMeshIn that stores texture coordinates
+    //              for pTextureIn
+    // UsageIndex - which index for Usage above for pTextureIn
+    // pTextureOut- Resampled texture
+    //
+    // Usage would generally be D3DDECLUSAGE_TEXCOORD  and UsageIndex other than zero
+    function ResampleTex(const pTextureIn: IDirect3DTexture9; const pMeshIn: ID3DXMesh;
+        Usage: TD3DDeclUsage; UsageIndex: LongWord; const pTextureOut: IDirect3DTexture9): HResult; stdcall;
 
     // the routines below provide access to the data structures
     // used by the Apply functions
@@ -5820,9 +6551,9 @@ type
     // during PRT
     // pGutterData must be allocated by the user
     function GetGutterMap(pGutterData: PByte): HResult; stdcall;
-    
+
     // face map is a UINT per texel that represents the
-    // face of the mesh that texel belongs too - 
+    // face of the mesh that texel belongs too -
     // only valid if same texel is valid in pGutterData
     function SetFaceMap(pFaceData: PLongWord): HResult; stdcall;
 
@@ -5868,11 +6599,11 @@ type
   {$HPPEMIT 'DECLARE_DINTERFACE_TYPE(ID3DXPRTEngine);'}
   {$EXTERNALSYM ID3DXPRTEngine}
   ID3DXPRTEngine = interface(IUnknown)
-    ['{C3F4ADBF-E6D2-4b7b-BFE8-9E7208746ADF}']
+    ['{683A4278-CD5F-4d24-90AD-C4E1B6855D53}']
     // ID3DXPRTEngine
 
     // material functions
-    
+
     // This sets a material per attribute in the scene mesh and it is
     // the only way to specify subsurface scattering parameters.  if
     // bSetAlbedo is FALSE, NumChannels must match the current
@@ -5888,17 +6619,17 @@ type
     //  and scaled by this amount
     function SetMeshMaterials(const ppMaterials: PPD3DXSHMaterial; NumMeshes, NumChannels: LongWord;
         bSetAlbedo: BOOL; fLengthScale: Single): HResult; stdcall;
-    
+
     // setting albedo per-vertex or per-texel over rides the albedos stored per mesh
     // but it does not over ride any other settings
-    
+
     // sets an albedo to be used per vertex - the albedo is represented as a float
     // pDataIn input pointer (pointint to albedo of 1st sample)
     // NumChannels 1 implies "grayscale" materials, set this to 3 to enable
     //  color bleeding effects
     // Stride - stride in bytes to get to next samples albedo
     function SetPerVertexAlbedo(const pDataIn: Pointer; NumChannels, Stride: LongWord): HResult; stdcall;
-    
+
     // represents the albedo per-texel instead of per-vertex (even if per-vertex PRT is used)
     // pAlbedoTexture - texture that stores the albedo (dimension arbitrary)
     // NumChannels 1 implies "grayscale" materials, set this to 3 to enable
@@ -5906,14 +6637,14 @@ type
     // pGH - optional gutter helper, otherwise one is constructed in computation routines and
     //  destroyed (if not attached to buffers)
     function SetPerTexelAlbedo(pAlbedoTexture: IDirect3DTexture9; NumChannels: LongWord; pGH: ID3DXTextureGutterHelper): HResult; stdcall;
-                                 
+
     // gets the per-vertex albedo
-    function GetVertexAlbedo(pVertColors: PD3DXColor; NumVerts: LongWord): HResult; stdcall;                                 
-                                 
+    function GetVertexAlbedo(pVertColors: PD3DXColor; NumVerts: LongWord): HResult; stdcall;
+
     // If pixel PRT is being computed normals default to ones that are interpolated
     // from the vertex normals.  This specifies a texture that stores an object
     // space normal map instead (must use a texture format that can represent signed values)
-    // pNormalTexture - normal map, must be same dimensions as PRTBuffers, signed                                
+    // pNormalTexture - normal map, must be same dimensions as PRTBuffers, signed
     function SetPerTexelNormal(pNormalTexture: IDirect3DTexture9): HResult; stdcall;
 
     // Copies per-vertex albedo from mesh
@@ -5945,6 +6676,15 @@ type
     // Number of faces currently allocated (includes new faces)
     function GetNumFaces: LongWord; stdcall;
 
+    // Sets the Minimum/Maximum intersection distances, this can be used to control
+    // maximum distance that objects can shadow/reflect light, and help with "bad"
+    // art that might have near features that you don't want to shadow.  This does not
+    // apply for GPU simulations.
+    //  fMin - minimum intersection distance, must be positive and less than fMax
+    //  fMax - maximum intersection distance, if 0.0f use the previous value, otherwise
+    //      must be strictly greater than fMin
+    function SetMinMaxIntersection(fMin: Single; fMax: Single): HResult; stdcall;
+
     // This will subdivide faces on a mesh so that adaptively simulations can
     // use a more conservative threshold (it won't miss features.)
     // MinEdgeLength - minimum edge length that will be generated, if 0.0f a
@@ -5974,7 +6714,7 @@ type
     // SHOrder - order of SH to use
     // pDataOut - PRT buffer that is generated.  Can be single channel
     function ComputeDirectLightingSH(SHOrder: LongWord; pDataOut: ID3DXPRTBuffer): HResult; stdcall;
-                                       
+
     // Adaptive variant of above function.  This will refine the mesh
     // generating new vertices/faces to approximate the PRT signal
     // more faithfully.
@@ -5984,7 +6724,7 @@ type
     // MinEdgeLength - minimum edge length that will be generated
     //  if value is too small a fairly conservative model dependent value
     //  is used
-    // MaxSubdiv - maximum subdivision level, if 0 is specified it 
+    // MaxSubdiv - maximum subdivision level, if 0 is specified it
     //  will default to 4
     // pDataOut - PRT buffer that is generated.  Can be single channel.
     function ComputeDirectLightingSHAdaptive(SHOrder: LongWord; AdaptiveThresh: Single;
@@ -6024,32 +6764,47 @@ type
     // pDataTotal - [optional] results can be summed into this buffer
     function ComputeSS(pDataIn, pDataOut, pDataTotal: ID3DXPRTBuffer): HResult; stdcall;
 
+    // Adaptive version of ComputeSS.
+    //
+    // pDataIn - input data (previous bounce)
+    // AdaptiveThresh - threshold for adaptive subdivision (in PRT vector error)
+    //  if value is less then 1e-6f, 1e-6f is specified
+    // MinEdgeLength - minimum edge length that will be generated
+    //  if value is too small a fairly conservative model dependent value
+    //  is used
+    // MaxSubdiv - maximum subdivision level, if 0 is specified it
+    //  will default to 4
+    // pDataOut - result of subsurface scattering simulation
+    // pDataTotal - [optional] results can be summed into this buffer
+    function ComputeSSAdaptive(pDataIn: ID3DXPRTBuffer; AdaptiveThresh, MinEdgeLength: Single;
+        MaxSubdiv: LongWord; pDataOut, pDataTotal: ID3DXPRTBuffer): HResult; stdcall;
+
     // computes a single bounce of inter-reflected light
     // works for SH based PRT or generic lighting
     // Albedo is not multiplied by result
     //
-    // pDataIn - previous bounces data 
+    // pDataIn - previous bounces data
     // pDataOut - PRT buffer that is generated
     // pDataTotal - [optional] can be used to keep a running sum
     function ComputeBounce(pDataIn, pDataOut, pDataTotal: ID3DXPRTBuffer): HResult; stdcall;
 
     // Adaptive version of above function.
     //
-    // pDataIn - previous bounces data, can be single channel 
+    // pDataIn - previous bounces data, can be single channel
     // AdaptiveThresh - threshold for adaptive subdivision (in PRT vector error)
     //  if value is less then 1e-6f, 1e-6f is specified
     // MinEdgeLength - minimum edge length that will be generated
     //  if value is too small a fairly conservative model dependent value
     //  is used
-    // MaxSubdiv - maximum subdivision level, if 0 is specified it 
+    // MaxSubdiv - maximum subdivision level, if 0 is specified it
     //  will default to 4
     // pDataOut - PRT buffer that is generated
-    // pDataTotal - [optional] can be used to keep a running sum    
-    function ComputeBounceAdaptive(pDataIn: ID3DXPRTBuffer; AdaptiveThresh: Single;
-        MinEdgeLength: Single; MaxSubdiv: LongWord; pDataOut, pDataTotal: ID3DXPRTBuffer): HResult; stdcall;
+    // pDataTotal - [optional] can be used to keep a running sum
+    function ComputeBounceAdaptive(pDataIn: ID3DXPRTBuffer; AdaptiveThresh, MinEdgeLength: Single;
+        MaxSubdiv: LongWord; pDataOut, pDataTotal: ID3DXPRTBuffer): HResult; stdcall;
 
     // Computes projection of distant SH radiance into a local SH radiance
-    // function.  This models how direct lighting is attenuated by the 
+    // function.  This models how direct lighting is attenuated by the
     // scene and is a form of "neighborhood transfer."  The result is
     // a linear operator (matrix) at every sample point, if you multiply
     // this matrix by the distant SH lighting coefficients you get an
@@ -6058,21 +6813,21 @@ type
     // than be projected into another basis or used with any rendering
     // technique that uses spherical harmonics as input.
     // SetSamplingInfo must be called with TRUE for UseSphere and
-    // FALSE for UseCosine before this method is called.  
-    // Generates SHOrderIn*SHOrderIn*SHOrderOut*SHOrderOut scalars 
+    // FALSE for UseCosine before this method is called.
+    // Generates SHOrderIn*SHOrderIn*SHOrderOut*SHOrderOut scalars
     // per channel at each sample location.
     //
     // SHOrderIn  - Order of the SH representation of distant lighting
     // SHOrderOut - Order of the SH representation of local lighting
     // NumVolSamples  - Number of sample locations
     // pSampleLocs    - position of sample locations
-    // pDataOut       - PRT Buffer that will store output results    
+    // pDataOut       - PRT Buffer that will store output results
     function ComputeVolumeSamplesDirectSH(SHOrderIn, SHOrderOut: LongWord;
         NumVolSamples: LongWord; const pSampleLocs: PD3DXVector3; pDataOut: ID3DXPRTBuffer): HResult; stdcall;
-                                    
+
     // At each sample location computes a linear operator (matrix) that maps
     // the representation of source radiance (NumCoeffs in pSurfDataIn)
-    // into a local incident radiance function approximated with spherical 
+    // into a local incident radiance function approximated with spherical
     // harmonics.  For example if a light map data is specified in pSurfDataIn
     // the result is an SH representation of the flow of light at each sample
     // point.  If PRT data for an outdoor scene is used, each sample point
@@ -6081,7 +6836,7 @@ type
     // ComputeVolumeSamplesDirectSH this gives the complete representation for
     // how light arrives at each sample point parameterized by distant lighting.
     // SetSamplingInfo must be called with TRUE for UseSphere and
-    // FALSE for UseCosine before this method is called.    
+    // FALSE for UseCosine before this method is called.
     // Generates pSurfDataIn->NumCoeffs()*SHOrder*SHOrder scalars
     // per channel at each sample location.
     //
@@ -6091,38 +6846,63 @@ type
     // pSampleLocs    - position of sample locations
     // pDataOut       - PRT Buffer that will store output results
     function ComputeVolumeSamples(pSurfDataIn: ID3DXPRTBuffer; SHOrder: LongWord;
-      NumVolSamples: LongWord; const pSampleLocs: PD3DXVector3; pDataOut: ID3DXPRTBuffer): HResult; stdcall;
+        NumVolSamples: LongWord; const pSampleLocs: PD3DXVector3; pDataOut: ID3DXPRTBuffer): HResult; stdcall;
+
+
+    // Computes direct lighting (SH) for a point not on the mesh
+    // with a given normal - cannot use texture buffers.
+    //
+    // SHOrder      - order of SH to use
+    // NumSamples   - number of sample locations
+    // pSampleLocs  - position for each sample
+    // pSampleNorms - normal for each sample
+    // pDataOut     - PRT Buffer that will store output results
+    function ComputeSurfSamplesDirectSH(SHOrder: LongWord; NumSamples: LongWord;
+        const pSampleLocs, pSampleNorms: PD3DXVector3; pDataOut: ID3DXPRTBuffer): HResult; stdcall;
+
+    // given the solution for PRT or light maps, computes transfer vector at arbitrary
+    // position/normal pairs in space
+    //
+    // pSurfDataIn  - input data
+    // NumSamples   - number of sample locations
+    // pSampleLocs  - position for each sample
+    // pSampleNorms - normal for each sample
+    // pDataOut     - PRT Buffer that will store output results
+    // pDataTotal   - optional buffer to sum results into - can be NULL
+    function ComputeSurfSamplesBounce(pSurfDataIn: ID3DXPRTBuffer; NumSamples: LongWord;
+        const pSampleLocs, pSampleNorms: PD3DXVector3; pDataOut, pDataTotal: ID3DXPRTBuffer): HResult; stdcall;
 
     // Frees temporary data structures that can be created for subsurface scattering
     // this data is freed when the PRTComputeEngine is freed and is lazily created
     function FreeSSData: HResult; stdcall;
-    
+
     // Frees temporary data structures that can be created for bounce simulations
     // this data is freed when the PRTComputeEngine is freed and is lazily created
     function FreeBounceData: HResult; stdcall;
 
-    // This computes the convolution coefficients relative to the per sample normals
-    // that minimize error in a least squares sense with respect to the input PRT
-    // data set.  These coefficients can be used with skinned/transformed normals to
-    // model global effects with dynamic objects.  Shading normals can optionaly be
-    // solved for - these normals (along with the convolution coefficients) can more
-    // accurately represent the PRT signal.
+    // This computes the Local Deformable PRT (LDPRT) coefficients relative to the
+    // per sample normals that minimize error in a least squares sense with respect
+    // to the input PRT data set.  These coefficients can be used with skinned/transformed
+    // normals to model global effects with dynamic objects.  Shading normals can
+    // optionally be solved for - these normals (along with the LDPRT coefficients) can
+    // more accurately represent the PRT signal.  The coefficients are for zonal
+    // harmonics oriented in the normal/shading normal direction.
     //
     // pDataIn  - SH PRT dataset that is input
     // SHOrder  - Order of SH to compute conv coefficients for
     // pNormOut - Optional array of vectors (passed in) that will be filled with
-    //             "shading normals", convolution coefficients are optimized for
+    //             "shading normals", LDPRT coefficients are optimized for
     //             these normals.  This array must be the same size as the number of
     //             samples in pDataIn
-    // pDataOut - Output buffer (SHOrder convolution coefficients per channel per sample)
-    function ComputeConvCoeffs(pDataIn: ID3DXPRTBuffer; SHOrder: LongWord;
+    // pDataOut - Output buffer (SHOrder zonal harmonic coefficients per channel per sample)
+    function ComputeLDPRTCoeffs(pDataIn: ID3DXPRTBuffer; SHOrder: LongWord;
         pNormOut: PD3DXVector3; pDataOut: ID3DXPRTBuffer): HResult; stdcall;
 
     // scales all the samples associated with a given sub mesh
     // can be useful when using subsurface scattering
     // fScale - value to scale each vector in submesh by
     function ScaleMeshChunk(uMeshChunk: LongWord; fScale: Single; pDataOut: ID3DXPRTBuffer): HResult; stdcall;
-    
+
     // mutliplies each PRT vector by the albedo - can be used if you want to have the albedo
     // burned into the dataset, often better not to do this.  If this is not done the user
     // must mutliply the albedo themselves when rendering - just multiply the albedo times
@@ -6143,6 +6923,29 @@ type
     //  will be invoked
     // lpUserContext - will be passed back to the users call back
     function SetCallBack(pCB: TD3DXSHPRTSimCB; Frequency: Single; lpUserContext: Pointer): HResult; stdcall;
+
+    // Returns TRUE if the ray intersects the mesh, FALSE if it does not.  This function
+    // takes into account settings from SetMinMaxIntersection.  If the closest intersection
+    // is not needed this function is more efficient compared to the ClosestRayIntersection
+    // method.
+    // pRayPos - origin of ray
+    // pRayDir - normalized ray direction (normalization required for SetMinMax to be meaningful)
+    function ShadowRayIntersects(const pRayPos: TD3DXVector3; const pRayDir: TD3DXVector3): BOOL; stdcall;
+
+    // Returns TRUE if the ray intersects the mesh, FALSE if it does not.  If there is an
+    // intersection the closest face that was intersected and its first two barycentric coordinates
+    // are returned.  This function takes into account settings from SetMinMaxIntersection.
+    // This is a slower function compared to ShadowRayIntersects and should only be used where
+    // needed.  The third vertices barycentric coordinates will be 1 - pU - pV.
+    // pRayPos     - origin of ray
+    // pRayDir     - normalized ray direction (normalization required for SetMinMax to be meaningful)
+    // pFaceIndex  - Closest face that intersects.  This index is based on stacking the pBlockerMesh
+    //  faces before the faces from pMesh
+    // pU          - Barycentric coordinate for vertex 0
+    // pV          - Barycentric coordinate for vertex 1
+    // pDist       - Distance along ray where the intersection occured
+    function ClosestRayIntersects(const pRayPos: TD3DXVector3; const pRayDir: TD3DXVector3;
+        out pFaceIndex: DWORD; pU, pV: PSingle; pDist: PSingle): BOOL; stdcall;
   end;
 
 type
@@ -6350,7 +7153,11 @@ function D3DXSavePRTCompBufferToFile(
 //      Number of clusters to compute
 //    NumPCA
 //      Number of basis vectors to compute
-//    ppBufferIn
+//    pCB
+//      Optional Callback function
+//    lpUserContext
+//      Optional user context
+//    pBufferIn
 //      Buffer that will be compressed
 //    ppBufferOut
 //      Compressed buffer that will be created
@@ -6361,6 +7168,8 @@ function D3DXCreatePRTCompBuffer(
   Quality: TD3DXSHCompressQualityType;
   NumClusters: LongWord;
   NumPCA: LongWord;
+  pCB: TD3DXSHPRTSimCB;
+  lpUserContext: Pointer;
   pBufferIn:  ID3DXPRTBuffer;
   out ppBufferOut: ID3DXPRTCompBuffer): HResult; stdcall; external d3dx9meshDLL;
 {$EXTERNALSYM D3DXCreatePRTCompBuffer}
@@ -6408,6 +7217,8 @@ function D3DXCreateTextureGutterHelper(
 //    pMesh
 //      Mesh that represents the scene - must have an AttributeTable
 //      where vertices are in a unique attribute.
+//    pAdjacency
+//      Optional adjacency information
 //    ExtractUVs
 //      Set this to true if textures are going to be used for albedos
 //      or to store PRT vectors
@@ -6420,6 +7231,7 @@ function D3DXCreateTextureGutterHelper(
 
 function D3DXCreatePRTEngine(
   pMesh: ID3DXMesh;
+  pAdjacency: PDWORD;
   ExtractUVs: BOOL;
   pBlockerMesh: ID3DXMesh;
   out ppEngine: ID3DXPRTEngine): HResult; stdcall; external d3dx9meshDLL;
@@ -6487,8 +7299,8 @@ function D3DXConcatenateMeshes(
 //
 //  D3DXSHPRTSimulation:
 //  --------------------
-//  Runs the PRT simulation on a set of input meshes using a corresponding 
-//  set of materials.  This function can take a long time to run and should 
+//  Runs the PRT simulation on a set of input meshes using a corresponding
+//  set of materials.  This function can take a long time to run and should
 //  only done offline.
 //
 //  Parameters:
@@ -6503,7 +7315,7 @@ function D3DXConcatenateMeshes(
 //   NumRays
 //      Number of rays to shoot at each vertex
 //   NumBounces
-//      Number of bounces simulated - if this is not zero inter-reflections 
+//      Number of bounces simulated - if this is not zero inter-reflections
 //      are computed
 //   EnableSubSurf
 //      Indicates whether or not Subsurface Scattering is to be used
@@ -6540,7 +7352,7 @@ function D3DXSHPRTSimulation(
 //   Order
 //      Order of spherical harmonic coefficients to extract
 //   pTransferCoefficients
-//      Array of Order^2 floats into which transfer coefficients for the 
+//      Array of Order^2 floats into which transfer coefficients for the
 //      specified channel are written
 //   Channel
 //      Specifies the channel to extract (0/1/2 for R/G/B)
@@ -6656,13 +7468,13 @@ function D3DXSHPRTSimulationTex(
 //
 //  D3DXSHPRTExtractTexture:
 //  ------------------------
-//  Pulls the data for a given channel out of pSimulationResults.  
-//  
+//  Pulls the data for a given channel out of pSimulationResults.
+//
 //  Parameters:
 //   Channel
 //      Channel to be extracted.
 //   StartCoefficient
-//      Initial coefficient to extract 
+//      Initial coefficient to extract
 //   NumCoefficients
 //      Number of coefficients to extract
 //   pSimulationResults
@@ -6672,9 +7484,9 @@ function D3DXSHPRTSimulationTex(
 //      when simulator was run and be a signed or float format
 //
 //  Example:
-//      For an order 4 simulation, there are 16 coefficients, which can be 
-//      stored into four 4-channel textures by calling D3DXSPHRTExtractTexture 
-//      4 times with NumCoefficients set to 4, and StartCoefficient set to 
+//      For an order 4 simulation, there are 16 coefficients, which can be
+//      stored into four 4-channel textures by calling D3DXSPHRTExtractTexture
+//      4 times with NumCoefficients set to 4, and StartCoefficient set to
 //      0, 4, 8, and 12 in succession.
 //
 //============================================================================
@@ -6690,9 +7502,9 @@ function D3DXSHPRTExtractTexture(
 //
 //  D3DXSHPRTExtractToMesh:
 //  -----------------------
-//  Pulls transfer coefficients from the buffer containing the simulation 
+//  Pulls transfer coefficients from the buffer containing the simulation
 //  results and attaches them to the input mesh.
-//  Can only be called on single channel buffers (use D3DXSHPRTExtractChannel 
+//  Can only be called on single channel buffers (use D3DXSHPRTExtractChannel
 //  otherwise).
 //
 //  Parameters:
@@ -6729,7 +7541,7 @@ function D3DXSHPRTExtractToMesh(
 //   pSimulationResults
 //      Buffer obtained from the simulator that contains transfer vectors.
 //   Quality
-//      Type of compression to use 
+//      Type of compression to use
 //   NumClusters
 //      Number of clusters to use for compression
 //   NumPCA
@@ -6751,7 +7563,7 @@ function D3DXSHPRTCompress(
 //
 //  D3DXSHPRTCompExtractToMesh:
 //  ---------------------------
-//  Pulls PCA coefficients from compressed buffer and attaches them to the 
+//  Pulls PCA coefficients from compressed buffer and attaches them to the
 //  mesh.
 //
 //  Parameters:
@@ -6799,7 +7611,7 @@ function D3DXSHPRTCompExtractDesc(
 //  D3DXSHPRTCompNormalizeData:
 //  ---------------------------
 //  Given a compressed buffer, rescales all of the PCA projection coefficients
-//  so that they are within [-1, 1].  The PCA vectors are scaled so that 
+//  so that they are within [-1, 1].  The PCA vectors are scaled so that
 //  reconstruction is still correct.  This maximizes precision when packing
 //  into textures.
 //
@@ -6849,7 +7661,7 @@ function D3DXSHPRTCompExtractBasis(
 //   pCompressedResults
 //      Buffer obtained from D3DXSHPRTCompress
 //   pClusterIDs
-//      Pointer where D3DXSHPRTCOMPBUFFER_DESC::NumSamples IDs are written 
+//      Pointer where D3DXSHPRTCOMPBUFFER_DESC::NumSamples IDs are written
 //
 //============================================================================
 
@@ -6953,7 +7765,7 @@ function D3DXSHPRTCompSuperCluster(
 //  to split the mesh into a group of faces/vertices per super cluster.
 //  Each super cluster contains all of the faces that contain any vertex
 //  classified in one of its clusters.  All of the vertices connected to this
-//  set of faces are also included with the returned array ppVertStatus 
+//  set of faces are also included with the returned array ppVertStatus
 //  indicating whether or not the vertex belongs to the supercluster.
 //
 //  Parameters:
@@ -6977,12 +7789,12 @@ function D3DXSHPRTCompSuperCluster(
 //      Number of faces in the original mesh (pInputIB is 3 times this length)
 //   ppIBData
 {$IFDEF DX92}
-//      LPD3DXBUFFER holds raw index buffer that will contain the resulting split faces.  
+//      LPD3DXBUFFER holds raw index buffer that will contain the resulting split faces.
 //      Format determined by bIBIs32Bit.  Allocated by function
 //   pIBDataLength
 //      Length of ppIBData, assigned in function
 //   OutputIBIs32Bit
-//      Indicates whether the output index buffer is to be 32-bit (otherwise 
+//      Indicates whether the output index buffer is to be 32-bit (otherwise
 //      16-bit is assumed)
 //   ppFaceRemap
 //      LPD3DXBUFFER mapping of each face in ppIBData to original faces.  Length is
@@ -7588,6 +8400,23 @@ const
   {$EXTERNALSYM D3DX_FILTER_SRGB}
 
 
+{$IFDEF DX92}
+//-----------------------------------------------------------------------------
+// D3DX_SKIP_DDS_MIP_LEVELS is used to skip mip levels when loading a DDS file:
+//-----------------------------------------------------------------------------
+
+const
+  D3DX_SKIP_DDS_MIP_LEVELS_MASK   = $1F;
+  {$EXTERNALSYM D3DX_SKIP_DDS_MIP_LEVELS_MASK}
+  D3DX_SKIP_DDS_MIP_LEVELS_SHIFT  = 26;
+  {$EXTERNALSYM D3DX_SKIP_DDS_MIP_LEVELS_SHIFT}
+
+function D3DX_SKIP_DDS_MIP_LEVELS(levels, filter: DWORD): DWORD;{$IFDEF ALLOW_INLINE} inline;{$ENDIF}
+{$EXTERNALSYM D3DX_SKIP_DDS_MIP_LEVELS}
+
+
+
+{$ENDIF}
 //----------------------------------------------------------------------------
 // D3DX_NORMALMAP flags:
 // ---------------------
@@ -8419,7 +9248,7 @@ function D3DXSaveVolumeToFileInMemory(
   pSrcBox: TD3DBox): HResult; stdcall; external d3dx9texDLL;
 {$EXTERNALSYM D3DXSaveVolumeToFileInMemory}
 
-        
+
 //////////////////////////////////////////////////////////////////////////////
 // Create/Save Texture APIs //////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -8559,15 +9388,15 @@ function D3DXCreateVolumeTexture(
 //      Size in bytes of file in memory.
 {$IFDEF DX92}
 //  Width, Height, Depth, Size
-//      Size in pixels.  If zero or D3DX_DEFAULT, the size will be taken from 
-//      the file and rounded up to a power of two.  If D3DX_DEFAULT_NONPOW2, 
+//      Size in pixels.  If zero or D3DX_DEFAULT, the size will be taken from
+//      the file and rounded up to a power of two.  If D3DX_DEFAULT_NONPOW2,
 //      and the device supports NONPOW2 textures, the size will not be rounded.
-//      If D3DX_FROM_FILE, the size will be taken exactly as it is in the file, 
+//      If D3DX_FROM_FILE, the size will be taken exactly as it is in the file,
 //      and the call will fail if this violates device capabilities.
 //  MipLevels
 //      Number of mip levels.  If zero or D3DX_DEFAULT, a complete mipmap
-//      chain will be created.  If D3DX_FROM_FILE, the size will be taken 
-//      exactly as it is in the file, and the call will fail if this violates 
+//      chain will be created.  If D3DX_FROM_FILE, the size will be taken
+//      exactly as it is in the file, and the call will fail if this violates
 //      device capabilities.
 //  Usage
 //      Texture usage flags
@@ -8597,7 +9426,13 @@ function D3DXCreateVolumeTexture(
 //      Or D3DX_DEFAULT for D3DX_FILTER_TRIANGLE.
 //  MipFilter
 //      D3DX_FILTER flags controlling how each miplevel is filtered.
+{$IFDEF DX92}
+//      Or D3DX_DEFAULT for D3DX_FILTER_BOX.
+//      Use the D3DX_SKIP_DDS_MIP_LEVELS macro to specify both a filter and the
+//      number of mip levels to skip when loading DDS files.
+{$ELSE}
 //      Or D3DX_DEFAULT for D3DX_FILTER_BOX,
+{$ENDIF}
 //  ColorKey
 //      Color to replace with transparent black, or 0 to disable colorkey.
 //      This is always a 32-bit ARGB color, independent of the source image
@@ -8612,7 +9447,6 @@ function D3DXCreateVolumeTexture(
 //      The texture object that will be created
 //
 //----------------------------------------------------------------------------
-
 
 // FromFile
 
@@ -9305,7 +10139,7 @@ function D3DXFillVolumeTexture(
 // D3DXFillTextureTX:
 // ------------------
 // Uses a TX Shader target to function to fill each texel of each mip level
-// of a given texture. The TX Shader target should be a compiled function 
+// of a given texture. The TX Shader target should be a compiled function
 // taking 2 paramters and returning a float4 color.
 //
 // Paramters:
@@ -9518,6 +10352,22 @@ type
   {$EXTERNALSYM D3DXFRAME}
   TD3DXFrame = _D3DXFRAME;
 
+{$IFDEF FPC}
+
+  //----------------------------------------------------------------------------
+  // This interface is needed for special hack to allow hierarchy loading in FPC
+  {$INTERFACES CORBA}
+  ID3DXAllocateHierarchy_FPC = interface
+    function CreateFrame(Name: PAnsiChar; out ppNewFrame: PD3DXFrame): HResult; stdcall;
+    function CreateMeshContainer(Name: PAnsiChar; const pMeshData: TD3DXMeshData;
+        pMaterials: PD3DXMaterial; pEffectInstances: PD3DXEffectInstance;
+        NumMaterials: DWORD; pAdjacency: PDWORD; pSkinInfo: ID3DXSkinInfo;
+        out ppNewMeshContainer: PD3DXMeshContainer): HResult; stdcall;
+    function DestroyFrame(pFrameToFree: PD3DXFrame): HResult; stdcall;
+    function DestroyMeshContainer(pMeshContainerToFree: PD3DXMeshContainer): HResult; stdcall;
+  end;
+  {$INTERFACES DEFAULT}
+{$ENDIF}
 
   //----------------------------------------------------------------------------
   // ID3DXAllocateHierarchy:
@@ -9527,7 +10377,7 @@ type
   // destroying frame hierarchies
   //----------------------------------------------------------------------------
   {$EXTERNALSYM ID3DXAllocateHierarchy}
-  ID3DXAllocateHierarchy = {$IFDEF TMT}object{$ELSE}class{$ENDIF}
+  ID3DXAllocateHierarchy = {$IFDEF TMT}object{$ELSE}class{$ENDIF}{$IFDEF FPC}(ID3DXAllocateHierarchy_FPC){$ENDIF}
     // ID3DXAllocateHierarchy
 
     //------------------------------------------------------------------------
@@ -9537,9 +10387,9 @@ type
     //
     // Parameters:
     //  Name
-    //		Name of the frame to be created
-    //	ppNewFrame
-    //		Returns the created frame object
+    //      Name of the frame to be created
+    //  ppNewFrame
+    //      Returns the created frame object
     //
     //------------------------------------------------------------------------
     function CreateFrame(Name: PAnsiChar; out ppNewFrame: PD3DXFrame): HResult; {$IFNDEF TMT}virtual; stdcall; abstract;{$ELSE}stdcall; virtual;{$ENDIF}
@@ -9551,28 +10401,28 @@ type
     //
     // Parameters:
     //  Name
-    //		Name of the mesh
-    //	pMesh
-    //		Pointer to the mesh object if basic polygon data found
-    //	pPMesh
-    //		Pointer to the progressive mesh object if progressive mesh data found
-    //	pPatchMesh
-    //		Pointer to the patch mesh object if patch data found
-    //	pMaterials
-    //		Array of materials used in the mesh
-    //	pEffectInstances
-    //		Array of effect instances used in the mesh
-    //	NumMaterials
-    //		Num elements in the pMaterials array
-    //	pAdjacency
-    //		Adjacency array for the mesh
-    //	pSkinInfo
-    //		Pointer to the skininfo object if the mesh is skinned
-    //	pBoneNames
-    //		Array of names, one for each bone in the skinned mesh.
-    //		The numberof bones can be found from the pSkinMesh object
-    //	pBoneOffsetMatrices
-    //		Array of matrices, one for each bone in the skinned mesh.
+    //    Name of the mesh
+    //  pMesh
+    //    Pointer to the mesh object if basic polygon data found
+    //  pPMesh
+    //    Pointer to the progressive mesh object if progressive mesh data found
+    //  pPatchMesh
+    //    Pointer to the patch mesh object if patch data found
+    //  pMaterials
+    //    Array of materials used in the mesh
+    //  pEffectInstances
+    //    Array of effect instances used in the mesh
+    //  NumMaterials
+    //    Num elements in the pMaterials array
+    //  pAdjacency
+    //    Adjacency array for the mesh
+    //  pSkinInfo
+    //    Pointer to the skininfo object if the mesh is skinned
+    //  pBoneNames
+    //    Array of names, one for each bone in the skinned mesh.
+    //    The numberof bones can be found from the pSkinMesh object
+    //  pBoneOffsetMatrices
+    //    Array of matrices, one for each bone in the skinned mesh.
     //
     //------------------------------------------------------------------------
     function CreateMeshContainer(Name: PAnsiChar; const pMeshData: TD3DXMeshData;
@@ -9587,7 +10437,7 @@ type
     //
     // Parameters:
     //  pFrameToFree
-    //		Pointer to the frame to be de-allocated
+    //    Pointer to the frame to be de-allocated
     //
     //------------------------------------------------------------------------
     function DestroyFrame(pFrameToFree: PD3DXFrame): HResult; {$IFNDEF TMT}virtual; stdcall; abstract;{$ELSE}stdcall; virtual;{$ENDIF}
@@ -9599,12 +10449,26 @@ type
     //
     // Parameters:
     //  pMeshContainerToFree
-    //		Pointer to the mesh container object to be de-allocated
+    //    Pointer to the mesh container object to be de-allocated
     //
     //------------------------------------------------------------------------
     function DestroyMeshContainer(pMeshContainerToFree: PD3DXMeshContainer): HResult; {$IFNDEF TMT}virtual; stdcall; abstract;{$ELSE}stdcall; virtual;{$ENDIF}
   end;
 
+{$IFDEF FPC}
+  //----------------------------------------------------------------------------
+  // To expose FreePascal class as abstract C++ class
+  {$INTERFACES CORBA}
+  ID3DXLoadUserData_FPC = interface
+    function LoadTopLevelData(pXofChildData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult; stdcall;
+    function LoadFrameChildData(pFrame: PD3DXFrame;
+        pXofChildData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult; stdcall;
+    function LoadMeshChildData(pMeshContainer: PD3DXMeshContainer;
+        pXofChildData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult; stdcall;
+  end;
+  {$INTERFACES DEFAULT}
+
+{$ENDIF}
   //----------------------------------------------------------------------------
   // ID3DXLoadUserData:
   // ------------------
@@ -9613,7 +10477,7 @@ type
   // to load the data.
   //----------------------------------------------------------------------------
   {$EXTERNALSYM ID3DXLoadUserData}
-  ID3DXLoadUserData = {$IFDEF TMT}object{$ELSE}class{$ENDIF}
+  ID3DXLoadUserData = {$IFDEF TMT}object{$ELSE}class{$ENDIF}{$IFDEF FPC}(ID3DXLoadUserData_FPC){$ENDIF}
     function LoadTopLevelData(pXofChildData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult; {$IFNDEF TMT}virtual; stdcall; abstract;{$ELSE}stdcall; virtual;{$ENDIF}
 
     function LoadFrameChildData(pFrame: PD3DXFrame;
@@ -9623,6 +10487,24 @@ type
         pXofChildData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult; {$IFNDEF TMT}virtual; stdcall; abstract;{$ELSE}stdcall; virtual;{$ENDIF}
   end;
 
+{$IFDEF FPC}
+  //----------------------------------------------------------------------------
+  // To expose FreePascal class as abstract C++ class
+  {$INTERFACES CORBA}
+  ID3DXSaveUserData_FPC = interface
+    function AddFrameChildData(pFrame: PD3DXFrame;
+        pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF};
+        pXofFrameData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult; stdcall;
+    function AddMeshChildData(pMeshContainer: PD3DXMeshContainer;
+        pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF}; pXofMeshData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult; stdcall;
+    function AddTopLevelDataObjectsPre(pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF}): HResult; stdcall;
+    function AddTopLevelDataObjectsPost(pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF}): HResult; stdcall;
+    function RegisterTemplates(pXFileApi: {$IFDEF DX92}ID3DXFile{$ELSE}IDirectXFile{$ENDIF}): HResult; stdcall;
+    function SaveTemplates(pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF}): HResult; stdcall;
+  end;
+  {$INTERFACES DEFAULT}
+
+{$ENDIF}
   //----------------------------------------------------------------------------
   // ID3DXSaveUserData:
   // ------------------
@@ -9631,7 +10513,7 @@ type
   // child data objects to the object provided to the callback.
   //----------------------------------------------------------------------------
   {$EXTERNALSYM ID3DXSaveUserData}
-  ID3DXSaveUserData = {$IFDEF TMT}object{$ELSE}class{$ENDIF}
+  ID3DXSaveUserData = {$IFDEF TMT}object{$ELSE}class{$ENDIF}{$IFDEF FPC}(ID3DXSaveUserData_FPC){$ENDIF}
     function AddFrameChildData(pFrame: PD3DXFrame;
         pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF};
         pXofFrameData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult; {$IFNDEF TMT}virtual; stdcall; abstract;{$ELSE}stdcall; virtual;{$ENDIF}
@@ -9790,7 +10672,7 @@ type
   //----------------------------------------------------------------------------
   // D3DXCOMPRESSION_FLAGS:
   // ----------------------
-  // Flags that can be passed into ID3DXKeyframedAnimationSet::Compress. 
+  // Flags that can be passed into ID3DXKeyframedAnimationSet::Compress.
   //----------------------------------------------------------------------------
   PD3DXCompressionFlags = ^TD3DXCompressionFlags;
   _D3DXCOMPRESSION_FLAGS = (
@@ -9843,7 +10725,7 @@ type
     function GetTranslationKeys(Animation: LongWord; pTranslationKeys: PD3DXKeyVector3): HResult; stdcall;
   {$IFDEF DX92}
     function GetTranslationKey(Animation, Key: LongWord; pTranslationKey: PD3DXKeyVector3): HResult; stdcall;
-	  function SetTranslationKey(Animation, Key: LongWord; pTranslationKey: PD3DXKeyVector3): HResult; stdcall;
+    function SetTranslationKey(Animation, Key: LongWord; pTranslationKey: PD3DXKeyVector3): HResult; stdcall;
   {$ENDIF}
 
     // Callback keys
@@ -9851,12 +10733,12 @@ type
     function GetCallbackKeys(pCallbackKeys: PD3DXKeyCallback): HResult; stdcall;
   {$IFDEF DX92}
     function GetCallbackKey(Key: LongWord; pCallbackKey: PD3DXKeyCallback): HResult; stdcall;
-	  function SetCallbackKey(Key: LongWord; pCallbackKey: PD3DXKeyCallback): HResult; stdcall;
+    function SetCallbackKey(Key: LongWord; pCallbackKey: PD3DXKeyCallback): HResult; stdcall;
 
-	  // Key removal methods. These are slow, and should not be used once the animation starts playing
-	  function UnregisterScaleKey(Animation: LongWord; Key: LongWord): HResult; stdcall;
+    // Key removal methods. These are slow, and should not be used once the animation starts playing
+    function UnregisterScaleKey(Animation: LongWord; Key: LongWord): HResult; stdcall;
     function UnregisterRotationKey(Animation: LongWord; Key: LongWord): HResult; stdcall;
-	  function UnregisterTranslationKey(Animation: LongWord; Key: LongWord): HResult; stdcall;
+    function UnregisterTranslationKey(Animation: LongWord; Key: LongWord): HResult; stdcall;
   {$ENDIF}
 
     // One-time animaton SRT keyframe registration
@@ -9871,7 +10753,7 @@ type
         pTranslationKeys: PD3DXKeyVector3      // Array of translation keys
   {$ELSE}
         pTranslationKeys: PD3DXKeyVector3;     // Array of translation keys
-        pAnimationIndex: PDWORD					       // Returns the animation index
+        pAnimationIndex: PDWORD                // Returns the animation index
   {$ENDIF}
       ): HResult; stdcall;
 
@@ -9974,7 +10856,7 @@ type
   //----------------------------------------------------------------------------
   // D3DXTRANSITION_TYPE:
   // --------------------
-  // This enum defines the type of transtion performed on a event that 
+  // This enum defines the type of transtion performed on a event that
   // transitions from one value to another.
   //----------------------------------------------------------------------------
   PD3DXTransitionType = ^TD3DXTransitionType;
@@ -9991,7 +10873,7 @@ type
   // D3DXEVENT_DESC:
   // ---------------
   // This structure describes a animation controller event.
-  // It gives the event's type, track (if the event is a track event), global 
+  // It gives the event's type, track (if the event is a track event), global
   // start time, duration, transition method, and target value.
   //----------------------------------------------------------------------------
   PD3DXEventDesc = ^TD3DXEventDesc;
@@ -10022,6 +10904,16 @@ type
   TD3DXEventHandle = D3DXEVENTHANDLE;
   PD3DXEventHandle = ^TD3DXEventHandle;
 
+{$IFDEF FPC}
+
+  //----------------------------------------------------------------------------
+  // To expose FreePascal class as abstract C++ class
+  {$INTERFACES CORBA}
+  ID3DXAnimationCallbackHandler_FPC = interface
+    function HandleCallback(Track: LongWord; pCallbackData: Pointer): HResult; stdcall;
+  end;
+  {$INTERFACES DEFAULT}
+{$ENDIF}
 
   //----------------------------------------------------------------------------
   // ID3DXAnimationCallbackHandler:
@@ -10031,7 +10923,7 @@ type
   // ID3DXAnimationController::AdvanceTime() is called.
   //----------------------------------------------------------------------------
   {$EXTERNALSYM ID3DXAnimationCallbackHandler}
-  ID3DXAnimationCallbackHandler = {$IFDEF TMT}object{$ELSE}class{$ENDIF}
+  ID3DXAnimationCallbackHandler = {$IFDEF TMT}object{$ELSE}class{$ENDIF}{$IFDEF FPC}(ID3DXAnimationCallbackHandler_FPC){$ENDIF}
     //----------------------------------------------------------------------------
     // ID3DXAnimationCallbackHandler::HandleCallback:
     // ----------------------------------------------
@@ -10091,7 +10983,7 @@ type
   {$ENDIF}
 
     // Global time
-    function AdvanceTime(TimeDelta: Double; pCallbackHandler: ID3DXAnimationCallbackHandler): HResult; stdcall;
+    function AdvanceTime(TimeDelta: Double; pCallbackHandler: {$IFDEF FPC}ID3DXAnimationCallbackHandler_FPC{$ELSE}ID3DXAnimationCallbackHandler{$ENDIF}): HResult; stdcall;
     function ResetTime: HResult; stdcall;
     function GetTime: Double; stdcall;
 
@@ -10179,15 +11071,15 @@ type
 //      Returns root node pointer of the loaded frame hierarchy
 //  ppAnimController
 //      Returns pointer to an animation controller corresponding to animation
-//		in the .X file. This is created with default max tracks and events
+//      in the .X file. This is created with default max tracks and events
 //
 //----------------------------------------------------------------------------
 function D3DXLoadMeshHierarchyFromXA(
   Filename: PAnsiChar;
   MeshOptions: DWORD;
   pD3DDevice: IDirect3DDevice9;
-  pAlloc: ID3DXAllocateHierarchy;
-  pUserDataLoader: ID3DXLoadUserData;
+  pAlloc: {$IFDEF FPC}ID3DXAllocateHierarchy_FPC{$ELSE}ID3DXAllocateHierarchy{$ENDIF};
+  pUserDataLoader: {$IFDEF FPC}ID3DXLoadUserData_FPC{$ELSE}ID3DXLoadUserData{$ENDIF};
   out ppFrameHierarchy: PD3DXFrame;
   out ppAnimController: ID3DXAnimationController): HResult; stdcall; external d3dx9animDLL name 'D3DXLoadMeshHierarchyFromXA';
 {$EXTERNALSYM D3DXLoadMeshHierarchyFromXA}
@@ -10196,8 +11088,8 @@ function D3DXLoadMeshHierarchyFromXW(
   Filename: PWideChar;
   MeshOptions: DWORD;
   pD3DDevice: IDirect3DDevice9;
-  pAlloc: ID3DXAllocateHierarchy;
-  pUserDataLoader: ID3DXLoadUserData;
+  pAlloc: {$IFDEF FPC}ID3DXAllocateHierarchy_FPC{$ELSE}ID3DXAllocateHierarchy{$ENDIF};
+  pUserDataLoader: {$IFDEF FPC}ID3DXLoadUserData_FPC{$ELSE}ID3DXLoadUserData{$ENDIF};
   out ppFrameHierarchy: PD3DXFrame;
   out ppAnimController: ID3DXAnimationController): HResult; stdcall; external d3dx9animDLL name 'D3DXLoadMeshHierarchyFromXW';
 {$EXTERNALSYM D3DXLoadMeshHierarchyFromXW}
@@ -10206,8 +11098,8 @@ function D3DXLoadMeshHierarchyFromX(
   Filename: PChar;
   MeshOptions: DWORD;
   pD3DDevice: IDirect3DDevice9;
-  pAlloc: ID3DXAllocateHierarchy;
-  pUserDataLoader: ID3DXLoadUserData;
+  pAlloc: {$IFDEF FPC}ID3DXAllocateHierarchy_FPC{$ELSE}ID3DXAllocateHierarchy{$ENDIF};
+  pUserDataLoader: {$IFDEF FPC}ID3DXLoadUserData_FPC{$ELSE}ID3DXLoadUserData{$ENDIF};
   out ppFrameHierarchy: PD3DXFrame;
   out ppAnimController: ID3DXAnimationController): HResult; stdcall; external d3dx9animDLL name 'D3DXLoadMeshHierarchyFromXA';
 {$EXTERNALSYM D3DXLoadMeshHierarchyFromX}
@@ -10218,8 +11110,8 @@ function D3DXLoadMeshHierarchyFromXInMemory(
   SizeOfMemory: DWORD;
   MeshOptions: DWORD;
   pD3DDevice: IDirect3DDevice9;
-  pAlloc: ID3DXAllocateHierarchy;
-  pUserDataLoader: ID3DXLoadUserData;
+  pAlloc: {$IFDEF FPC}ID3DXAllocateHierarchy_FPC{$ELSE}ID3DXAllocateHierarchy{$ENDIF};
+  pUserDataLoader: {$IFDEF FPC}ID3DXLoadUserData_FPC{$ELSE}ID3DXLoadUserData{$ENDIF};
   out ppFrameHierarchy: PD3DXFrame;
   out ppAnimController: ID3DXAnimationController): HResult; stdcall; external d3dx9animDLL;
 {$EXTERNALSYM D3DXLoadMeshHierarchyFromXInMemory}
@@ -10249,7 +11141,7 @@ function D3DXSaveMeshHierarchyToFileA(
   XFormat: {$IFDEF DX92}TD3DXFFileFormat{$ELSE}TDXFileFormat{$ENDIF};
   pFrameRoot: PD3DXFrame;
   pAnimcontroller: ID3DXAnimationController;
-  pUserDataSaver: ID3DXSaveUserData): HResult; stdcall; external d3dx9animDLL name 'D3DXSaveMeshHierarchyToFileA';
+  pUserDataSaver: {$IFDEF FPC}ID3DXSaveUserData_FPC{$ELSE}ID3DXSaveUserData{$ENDIF}): HResult; stdcall; external d3dx9animDLL name 'D3DXSaveMeshHierarchyToFileA';
 {$EXTERNALSYM D3DXSaveMeshHierarchyToFileA}
 
 function D3DXSaveMeshHierarchyToFileW(
@@ -10257,7 +11149,7 @@ function D3DXSaveMeshHierarchyToFileW(
   XFormat: {$IFDEF DX92}TD3DXFFileFormat{$ELSE}TDXFileFormat{$ENDIF};
   pFrameRoot: PD3DXFrame;
   pAnimcontroller: ID3DXAnimationController;
-  pUserDataSaver: ID3DXSaveUserData): HResult; stdcall; external d3dx9animDLL name 'D3DXSaveMeshHierarchyToFileW';
+  pUserDataSaver: {$IFDEF FPC}ID3DXSaveUserData_FPC{$ELSE}ID3DXSaveUserData{$ENDIF}): HResult; stdcall; external d3dx9animDLL name 'D3DXSaveMeshHierarchyToFileW';
 {$EXTERNALSYM D3DXSaveMeshHierarchyToFileW}
 
 function D3DXSaveMeshHierarchyToFile(
@@ -10265,7 +11157,7 @@ function D3DXSaveMeshHierarchyToFile(
   XFormat: {$IFDEF DX92}TD3DXFFileFormat{$ELSE}TDXFileFormat{$ENDIF};
   pFrameRoot: PD3DXFrame;
   pAnimcontroller: ID3DXAnimationController;
-  pUserDataSaver: ID3DXSaveUserData): HResult; stdcall; external d3dx9animDLL name 'D3DXSaveMeshHierarchyToFileA';
+  pUserDataSaver: {$IFDEF FPC}ID3DXSaveUserData_FPC{$ELSE}ID3DXSaveUserData{$ENDIF}): HResult; stdcall; external d3dx9animDLL name 'D3DXSaveMeshHierarchyToFileA';
 {$EXTERNALSYM D3DXSaveMeshHierarchyToFile}
 
 
@@ -10275,15 +11167,15 @@ function D3DXSaveMeshHierarchyToFile(
 // Destroys the subtree of frames under the root, including the root
 //
 // Parameters:
-//	pFrameRoot
-//		Pointer to the root node
+//  pFrameRoot
+//      Pointer to the root node
 //  pAlloc
 //      Allocation interface used to de-allocate nodes of the frame hierarchy
 //
 //----------------------------------------------------------------------------
 function D3DXFrameDestroy(
   pFrameRoot: PD3DXFrame;
-  pAlloc: ID3DXAllocateHierarchy): HResult; stdcall; external d3dx9animDLL;
+  pAlloc: {$IFDEF FPC}ID3DXAllocateHierarchy_FPC{$ELSE}ID3DXAllocateHierarchy{$ENDIF}): HResult; stdcall; external d3dx9animDLL;
 {$EXTERNALSYM D3DXFrameDestroy}
 
 //----------------------------------------------------------------------------
@@ -10292,8 +11184,8 @@ function D3DXFrameDestroy(
 // Add a child frame to a frame
 //
 // Parameters:
-//	pFrameParent
-//		Pointer to the parent node
+//  pFrameParent
+//      Pointer to the parent node
 //  pFrameChild
 //      Pointer to the child node
 //
@@ -10309,15 +11201,15 @@ function D3DXFrameAppendChild(
 // Finds a frame with the given name.  Returns NULL if no frame found.
 //
 // Parameters:
-//	pFrameRoot
-//		Pointer to the root node
+//  pFrameRoot
+//      Pointer to the root node
 //  Name
 //      Name of frame to find
 //
 //----------------------------------------------------------------------------
 function D3DXFrameFind(
   pFrameRoot: PD3DXFrame;
-  Name: PAnsiChar): HResult; stdcall; external d3dx9animDLL;
+  Name: PAnsiChar): PD3DXFrame; stdcall; external d3dx9animDLL;
 {$EXTERNALSYM D3DXFrameFind}
 
 //----------------------------------------------------------------------------
@@ -10327,10 +11219,10 @@ function D3DXFrameFind(
 // matrices to the given animation controller
 //
 // Parameters:
-//	pFrameRoot
-//		Pointer to the root node
-//	pAnimController
-//		Pointer to the animation controller where the matrices are registered
+//  pFrameRoot
+//      Pointer to the root node
+//  pAnimController
+//      Pointer to the animation controller where the matrices are registered
 //
 //----------------------------------------------------------------------------
 function D3DXFrameRegisterNamedMatrices(
@@ -10341,13 +11233,13 @@ function D3DXFrameRegisterNamedMatrices(
 //----------------------------------------------------------------------------
 // D3DXFrameNumNamedMatrices:
 // --------------------------
-// Counts number of frames in a subtree that have non-null names 
+// Counts number of frames in a subtree that have non-null names
 //
 // Parameters:
-//	pFrameRoot
-//		Pointer to the root node of the subtree
+//  pFrameRoot
+//      Pointer to the root node of the subtree
 // Return Value:
-//		Count of frames
+//      Count of frames
 //
 //----------------------------------------------------------------------------
 function D3DXFrameNumNamedMatrices(
@@ -10360,12 +11252,12 @@ function D3DXFrameNumNamedMatrices(
 // Computes the bounding sphere of all the meshes in the frame hierarchy.
 //
 // Parameters:
-//	pFrameRoot
-//		Pointer to the root node
-//	pObjectCenter
-//		Returns the center of the bounding sphere
-//	pObjectRadius
-//		Returns the radius of the bounding sphere
+//  pFrameRoot
+//      Pointer to the root node
+//  pObjectCenter
+//      Returns the center of the bounding sphere
+//  pObjectRadius
+//      Returns the radius of the bounding sphere
 //
 //----------------------------------------------------------------------------
 function D3DXFrameCalculateBoundingSphere(
@@ -10379,7 +11271,7 @@ function D3DXFrameCalculateBoundingSphere(
 // D3DXCreateKeyframedAnimationSet:
 // --------------------------------
 // This function creates a compressable keyframed animations set interface.
-// 
+//
 // Parameters:
 //  pName
 //      Name of the animation set
@@ -10649,7 +11541,7 @@ begin
   end;
 end;
 
-function D3DXVector4(xyz: TD3DXVector3; _w: Single): TD3DXVector4;
+function D3DXVector4(xyz: TD3DXVector3; _w: Single): TD3DXVector4;{$IFDEF ALLOW_INLINE} inline;{$ENDIF}
 begin
   with Result do
   begin
@@ -10675,7 +11567,7 @@ begin
   end;
 end;
 
-function D3DXVector4_16F(xyz: TD3DXVector3_16f; _w: TD3DXFloat16): TD3DXVector4_16F;
+function D3DXVector4_16F(xyz: TD3DXVector3_16f; _w: TD3DXFloat16): TD3DXVector4_16F;{$IFDEF ALLOW_INLINE} inline;{$ENDIF}
 begin
   with Result do
   begin
@@ -10838,28 +11730,28 @@ begin
   end;
 end;
 
-function D3DXColorToDWord(c: TD3DXColor): DWord;
-
-  function ColorLimit(const x: Single): DWord;
-  begin
-    if x > 1.0 then Result:= 255
-     else if x < 0 then Result:= 0
-      else Result:= DWORD(Trunc(x * 255.0 + 0.5));
-  end;
+function D3DXColorToDWord(c: TD3DXColor): DWord;{$IFDEF ALLOW_INLINE} inline;{$ENDIF}
+var
+  dwR, dwG, dwB, dwA: DWORD;
 begin
-  Result:= ColorLimit(c.a) shl 24 or ColorLimit(c.r) shl 16
-    or ColorLimit(c.g) shl 8 or ColorLimit(c.b);
+  if c.r > 1.0 then dwR:= 255 else if c.r < 0 then dwR:= 0 else dwR:= DWORD(Trunc(c.r * 255.0 + 0.5));
+  if c.g > 1.0 then dwG:= 255 else if c.g < 0 then dwG:= 0 else dwG:= DWORD(Trunc(c.g * 255.0 + 0.5));
+  if c.b > 1.0 then dwB:= 255 else if c.b < 0 then dwB:= 0 else dwB:= DWORD(Trunc(c.b * 255.0 + 0.5));
+  if c.a > 1.0 then dwA:= 255 else if c.a < 0 then dwA:= 0 else dwA:= DWORD(Trunc(c.a * 255.0 + 0.5));
+
+  Result:= (dwA shl 24) or (dwR shl 16) or (dwG shl 8) or dwB;
 end;
 
 function D3DXColorFromDWord(c: DWord): TD3DXColor;{$IFDEF ALLOW_INLINE} inline;{$ENDIF}
-const
-  f: Single = 1/255;
+var
+  f: Single; // = 1/255; //Clootie: Changed from CONST due to Delphi9 inline bug
 begin
+  f:= (1/255);
   with Result do
   begin
     r:= f * Byte(c shr 16);
     g:= f * Byte(c shr  8);
-    b:= f * Byte(c shr  0);
+    b:= f * Byte(c{shr 0});
     a:= f * Byte(c shr 24);
   end;
 end;
@@ -10923,7 +11815,7 @@ end;
 // Minimize each component.  x = min(x1, x2), y = min(y1, y2)
 function D3DXVec2Minimize(out vOut: TD3DXVector2; const v1, v2: TD3DXVEctor2): PD3DXVector2;
 begin
-  if v1.x < v2.x then vOut.x:= v1.x else vOut.y:= v2.x;
+  if v1.x < v2.x then vOut.x:= v1.x else vOut.x:= v2.x;
   if v1.y < v2.y then vOut.y:= v1.y else vOut.y:= v2.y;
   Result:= @vOut;
 end;
@@ -10931,7 +11823,7 @@ end;
 // Maximize each component.  x = max(x1, x2), y = max(y1, y2)
 function D3DXVec2Maximize(out vOut: TD3DXVector2; const v1, v2: TD3DXVector2): PD3DXVector2;
 begin
-  if v1.x > v2.x then vOut.x:= v1.x else vOut.y:= v2.x;
+  if v1.x > v2.x then vOut.x:= v1.x else vOut.x:= v2.x;
   if v1.y > v2.y then vOut.y:= v1.y else vOut.y:= v2.y;
   Result:= @vOut;
 end;
@@ -11298,7 +12190,27 @@ end;
 
 
 
+{$IFDEF DX92}
+//////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (C) Microsoft Corporation.  All Rights Reserved.
+//
+//  File:       d3dx9tex.h
+//  Content:    D3DX texturing APIs
+//
+//////////////////////////////////////////////////////////////////////////////
 
+// #define D3DX_SKIP_DDS_MIP_LEVELS(levels, filter) ((((levels) & D3DX_SKIP_DDS_MIP_LEVELS_MASK) << D3DX_SKIP_DDS_MIP_LEVELS_SHIFT) | ((filter) == D3DX_DEFAULT ? D3DX_FILTER_BOX : (filter)))
+function D3DX_SKIP_DDS_MIP_LEVELS(levels, filter: DWORD): DWORD;{$IFDEF ALLOW_INLINE} inline;{$ENDIF}
+begin
+  if (filter = D3DX_DEFAULT) then filter :=  D3DX_FILTER_BOX;
+  Result := ((levels and D3DX_SKIP_DDS_MIP_LEVELS_MASK) shl D3DX_SKIP_DDS_MIP_LEVELS_SHIFT) or filter;
+end;
+
+
+
+
+{$ENDIF}
 //////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -11328,22 +12240,20 @@ end;
 
 function ID3DXInclude.Close(pData: Pointer): HResult;
 begin
-
 end;
 
 function ID3DXInclude.Open(IncludeType: TD3DXIncludeType;
   pFileName: PAnsiChar; pParentData: Pointer; out ppData: Pointer;
   out pBytes: LongWord): HResult;
 begin
-
 end;
+
 
 { ID3DXAllocateHierarchy }
 
 function ID3DXAllocateHierarchy.CreateFrame(Name: PAnsiChar;
   out ppNewFrame: PD3DXFrame): HResult;
 begin
-
 end;
 
 function ID3DXAllocateHierarchy.CreateMeshContainer(Name: PAnsiChar;
@@ -11352,41 +12262,37 @@ function ID3DXAllocateHierarchy.CreateMeshContainer(Name: PAnsiChar;
   pAdjacency: PDWORD; pSkinInfo: ID3DXSkinInfo;
   out ppNewMeshContainer: PD3DXMeshContainer): HResult;
 begin
-
 end;
 
 function ID3DXAllocateHierarchy.DestroyFrame(
   pFrameToFree: PD3DXFrame): HResult;
 begin
-
 end;
 
 function ID3DXAllocateHierarchy.DestroyMeshContainer(
   pMeshContainerToFree: PD3DXMeshContainer): HResult;
 begin
-
 end;
+
 
 { ID3DXLoadUserData }
 
 function ID3DXLoadUserData.LoadFrameChildData(pFrame: PD3DXFrame;
   pXofChildData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult;
 begin
-
 end;
 
 function ID3DXLoadUserData.LoadMeshChildData(
   pMeshContainer: PD3DXMeshContainer;
   pXofChildData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult;
 begin
-
 end;
 
 function ID3DXLoadUserData.LoadTopLevelData(
   pXofChildData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult;
 begin
-
 end;
+
 
 { ID3DXSaveUserData }
 
@@ -11394,38 +12300,32 @@ function ID3DXSaveUserData.AddFrameChildData(pFrame: PD3DXFrame;
   pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF};
   pXofFrameData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult;
 begin
-
 end;
 
 function ID3DXSaveUserData.AddMeshChildData(
   pMeshContainer: PD3DXMeshContainer; pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF};
   pXofMeshData: {$IFDEF DX92}ID3DXFileData{$ELSE}IDirectXFileData{$ENDIF}): HResult;
 begin
-
 end;
 
 function ID3DXSaveUserData.AddTopLevelDataObjectsPost(
   pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF}): HResult;
 begin
-
 end;
 
 function ID3DXSaveUserData.AddTopLevelDataObjectsPre(
   pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF}): HResult;
 begin
-
 end;
 
 function ID3DXSaveUserData.RegisterTemplates(
   pXFileApi: IDirectXFile): HResult;
 begin
-
 end;
 
 function ID3DXSaveUserData.SaveTemplates(
   pXofSave: {$IFDEF DX92}ID3DXFileSaveObject{$ELSE}IDirectXFileSaveObject{$ENDIF}): HResult;
 begin
-
 end;
 
 { ID3DXAnimationCallbackHandler }
@@ -11433,9 +12333,8 @@ end;
 function ID3DXAnimationCallbackHandler.HandleCallback(Track: LongWord;
   pCallbackData: Pointer): HResult;
 begin
-
 end;
 
 {$ENDIF}
-end.
 
+end.

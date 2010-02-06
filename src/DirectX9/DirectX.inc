@@ -30,6 +30,7 @@
   {$ENDIF}
 
   // Additional settings
+  {$BOOLEVAL OFF}
   {$MINENUMSIZE 4}
   {$ALIGN ON}
 
@@ -38,6 +39,14 @@
     {$WARN UNSAFE_TYPE OFF}
     {$WARN UNSAFE_CAST OFF}
   {$ENDIF}
+
+  {$IFDEF COMPILER9_UP}
+    {$IFDEF DEBUG}
+      {$INLINE OFF}
+    {$ELSE}
+      {$INLINE ON}
+    {$ENDIF}
+  {$ENDIF}
 {$ELSE}
 
   // *** FreePascal compiler support ***
@@ -45,18 +54,16 @@
 
   {$APPTYPE GUI}
 
-  {$UNDEF TYPE_IDENTITY}
-  {$DEFINE SUPPORTS_EXCEPTIONS}
-  {$DEFINE SUPPORTS_DEFAULTPARAMS}
-  {$DEFINE SUPPORTS_OVERLOAD}
-
   // Additional settings
-  {$MODE DELPHI}
+  {$H+} // Long Strings
+  {$BOOLEVAL OFF}
   {$MINENUMSIZE 4}
   {$ALIGN ON}
   {$PACKRECORDS 8}
   {$INLINE ON}
 
+  {$UNDEF TYPE_IDENTITY}
+  {$DEFINE SUPPORTS_EXCEPTIONS}
   {$DEFINE SUPPORTS_INLINE}
   {$DEFINE COMPILER5_UP} // Specially for DirectDraw.pas
 
