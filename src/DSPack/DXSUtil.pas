@@ -4155,13 +4155,19 @@ begin
     if (bSign) then
     begin
       ud[0].QuadPart := DWORDLONG(-d);
-      if (d > 0) then ud[1].QuadPart := $FFFFFFFFFFFFFFFF
-                 else ud[1].QuadPart := 0;
+      if (d > 0) then
+      begin
+        ud[1].LowPart := $FFFFFFFF;
+        ud[1].HighPart := $FFFFFFFF;
+      end else ud[1].QuadPart := 0;
     end else
     begin
       ud[0].QuadPart := DWORDLONG(d);
-      if (d < 0) then ud[1].QuadPart := $FFFFFFFFFFFFFFFF
-                 else ud[1].QuadPart := 0;
+      if (d < 0) then
+      begin
+        ud[1].LowPart := $FFFFFFFF;
+        ud[1].HighPart := $FFFFFFFF;
+      end else ud[1].QuadPart := 0;
     end;
 
     uliTotal.QuadPart  := DWORDLONG(ud[0].LowPart) + p[0].LowPart;

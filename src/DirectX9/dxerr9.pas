@@ -127,7 +127,7 @@ type
   TDXTrace = {$IFDEF UNICODE}TDXTraceW{$ELSE}TDXTraceA{$ENDIF};
 
 function Dummy_DXTraceA(strFile: PAnsiChar; dwLine: DWORD; hr: HRESULT; strMsg: PAnsiChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
-function Dummy_DXTraceW(strFile: PChar; dwLine: DWORD; hr: HRESULT; strMsg: PWideChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
+function Dummy_DXTraceW(strFile: PWideChar; dwLine: DWORD; hr: HRESULT; strMsg: PWideChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
 
 var
   DXTraceA: TDXTraceA = Dummy_DXTraceA;
@@ -181,7 +181,7 @@ begin
   Result:= hr;
 end;
 
-function Dummy_DXTraceW(strFile: PChar; dwLine: DWORD; hr: HRESULT; strMsg: PWideChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
+function Dummy_DXTraceW(strFile: PWideChar; dwLine: DWORD; hr: HRESULT; strMsg: PWideChar; bPopMsgBox: BOOL{$IFDEF SUPPORTS_DEFAULTPARAMS} = FALSE{$ENDIF}): HRESULT; stdcall;
 begin
   Result:= hr;
 end;
