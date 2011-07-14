@@ -973,7 +973,11 @@ const
 
 {$IFNDEF COMPILER6_UP}
   procedure Set8087CW(NewCW: Word);
+  // martin begin - asm ref 15,32 bit is not supported with 64bit fpc compiler
+  {$IFNDEF FPC}
   function Get8087CW: Word;
+  {$ENDIF}
+  // martin end
 {$ENDIF}
 
 // previously TMPEGHeaderBitsWrapper
@@ -1016,12 +1020,18 @@ var
     end;
   end;
 
+// martin begin - asm ref 15,32 bit is not supported with 64bit fpc compiler
+{$IFNDEF FPC}
   function Get8087CW: Word;
   asm
     PUSH   0
     FNSTCW [ESP].Word
     POP    EAX
   end;
+{$ENDIF}
+// martin end
+
+
 {$ENDIF}
 
 // martin begin - added missing FPC activex implementations

@@ -9899,8 +9899,27 @@ end;
 procedure TBCAMThread.Close;
 var
   Thread: THandle;
+  // martin begin
+  {$IFDEF FPC}
+    {$IFDEF WIN64}
+    ThreadAdr: QWord;
+    {$ELSE}
+    ThreadAdr: LongInt;
+    {$ENDIF}
+  {$ENDIF}
 begin
-  Thread := InterlockedExchange(Integer(FThread), 0);
+  {$IFDEF FPC}
+    {$IFDEF WIN64}
+    ThreadAdr := QWord(FThread);
+    Thread := InterLockedExchange64(ThreadAdr, 0);
+    {$ELSE}
+    ThreadAdr := LongInt(FThread);
+    Thread := InterLockedExchange(ThreadAdr, 0);
+    {$ENDIF}
+  {$ELSE}
+    Thread := InterlockedExchange(Integer(FThread), 0);
+  {$ENDIF}
+  // martin end
   if BOOL(Thread) then
   begin
     WaitForSingleObject(Thread, INFINITE);
