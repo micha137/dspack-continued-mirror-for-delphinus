@@ -674,7 +674,13 @@ type
     function QueryId(out Id: LPWSTR): HResult; stdcall;
     function QueryAccept(const pmt: TAMMediaType): HResult; stdcall;
     function EnumMediaTypes(out ppEnum: IEnumMediaTypes): HResult; stdcall;
+    {$IFDEF FPC}
+    // martin begin - changed apPin to "var" because "out" crashes
+    function QueryInternalConnections(var apPin: IPin; var nPin: ULONG): HResult; stdcall;
+    // martin end
+    {$ELSE}
     function QueryInternalConnections(out apPin: IPin; var nPin: ULONG): HResult; stdcall;
+    {$ENDIF}
     function EndOfStream: HResult; stdcall;
     function BeginFlush: HResult; stdcall;
     function EndFlush: HResult; stdcall;

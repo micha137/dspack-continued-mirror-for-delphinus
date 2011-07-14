@@ -36,6 +36,7 @@
 {.$DEFINE WITH_PROPERTY_PAGE} // In case you´re not using Forms for PropertyPages and want
                               // smaller FileSizes, disable this. Disabling this will enable
                               // support for Property Pages from Resource Dialogs.
+                              // NOTE: Do not enable when you use Free Pascal
 
 {$MINENUMSIZE 4}
 {$ALIGN ON}
@@ -383,7 +384,13 @@ type
     // The filter graph will interpret NOT_IMPL as any input pin connects to
     // all visible output pins and vice versa.
     // apPin can be NULL if nPin==0 (not otherwise).
-    function QueryInternalConnections(out apPin: IPin; var nPin: ULONG): HRESULT; virtual; stdcall;
+    {$IFDEF FPC}
+    // martin begin - changed apPin on FPC to "var" because "out" crashes
+    function QueryInternalConnections(var apPin: IPin; var nPin: ULONG): HResult; virtual; stdcall;
+    // martin end
+    {$ELSE}
+    function QueryInternalConnections(out apPin: IPin; var nPin: ULONG): HResult; virtual; stdcall;
+    {$ENDIF}
     // Called when no more data will be sent
     function EndOfStream: HRESULT; virtual; stdcall;
     function BeginFlush: HRESULT; virtual; stdcall; abstract;
@@ -3218,7 +3225,7 @@ type
     );
     (*{$ifdef UNICODE}
     TBCMemAllocator(CHAR *, LPUNKNOWN, HRESULT * )
-    {$endif}(**)
+    {$endif}*)
     destructor Destroy; override;
 
     function InheritedAlloc: HRESULT;
@@ -4976,8 +4983,15 @@ begin
   result := AMGetWideString(FPinName, id);
 end;
 
+{$IFDEF FPC}
+// martin begin - changed apPin on FPC to "var" because "out" crashes
+function TBCBasePin.QueryInternalConnections(var apPin: IPin;
+  var nPin: ULONG): HRESULT;
+// martin end
+{$ELSE}
 function TBCBasePin.QueryInternalConnections(out apPin: IPin;
   var nPin: ULONG): HRESULT;
+{$ENDIF}
 begin
   result := E_NOTIMPL;
 end;
@@ -9028,7 +9042,13 @@ begin
   // the interface implementation class to us the iid we are talking about.
   result := GetTypeInfo(iid, 0, LocaleID, ti);
   if SUCCEEDED(result) then
+  {$IFDEF FPC}
+    // martin begin
+    result := ti.GetIDsOfNames(Names, NameCount, MEMBERID(DispIDs^));
+    // martin end
+  {$ELSE}
     result := ti.GetIDsOfNames(Names, NameCount, DispIDs);
+  {$ENDIF}
 end;
 
 function TBCBaseDispatch.GetTypeInfo(const iid: TGUID; info: Cardinal; lcid: LCID;
@@ -9109,8 +9129,15 @@ begin
     end;
   result := GetTypeInfo(0, LocaleID, ti);
   if FAILED(result) then exit;
-  result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags, TDispParams(Params),
-    VarResult, ExcepInfo, ArgErr);
+    {$IFDEF FPC}
+    // martin begin
+    result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags, TDispParams(Params),
+      Variant(VarResult^), ActiveX.EXCEPINFO(ExcepInfo^), UINT(ArgErr^));
+    // martin end
+    {$ELSE}
+    result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags, TDispParams(Params),
+      VarResult, ExcepInfo, ArgErr);
+    {$ENDIF}
 end;
 
 { TBCMediaEvent }
@@ -9157,7 +9184,15 @@ begin
     end;
   result := GetTypeInfo(0, LocaleID, ti);
   if FAILED(result) then exit;
-  result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags, TDispParams(Params), VarResult, ExcepInfo, ArgErr);
+  {$IFDEF FPC}
+  // martin begin
+  result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags, TDispParams(Params),
+    Variant(VarResult^), ActiveX.EXCEPINFO(ExcepInfo^), UINT(ArgErr^));
+  // martin end
+  {$ELSE}
+  result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags,
+    TDispParams(Params), VarResult, ExcepInfo, ArgErr);
+  {$ENDIF}
 end;
 
 { TBCMediaPosition }
@@ -9211,7 +9246,15 @@ begin
     end;
   result := GetTypeInfo(0, LocaleID, ti);
   if FAILED(result) then exit;
-  result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags, TDispParams(Params), VarResult, ExcepInfo, ArgErr);
+  {$IFDEF FPC}
+  // martin begin
+  result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags, TDispParams(Params),
+    Variant(VarResult^), ActiveX.EXCEPINFO(ExcepInfo^), UINT(ArgErr^));
+  // martin end
+  {$ELSE}
+  result := ti.Invoke(Pointer(Integer(Self)), DISPID, Flags,
+    TDispParams(Params), VarResult, ExcepInfo, ArgErr);
+  {$ENDIF}
 end;
 
 { TBCPosPassThru }

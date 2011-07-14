@@ -31,8 +31,10 @@
 {
   @abstract(Methods & usefull Class for Direct Show programming.)
   @author(Henri Gourvest: hgourvest@progdigy.com)
+  @contributors(Peter J. Haas, Andriy Nevhasymyy, Milenko Mitrovic,
+   Michael Andersen, Martin Offenwanger)
   @created(Mar 14, 2002)
-  @lastmod(Oct 24, 2003)
+  @lastmod(Jul 14, 2011)
 }
 
 unit DXSUtil;
@@ -50,6 +52,99 @@ uses
   {$IFDEF COMPILER6_UP} Variants, {$ENDIF}
   Windows, SysUtils, ActiveX, Classes, MMSystem, DirectShow9, WMF9, DirectDraw,
   DxDiag;
+
+// martin begin - added missing FPC activex declarations
+{$IFDEF FPC}
+const
+  {$EXTERNALSYM PROPPAGESTATUS_DIRTY}
+  PROPPAGESTATUS_DIRTY  = 1;  // Values in page have changed
+
+type
+  // TCAUUID structure - a counted array of TGUID
+  PGUIDList = ^TGUIDList;
+  TGUIDList = array[0..65535] of TGUID;
+  PCAGUID = ^TCAGUID;
+  {$EXTERNALSYM tagCAUUID}
+  tagCAUUID = record
+    cElems: Longint;
+    pElems: PGUIDList;
+  end;
+  TCAGUID = tagCAUUID;
+  {$EXTERNALSYM CAUUID}
+  CAUUID = TCAGUID;
+
+  // Unknown lists }
+  PUnknownList = ^TUnknownList;
+  TUnknownList = array[0..65535] of IUnknown;
+
+  // TPropPageInfo structure - information about a property page
+  PPropPageInfo = ^TPropPageInfo;
+  {$EXTERNALSYM tagPROPPAGEINFO}
+  tagPROPPAGEINFO = record
+    cb: Longint;
+    pszTitle: POleStr;
+    size: TSize;
+    pszDocString: POleStr;
+    pszHelpFile: POleStr;
+    dwHelpContext: Longint;
+  end;
+  TPropPageInfo = tagPROPPAGEINFO;
+  {$EXTERNALSYM PROPPAGEINFO}
+  PROPPAGEINFO = TPropPageInfo;
+
+  // IPropertyPageSite interface
+  {$EXTERNALSYM IPropertyPageSite}
+  IPropertyPageSite = interface
+    ['{B196B28C-BAB4-101A-B69C-00AA00341D07}']
+    function OnStatusChange(flags: Longint): HResult; stdcall;
+    function GetLocaleID(out localeID: TLCID): HResult; stdcall;
+    function GetPageContainer(out unk: IUnknown): HResult; stdcall;
+    function TranslateAccelerator(msg: PMsg): HResult; stdcall;
+  end;
+
+  // IPropertyPage interface
+  {$EXTERNALSYM IPropertyPage}
+  IPropertyPage = interface
+    ['{B196B28D-BAB4-101A-B69C-00AA00341D07}']
+    function SetPageSite(const pageSite: IPropertyPageSite): HResult; stdcall;
+    function Activate(hwndParent: HWnd; const rc: TRect; bModal: BOOL): HResult;
+      stdcall;
+    function Deactivate: HResult; stdcall;
+    function GetPageInfo(out pageInfo: TPropPageInfo): HResult; stdcall;
+    function SetObjects(cObjects: Longint; pUnkList: PUnknownList): HResult; stdcall;
+    function Show(nCmdShow: Integer): HResult; stdcall;
+    function Move(const rect: TRect): HResult; stdcall;
+    function IsPageDirty: HResult; stdcall;
+    function Apply: HResult; stdcall;
+    function Help(pszHelpDir: POleStr): HResult; stdcall;
+    function TranslateAccelerator(msg: PMsg): HResult; stdcall;
+  end;
+
+  // ISpecifyPropertyPages interface
+  {$EXTERNALSYM ISpecifyPropertyPages}
+  ISpecifyPropertyPages = interface
+    ['{B196B28B-BAB4-101A-B69C-00AA00341D07}']
+    function GetPages(out pages: TCAGUID): HResult; stdcall;
+  end;
+
+  {$EXTERNALSYM OleCreatePropertyFrame}
+  function OleCreatePropertyFrame(hwndOwner: HWnd; x, y: Integer;
+    lpszCaption: POleStr; cObjects: Integer; pObjects: Pointer;
+    cPages: Integer; pPageCLSIDs: Pointer; lcid: TLCID; dwReserved: Longint;
+    pvReserved: Pointer): HResult; stdcall; external 'olepro32.dll' name
+    'OleCreatePropertyFrame';
+  {$EXTERNALSYM VariantInit}
+  procedure VariantInit(var varg: OleVariant); stdcall; external
+    'oleaut32.dll' name 'VariantInit';
+  {$EXTERNALSYM VariantClear}
+  function VariantClear(var varg: OleVariant): HResult; stdcall; external
+    'oleaut32.dll' name 'VariantClear';
+
+  function FindVarData(const V: Variant): PVarData;
+  function VarIsType(const V: Variant; AVarType: TVarType): Boolean;
+
+{$ENDIF}
+// martin end
 
 const
   IID_IPropertyBag          : TGUID = '{55272A00-42CB-11CE-8135-00AA004BB851}';
@@ -788,7 +883,13 @@ type
     { Set or retrieve the moniker interface.}
     property Moniker: IMoniker read GetMoniker write SetMoniker;
     { Read a property bag. For example you can read the GUID identifier (PropertyBag('CLSID'))}
+    {$IFDEF FPC}
+    // martin begin
+    function PropertyBag(Name: UnicodeString): Variant;
+    // martin end
+    {$ELSE}
     function PropertyBag(Name: UnicodeString): OleVariant;
+    {$ENDIF}
     {Return the IBaseFilter interface corresponding to filter.}
     function CreateFilter: IBaseFilter;
   end;
@@ -923,6 +1024,22 @@ var
   end;
 {$ENDIF}
 
+// martin begin - added missing FPC activex implementations
+{$IFDEF FPC}
+  function FindVarData(const V: Variant): PVarData;
+  begin
+    Result := @TVarData(V);
+    while Result.VType = varByRef or varVariant do
+      Result := PVarData(Result.VPointer);
+  end;
+
+  function VarIsType(const V: Variant; AVarType: TVarType): Boolean;
+  begin
+    Result := FindVarData(V)^.VType = AVarType;
+  end;
+{$ENDIF}
+// martin end
+
   function ProfileFromGUID(const GUID: TGUID): TWMPofiles8;
   begin
     for result := low(TWMPofiles8) to high(TWMPofiles8) do
@@ -1018,13 +1135,25 @@ end;
     Moniker: IMoniker;
     ROT    : IRunningObjectTable;
     wsz    : UnicodeString;
+    // martin begin
+    {$IFDEF FPC}
+    lwID   : DWORD;
+    {$ENDIF}
+    // martin end
   begin
     result := GetRunningObjectTable(0, ROT);
     if (result <> S_OK) then exit;
     wsz := format('FilterGraph %p pid %x',[pointer(graph),GetCurrentProcessId()]);
     result  := CreateItemMoniker('!', PWideChar(wsz), Moniker);
     if (result <> S_OK) then exit;
+    {$IFDEF FPC}
+    // martin begin - fpc qnat a uint (DWORD) as ID
+    result  := ROT.Register(0, Graph, Moniker, lwID);
+    ID := Integer(lwID);
+    // martin end
+    {$ELSE}
     result  := ROT.Register(0, Graph, Moniker, ID);
+    {$ENDIF}
     Moniker := nil;
   end;
 
@@ -1940,7 +2069,13 @@ end;
     Moniker    : IMoniker;
     Fetched    : ULONG;
     PropBag    : IPropertyBag;
+    {$IFDEF FPC}
+    // martin begin
+    Name       : variant;
+    // martin end
+    {$ELSE}
     Name       : olevariant;
+    {$ENDIF}
     hr         : HRESULT;
     i          : integer;
   begin
@@ -1953,7 +2088,13 @@ end;
     hr := SysDevEnum.CreateClassEnumerator(CatGUID, EnumCat, 0);
     if (hr = S_OK) then
     begin
-      while(EnumCat.Next(1, Moniker, @Fetched) = S_OK) do
+      // martin begin
+      {$IFDEF FPC}
+        while(EnumCat.Next(1, Moniker, Fetched) = S_OK) do
+      {$ELSE}
+        while(EnumCat.Next(1, Moniker, @Fetched) = S_OK) do
+      {$ENDIF}
+      // martin end
         begin
           Moniker.BindToStorage(nil, nil, IID_IPropertyBag, PropBag);
           new(ACategory);
@@ -2060,6 +2201,11 @@ end;
   var
     SysDevEnum  : ICreateDevEnum;
     EnumCat     : IEnumMoniker;
+    // martin begin
+    {$IFDEF FPC}
+    Fetched     : ULONG;
+    {$ENDIF}
+    // martin end
   begin
     result := nil;
    if ((index < CountFilters) and (index >= 0)) then
@@ -2067,7 +2213,13 @@ end;
         CocreateInstance(CLSID_SystemDeviceEnum, nil, CLSCTX_INPROC, IID_ICreateDevEnum, SysDevEnum);
         SysDevEnum.CreateClassEnumerator(FGUID, EnumCat, 0);
         EnumCat.Skip(index);
+        {$IFDEF FPC}
+        // martin begin
+        EnumCat.Next(1, Result, Fetched);
+        // martin end
+        {$ELSE}
         EnumCat.Next(1, Result, nil);
+        {$ENDIF}
         EnumCat.Reset;
         SysDevEnum := nil;
         EnumCat    := nil;
@@ -2079,6 +2231,11 @@ end;
     SysDevEnum  : ICreateDevEnum;
     EnumCat     : IEnumMoniker;
     Moniker     : IMoniker;
+    // martin begin
+    {$IFDEF FPC}
+    Fetched     : ULONG;
+    {$ENDIF}
+    // martin end
   begin
     result := nil;
    if ((index < CountFilters) and (index >= 0)) then
@@ -2086,7 +2243,13 @@ end;
         CocreateInstance(CLSID_SystemDeviceEnum, nil, CLSCTX_INPROC, IID_ICreateDevEnum, SysDevEnum);
         SysDevEnum.CreateClassEnumerator(FGUID, EnumCat, 0);
         EnumCat.Skip(index);
-        EnumCat.Next(1, Moniker, nil);
+        {$IFDEF FPC}
+        // martin begin
+        EnumCat.Next(1, Result, Fetched);
+        // martin end
+        {$ELSE}
+        EnumCat.Next(1, Result, nil);
+        {$ENDIF}
         Moniker.BindToObject(nil, nil, IID_IBaseFilter, result);
         EnumCat.Reset;
         SysDevEnum := nil;
@@ -2976,7 +3139,13 @@ end;
       result := nil;
   end;
 
+  {$IFDEF FPC}
+  // martin begin
+  function TBaseFilter.PropertyBag(Name: UnicodeString): Variant;
+  // martin end
+  {$ELSE}
   function TBaseFilter.PropertyBag(Name: UnicodeString): OleVariant;
+  {$ENDIF}
   var
     AMoniker : IMoniker;
     PropBag  : IPropertyBag;
@@ -4090,6 +4259,19 @@ begin
 end;
 // milenko end
 
+{$IFDEF FPC}
+
+// martin begin
+function EnlargedUnsignedDivide(Dividend: UInt64; Divisor: ULONG; Remainder: PULONG): ULONG; stdcall;
+begin
+  if remainder <> nil then
+    remainder^ := Dividend mod int64(Divisor);
+  Result := Dividend div int64(Divisor);
+end;
+// martin end
+
+{$ELSE}
+
 // milenko start wxutil implementation
 function EnlargedUnsignedDivide(Dividend: ULARGE_INTEGER; Divisor: ULONG; Remainder: PULONG): ULONG; stdcall;
 asm
@@ -4102,6 +4284,9 @@ asm
         mov      [ecx],edx
 @@End:
 end;
+
+{$ENDIF}
+
 
 function Int32x32To64(a, b: integer): Int64;
 asm
@@ -4217,10 +4402,27 @@ begin
     dwDivisor := DWORD(uc);
     uliDividend.HighPart := p[1].LowPart;
     uliDividend.LowPart := p[0].HighPart;
+
     if (uliDividend.QuadPart >= DWORDLONG(dwDivisor))
-      then uliResult.HighPart := EnlargedUnsignedDivide(uliDividend,dwDivisor,@p[0].HighPart)
-      else uliResult.HighPart := 0;
+      then
+        {$IFDEF FPC}
+        // martin begin
+        uliResult.HighPart := EnlargedUnsignedDivide(uliDividend.QuadPart,dwDivisor,@p[0].HighPart)
+        // martin end
+        {$ELSE}
+        uliResult.HighPart := EnlargedUnsignedDivide(uliDividend,dwDivisor,@p[0].HighPart)
+        {$ENDIF}
+      else
+        uliResult.HighPart := 0;
+
+    {$IFDEF FPC}
+    // martin begin
+    uliResult.LowPart := EnlargedUnsignedDivide(p[0].QuadPart,dwDivisor,nil);
+    // martin end
+    {$ELSE}
     uliResult.LowPart := EnlargedUnsignedDivide(p[0],dwDivisor,nil);
+    {$ENDIF}
+
     if bSign then Result := -LONGLONG(uliResult.QuadPart)
              else Result :=  LONGLONG(uliResult.QuadPart);
     Exit;
@@ -4331,13 +4533,25 @@ begin
   uliDividend.LowPart := p0.HighPart;
   if (uliDividend.QuadPart >= DWORDLONG(dwDivisor)) then
   begin
+    {$IFDEF FPC}
+    // martin begin
+    uliResult.HighPart := EnlargedUnsignedDivide(uliDividend.QuadPart, dwDivisor, @p0.HighPart);
+    // martin end
+    {$ELSE}
     uliResult.HighPart := EnlargedUnsignedDivide(uliDividend, dwDivisor, @p0.HighPart);
+    {$ENDIF}
   end else
   begin
     uliResult.HighPart := 0;
   end;
 
+  {$IFDEF FPC}
+  // martin begin
+  uliResult.LowPart := EnlargedUnsignedDivide(p0.QuadPart, dwDivisor, nil);
+  // martin end
+  {$ELSE}
   uliResult.LowPart := EnlargedUnsignedDivide(p0, dwDivisor, nil);
+  {$ENDIF}
 
   if bSign then Result := -LONGLONG(uliResult.QuadPart)
            else Result :=  LONGLONG(uliResult.QuadPart);
