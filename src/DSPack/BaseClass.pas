@@ -15928,6 +15928,7 @@ begin
     FAbort := True;
     TriggerThread;
     WaitForSingleObject(FThread, INFINITE);
+    CloseHandle(FThread);
     CloseHandle(FSchedule.GetEvent);
     FreeAndNil(FSchedule);
   end;
