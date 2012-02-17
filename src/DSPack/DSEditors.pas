@@ -30,14 +30,11 @@ unit DSEditors;
 {$ENDIF}
 
 interface
+{$I dspack.inc}
+
 uses
-{$IFDEF VER140} DesignIntf, DesignEditors, {$ELSE}
-{$IFDEF VER150} DesignIntf, DesignEditors, {$ELSE}
-{$IFDEF VER170} DesignIntf, DesignEditors, {$ELSE}
-{$IFDEF VER180} DesignIntf, DesignEditors, {$ELSE}
-{$IFDEF VER200} DesignIntf, DesignEditors, {$ELSE}
-{$IFDEF VER210} DesignIntf, DesignEditors, {$ELSE}
- DsgnIntf, {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
+
+{$IFDEF COMPILER6_UP} DesignIntf, DesignEditors, {$ELSE} DsgnIntf, {$ENDIF}
  Forms, Controls, DXSUtil, DSPack;
 
 type

@@ -50,7 +50,7 @@ unit BaseClass;
   {$WARN UNSAFE_CAST OFF}
 {$ENDIF}
 
-{$I Jedi.inc}
+{$I dspack.inc}
 
 interface
 
@@ -183,7 +183,7 @@ type
   end;
 
 
-  TBCMediaType = object
+  TBCMediaType = {$IFDEF DELPHI15_UP} record {$ELSE} object {$ENDIF}
     MediaType: PAMMediaType;
     function Equal(mt: TBCMediaType): boolean; overload;
     function Equal(mt: PAMMediaType): boolean; overload;
@@ -2615,7 +2615,7 @@ function CreatePosPassThru(Agg: IUnknown; Renderer: boolean; Pin: IPin; out Pass
 // -----
 
 type
-  TBCRefTime = object
+  TBCRefTime = {$IFDEF DELPHI15_UP} record {$ELSE} object {$ENDIF}
   public
     // *MUST* be the only data member so that this class is exactly
     // equivalent to a REFERENCE_TIME.
@@ -17773,7 +17773,7 @@ begin
   case uMsg of
     WM_STYLECHANGING:
     begin
-      if (wParam = GWL_EXSTYLE) then
+      if (wParam = THandle(GWL_EXSTYLE)) then
       begin
         lpss := PStyleStruct(lParam);
         lpss.styleNew := lpss.styleNew or WS_EX_CONTROLPARENT;

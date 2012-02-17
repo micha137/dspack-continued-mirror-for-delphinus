@@ -28,18 +28,9 @@
      *                                                                   *
      *********************************************************************)
 
-{
-  @abstract(Methods & usefull Class for Direct Show programming.)
-  @author(Henri Gourvest: hgourvest@progdigy.com)
-  @contributors(Peter J. Haas, Andriy Nevhasymyy, Milenko Mitrovic,
-   Michael Andersen, Martin Offenwanger)
-  @created(Mar 14, 2002)
-  @lastmod(Jul 14, 2011)
-}
-
 unit DXSUtil;
 {$B-}  // needed at least for TSysDevEnum.FilterIndexOfFriendlyName
-{$I jedi.inc}
+{$I dspack.inc}
 {$IFDEF COMPILER7_UP}
   {$WARN UNSAFE_CODE OFF}
   {$WARN UNSAFE_TYPE OFF}
@@ -367,8 +358,21 @@ const
     <b>ID:</b> identifier provided by the @link(AddGraphToRot) method.}
   function RemoveGraphFromRot(ID: integer): HRESULT;
 
+type
+  TDsPackDVDTimecode = record
+    Hours1    : byte;
+    Hours10   : byte;
+    Minutes1  : byte;
+    Minutes10 : byte;
+    Seconds1  : byte;
+    Seconds10 : byte;
+    Frames1   : byte;
+    Frames10  : byte;
+    FrameRateCode: byte;
+  end;
+
   { deprecated, convert a Time code event to TDVD_TimeCode record. }
-  function IntToTimeCode(x : longint): TDVDTimeCode;
+  function IntToTimeCode(x : longint): TDsPackDVDTimecode;
 
   { Return a string explaining a filter graph event. }
   function  GetEventCodeDef(code: longint): string;
@@ -1179,7 +1183,7 @@ end;
     ROT := nil;
   end;
 
-  function IntToTimeCode(x : longint): TDVDTimeCode;
+  function IntToTimeCode(x : LongInt): TDsPackDVDTimecode;
   begin
     Result.Hours1        := (x and $F0000000) shr 28;
     Result.Hours10       := (x and $0F000000) shr 24;

@@ -28,13 +28,7 @@
      *                                                                   *
      *********************************************************************)
 
-{
-  @abstract(DSPack Components.)
-  @author(Henri Gourvest: hgourvest@progdigy.com)
-  @created(Mar 14, 2002)
-  @lastmod(Oct 24, 2003)
-}
-{$I jedi.inc}
+{$I dspack.inc}
 {$IFDEF COMPILER6_UP}
   {$WARN SYMBOL_DEPRECATED OFF}
 {$ENDIF}
@@ -167,7 +161,7 @@ type
   TOnDVDAnglesAvailable        = procedure(sender: TObject; available: boolean) of object;                                         {@exclude}
   TOnDVDButtonAutoActivated    = procedure(sender: TObject; Button: Cardinal) of object;                                           {@exclude}
   TOnDVDCMD                    = procedure(sender: TObject; CmdID: Cardinal) of object;                                            {@exclude}
-  TOnDVDCurrentHMSFTime        = procedure(sender: TObject; HMSFTimeCode: TDVDHMSFTimeCode; TimeCode: TDVDTimeCode) of object;  {@exclude}
+  TOnDVDCurrentHMSFTime        = procedure(sender: TObject; HMSFTimeCode: TDVDHMSFTimeCode; TimeCode: TDsPackDVDTimecode) of object;  {@exclude}
   TOnDVDKaraokeMode            = procedure(sender: TObject; Played: boolean) of object;
   {@exclude}
   TOnBuffer = procedure(sender: TObject; SampleTime: Double; pBuffer: Pointer; BufferLen: longint) of object ;
@@ -1870,7 +1864,7 @@ const
   var
     lcid    : cardinal;
     achLang : array[0..MAX_PATH] of Char;
-    tc      : TDVDTimeCode;
+    tc      : TDsPackDVDTimecode;
     frate   : integer;
     hmsftc  : TDVDHMSFTimeCode;
     DVDInfo2: IDVDInfo2;
