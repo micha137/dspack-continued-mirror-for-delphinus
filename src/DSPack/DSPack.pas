@@ -831,7 +831,7 @@ type
       the DVD content. Playback is stopped. }
     property OnDVDErrorLowParentalLevel: TNotifyEvent read FOnDVDErrorLowParentalLevel write FOnDVDErrorLowParentalLevel;
 
-    { Macrovision® distribution failed. Playback stopped. }
+    { MacrovisionÂ® distribution failed. Playback stopped. }
     property OnDVDErrorMacrovisionFail: TNotifyEvent read FOnDVDErrorMacrovisionFail write FOnDVDErrorMacrovisionFail;
 
     { No discs can be played because the system region does not match the decoder region. }
@@ -1533,7 +1533,7 @@ type
     property Canvas;
 
     { The Colorkey is the color that the Overlay Mixer Filter used by DSVideoWindowEx sees
-      as transparent, when you draw ontop of the movie always set the canvas’s brush
+      as transparent, when you draw ontop of the movie always set the canvasÂ’s brush
       color to this color or set the style to bsclear.
       Note: The colors returned through this method vary depending on the current display mode.
       if the colors are 8-bit palettized, they will be bright system colors (such as magenta).
@@ -1840,8 +1840,14 @@ const
   end;
 
   procedure TFilterGraph.HandleEvents;
-  var hr: HRESULT;
-      Event, Param1, Param2: Integer;
+  var
+    hr: HRESULT;
+    Event: Integer;
+    {$IF CompilerVersion >= 24.0}
+    Param1, Param2: NativeInt;
+    {$ELSE}
+    Param1, Param2: Integer;
+    {$IFEND}
   begin
     if assigned(FMediaEventEx) then
     begin
