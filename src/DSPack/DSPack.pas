@@ -1851,6 +1851,8 @@ const
   begin
     if assigned(FMediaEventEx) then
     begin
+      // if you got compiler error on FMediaEventEx.GetEvent with XE7 or newer then 
+      // delete or remove from search path folder "DSPack\src\DirectX9"
       hr := FMediaEventEx.GetEvent(Event, Param1, Param2, 0);
       while (hr = S_OK) do
       begin
