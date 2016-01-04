@@ -27,8 +27,8 @@
      *********************************************************************)
 
 {.$DEFINE DEBUG}      // Debug Log
-{.$DEFINE TRACE}      // Trace Criteral Section (DEBUG must be ON)
-{.$DEFINE MESSAGE}    // Use OutputDebugString instead of a File (DEBUG must be ON)
+{.$DEFINE TRACE}      // Trace Critical Sections (DEBUG must be ON)
+{$DEFINE MESSAGE}    // Use OutputDebugString instead of a File (DEBUG must be ON)
 
 {.$DEFINE PERF}       // Show Performace Counter
 {.$DEFINE VTRANSPERF} // Show additional TBCVideoTransformFilter Performace Counter (PERF must be ON)
@@ -265,7 +265,7 @@ type
     // send an event notification to the filter graph if we know about it.
     // returns S_OK if delivered, S_FALSE if the filter graph does not sink
     // events, or an error otherwise.
-    function NotifyEvent(EventCode, EventParam1, EventParam2: LongInt): HRESULT;
+    function NotifyEvent(EventCode: Longint; EventParam1, EventParam2: LONG_PTR): HRESULT;
     // return the filter graph we belong to
     function GetFilterGraph: IFilterGraph;
     // Request reconnect
@@ -501,7 +501,7 @@ type
   TBCBaseOutputPin = class(TBCBasePin)
   protected
     FAllocator: IMemAllocator;
-    // interface on the downstreaminput pin, set up in CheckConnect when we connect.
+    // interface on the downstream input pin, set up in CheckConnect when we connect.
     FInputPin : IMemInputPin;
   public
     constructor Create(ObjectName: string; Filter: TBCBaseFilter; Lock: TBCCritSec;
@@ -4005,8 +4005,7 @@ begin
   end;
 end;
 
-function TBCBaseFilter.NotifyEvent(EventCode, EventParam1,
-  EventParam2: Integer): HRESULT;
+function TBCBaseFilter.NotifyEvent(EventCode: Longint; EventParam1, EventParam2: LONG_PTR): HRESULT;
 var
   Filter : IBaseFilter;
 begin
@@ -4014,7 +4013,7 @@ begin
   if assigned(FSink) then
   begin
     QueryInterface(IID_IBaseFilter,Filter);
-    if (EC_COMPLETE = EventCode) then EventParam2 := LongInt(Filter);
+    if (EC_COMPLETE = EventCode) then EventParam2 := LONG_PTR(Filter);
     result := FSink.Notify(EventCode, EventParam1, EventParam2);
     Filter := nil;
   end
@@ -4140,6 +4139,7 @@ begin
   try
     // remember the stream time offset
     FStart := tStart;
+OutputDebugString(PChar(Format('TBCBaseFilter.Run(tStart=%d): %d s', [tStart, tStart div UNITS])));
     if FState = State_Stopped then
     begin
       result := Pause;
@@ -4517,7 +4517,7 @@ end;
 function TBCBasePin.AttemptConnection(ReceivePin: IPin; pmt: PAMMediaType): HRESULT;
 begin
 
-  // The caller should hold the filter lock becasue this function
+  // The caller should hold the filter lock because this function
   // uses m_Connected.  The caller should also hold the filter lock
   // because this function calls SetMediaType(), IsStopped() and
   // CompleteConnect().
@@ -8416,7 +8416,7 @@ begin
   // One way would be to have our EnumMediaTypes return our output
   // connection type first but more deterministic and simple is to
   // call ReconnectEx passing the type we want to reconnect with
-  // via the base class ReconeectPin method.
+  // via the base class ReconnectPin method.
 
   if(dir = PINDIR_OUTPUT) then
   begin
@@ -9917,7 +9917,11 @@ begin
     Thread := InterLockedExchange(ThreadAdr, 0);
     {$ENDIF}
   {$ELSE}
+    {$IFDEF WIN64}
+    Thread := PHandle(InterlockedExchangePointer(Pointer(FThread), nil))^;
+    {$ELSE}
     Thread := InterlockedExchange(Integer(FThread), 0);
+    {$ENDIF}
   {$ENDIF}
   // martin end
   if BOOL(Thread) then
@@ -11125,7 +11129,7 @@ begin
           // derived class encountered an error
           Sample := nil;
           {$IFDEF DEBUG}
-            DbgLog(format('Error %08lX from FillBuffer!!!', [Result]));
+            DbgLog(format('Error %08x from FillBuffer!!!', [Result]));
           {$ENDIF}
           DeliverEndOfStream;
           FFilter.NotifyEvent(EC_ERRORABORT, Result, 0);
@@ -12278,7 +12282,7 @@ begin
     begin
 // milenko start (Delphi 5 compatibility)
       QueryInterface(IID_IBaseFilter,Filter);
-      NotifyEvent(EC_COMPLETE, S_OK, Integer(Filter));
+      NotifyEvent(EC_COMPLETE, S_OK, LONG_PTR(Filter));
       Filter := nil;
 // milenko end
       FState := State_Running;
@@ -13238,7 +13242,7 @@ begin
     // ??? return NotifyEvent(EC_COMPLETE,S_OK,(LONG_PTR)(IBaseFilter *)this);
 // milenko start (Delphi 5 compatibility)
     QueryInterface(IID_IBaseFilter,Filter);
-    Result := NotifyEvent(EC_COMPLETE, S_OK, Integer(Filter));
+    Result := NotifyEvent(EC_COMPLETE, S_OK, LONG_PTR(Filter));
     Filter := nil;
 // milenko end
   finally
@@ -13427,7 +13431,7 @@ begin
 // milenko start (delphi 5 compatibility)
 //      Pin := FInputPin as IPin;
       FInputPin.QueryInterface(IID_IPin,Pin);
-      NotifyEvent(EC_REPAINT, Integer(Pin), 0);
+      NotifyEvent(EC_REPAINT, LONG_PTR(Pin), 0);
       Pin := nil;
 // milenko end
       SetRepaintStatus(False);
@@ -13467,7 +13471,7 @@ begin
 //  Pin := FInputPin as IPin;
     FInputPin.QueryInterface(IID_IPin,Pin);
     // ??? m_pInputPin->AddRef();
-    NotifyEvent(EC_DISPLAY_CHANGED, Integer(Pin), 0);
+    NotifyEvent(EC_DISPLAY_CHANGED, LONG_PTR(Pin), 0);
     SetAbortSignal(True);
     ClearPendingSample;
 //    FreeAndNil(FInputPin);
@@ -14914,7 +14918,7 @@ begin
     // We were in a graph and now we're not
     // Do this properly in case we are aggregated
     QueryInterface(IID_IBaseFilter, Filter);
-    NotifyEvent(EC_WINDOW_DESTROYED, Integer(Filter), 0);
+    NotifyEvent(EC_WINDOW_DESTROYED, LONG_PTR(Filter), 0);
     Filter := nil;
   end;
 

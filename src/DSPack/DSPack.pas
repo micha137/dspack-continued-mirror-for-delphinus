@@ -145,7 +145,7 @@ type
   TOnGraphStreamError          = procedure(sender: TObject; Operation: HRESULT; Value: LongWord) of object ;                       {@exclude}
   TOnGraphVideoSizeChanged     = procedure(sender: TObject; Width, height: word) of object ;                                       {@exclude}
   TOnGraphTimeCodeAvailable    = procedure(sender: TObject; From: IBaseFilter; DeviceID: LongWord) of object ;                     {@exclude}
-  TOnGraphEXTDeviceModeChange  = procedure(sender: TObject; NewMode, DeviceID: LongWord) of object ;                               {@exclude}
+  TOnGraphEXTDeviceModeChange  = procedure(sender: TObject; NewMode, DeviceID: NativeInt) of object ;                               {@exclude}
   TOnGraphVMRRenderDevice      = procedure(sender: TObject; RenderDevice: TVMRRenderDevice) of object;
                                                                                                                                    {@exclude}
   TOnDVDAudioStreamChange      = procedure(sender: TObject; stream, lcid: Integer; Lang: string) of object;                        {@exclude}
@@ -372,11 +372,7 @@ type
     function UnableToRender(ph1, ph2: integer; pPin: IPin): HResult; // thiscall
   protected
     {@exclude}
-    procedure DoEvent(Event, Param1, Param2: Integer); virtual;
-    {@exclude}
-    procedure InsertFilter(AFilter: IFilter);
-    {@exclude}
-    procedure RemoveFilter(AFilter: IFilter);
+    procedure DoEvent(Event, Param1, Param2: NativeInt); virtual;
     {@exclude}
     procedure InsertEventNotifier(AEvent: IEvent);
     {@exclude}
@@ -384,6 +380,10 @@ type
     {@exclude}
     function QueryService(const rsid, iid: TGuid; out Obj): HResult; stdcall;
   public
+    {@exclude}
+    procedure InsertFilter(AFilter: IFilter);
+    {@exclude}
+    procedure RemoveFilter(AFilter: IFilter);
     { Retrieve/Set the current Position in MilliSeconds. }
     property Position: Integer read GetPosition write SetPosition;
     { Retrieve the total duration of a stream. }
@@ -831,7 +831,7 @@ type
       the DVD content. Playback is stopped. }
     property OnDVDErrorLowParentalLevel: TNotifyEvent read FOnDVDErrorLowParentalLevel write FOnDVDErrorLowParentalLevel;
 
-    { MacrovisionÂ® distribution failed. Playback stopped. }
+    { Macrovision® distribution failed. Playback stopped. }
     property OnDVDErrorMacrovisionFail: TNotifyEvent read FOnDVDErrorMacrovisionFail write FOnDVDErrorMacrovisionFail;
 
     { No discs can be played because the system region does not match the decoder region. }
@@ -1533,7 +1533,7 @@ type
     property Canvas;
 
     { The Colorkey is the color that the Overlay Mixer Filter used by DSVideoWindowEx sees
-      as transparent, when you draw ontop of the movie always set the canvasÂ’s brush
+      as transparent, when you draw ontop of the movie always set the canvas’s brush
       color to this color or set the style to bsclear.
       Note: The colors returned through this method vary depending on the current display mode.
       if the colors are 8-bit palettized, they will be bright system colors (such as magenta).
@@ -1698,7 +1698,7 @@ type
 
 implementation
 
-uses ComObj;
+uses ComObj, Types;
 
 const
   CLSID_FilterGraphCallback: TGUID = '{C7CAA944-C191-4AB1-ABA7-D8B40EF4D5B2}';
@@ -1764,7 +1764,7 @@ const
           if Succeeded(QueryInterface(IMediaEventEx, FMediaEventEx)) then
           begin
             FMediaEventEx.SetNotifyFlags(0); // enable events notification
-            FMediaEventEx.SetNotifyWindow(FHandle,WM_GRAPHNOTIFY,ULONG(FMediaEventEx));
+            FMediaEventEx.SetNotifyWindow(FHandle,WM_GRAPHNOTIFY,LONG_PTR(FMediaEventEx));
           end;
 
           // Callbacks
@@ -1840,19 +1840,12 @@ const
   end;
 
   procedure TFilterGraph.HandleEvents;
-  var
-    hr: HRESULT;
-    Event: Integer;
-    {$IF CompilerVersion >= 24.0}
-    Param1, Param2: NativeInt;
-    {$ELSE}
-    Param1, Param2: Integer;
-    {$IFEND}
+  var hr: HRESULT;
+      Event: Integer;
+      Param1, Param2: LONG_PTR;
   begin
     if assigned(FMediaEventEx) then
     begin
-      // if you got compiler error on FMediaEventEx.GetEvent with XE7 or newer then 
-      // delete or remove from search path folder "DSPack\src\DirectX9"
       hr := FMediaEventEx.GetEvent(Event, Param1, Param2, 0);
       while (hr = S_OK) do
       begin
@@ -1863,7 +1856,7 @@ const
     end;
   end;
 
-  procedure TFilterGraph.DoEvent(Event, Param1, Param2: Integer);
+  procedure TFilterGraph.DoEvent(Event, Param1, Param2: NativeInt);
   type
     TVideoSize = record
       Width : WORD;
@@ -1902,7 +1895,7 @@ const
       EC_STREAM_ERROR_STILLPLAYING : if assigned(FOnGraphStreamErrorStillPlaying) then FOnGraphStreamErrorStillPlaying(self, Param1, Param2);
       EC_STREAM_ERROR_STOPPED      : if assigned(FOnGraphStreamErrorStopped)      then FOnGraphStreamErrorStopped(self, Param1, Param2);
       EC_USERABORT                 : if assigned(FOnGraphUserAbort)               then FOnGraphUserAbort(self);
-      EC_VIDEO_SIZE_CHANGED        : if assigned(FOnGraphVideoSizeChanged)        then FOnGraphVideoSizeChanged(self, TVideoSize(Param1).Width, TVideoSize(Param1).Height);
+      EC_VIDEO_SIZE_CHANGED        : if assigned(FOnGraphVideoSizeChanged)        then FOnGraphVideoSizeChanged(self, TVideoSize(Integer(Param1)).Width, TVideoSize(Integer(Param1)).Height);
       EC_TIMECODE_AVAILABLE        : if assigned(FOnGraphTimeCodeAvailable)       then FOnGraphTimeCodeAvailable(self,IBaseFilter(Param1), Param2);
       EC_EXTDEVICE_MODE_CHANGE     : if assigned(FOnGraphEXTDeviceModeChange)     then FOnGraphEXTDeviceModeChange(self, Param1, Param2);
       EC_CLOCK_UNSET               : if assigned(FOnGraphClockUnset)              then FOnGraphClockUnset(self);
@@ -2000,7 +1993,7 @@ const
         begin
           if assigned(FOnDVDCurrentHMSFTime) then
             begin
-              hmsftc := TDVDHMSFTimeCode(param1);
+              hmsftc := TDVDHMSFTimeCode(Integer(param1));
               tc := IntToTimeCode(Param2);
               FOnDVDCurrentHMSFTime(self,hmsftc,tc);
             end;
@@ -2068,7 +2061,7 @@ const
     if active then
       begin
         AFilter.NotifyFilter(foRemoving);
-        FFilterGraph.RemoveFilter(AFilter.GetFilter);
+        CheckDSError(FFilterGraph.RemoveFilter(AFilter.GetFilter));
         AFilter.NotifyFilter(foRemoved);
       end;
     if FFilters.Count = 0 then
@@ -3381,12 +3374,12 @@ const
         BIHeaderPtr := Nil;
         if IsEqualGUID(MediaType.formattype, FORMAT_VideoInfo) then
         begin
-          if MediaType.cbFormat = SizeOf(TVideoInfoHeader) then  // check size
+          if MediaType.cbFormat >= SizeOf(TVideoInfoHeader) then  // check size
             BIHeaderPtr := @(PVideoInfoHeader(MediaType.pbFormat)^.bmiHeader);
         end
         else if IsEqualGUID(MediaType.formattype, FORMAT_VideoInfo2) then
         begin
-          if MediaType.cbFormat = SizeOf(TVideoInfoHeader2) then  // check size
+          if MediaType.cbFormat >= SizeOf(TVideoInfoHeader2) then  // check size
             BIHeaderPtr := @(PVideoInfoHeader2(MediaType.pbFormat)^.bmiHeader);
         end;
         // check, whether format is supported by TSampleGrabber
@@ -5979,3 +5972,4 @@ procedure TVMRBitmap.Update;
   end;
 
 end.
+
