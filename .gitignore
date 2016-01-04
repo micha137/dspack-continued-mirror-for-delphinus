@@ -1,0 +1,6 @@
+*.dsk
+*.tvsconfig
+*.local
+*.res
+packages/Win32/
+__history
