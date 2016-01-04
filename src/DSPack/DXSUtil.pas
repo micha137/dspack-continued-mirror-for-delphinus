@@ -150,6 +150,9 @@ const
   // VoxWare MetaSound
   MEDIASUBTYPE_VOXWARE      : TGUID = '{00000075-0000-0010-8000-00AA00389B71}';
 
+  MEDIASUBTYPE_H264         : TGUID = '{34363248-0000-0010-8000-00AA00389B71}';
+  MEDIASUBTYPE_AVC1         : TGUID = '{31435641-0000-0010-8000-00AA00389B71}';
+
   MiliSecPerDay : Cardinal = 86400000;
   MAX_TIME : Int64 = $7FFFFFFFFFFFFFFF;
 
@@ -424,8 +427,8 @@ type
   { Find the four-character codes wich identifi a codec. }
   function GetFOURCC(Fourcc: Cardinal): string;
 
-  { Convert a FCC (Four Char Codes) to Cardinal. A FCC identifie a media type.}
-  function FCC(str: String): Cardinal;
+  { Convert a FCC (Four Char Codes) to Cardinal. A FCC identifies a media type.}
+  function FCC(str: AnsiString): Cardinal;
 
   { Create the four-character codes from a Cardinal value. }
   function MAKEFOURCC(ch0, ch1, ch2, ch3: AnsiChar): Cardinal;
@@ -437,7 +440,7 @@ type
   { This function examine a media type and return a short description like GraphEdit. }
   function GetMediaTypeDescription(MediaType: PAMMediaType): string;
 
-  { Retrieve the Size needed to store a bitmat }
+  { Retrieve the Size needed to store a bitmap }
   function GetBitmapSize(Header: PBitmapInfoHeader): DWORD;
 
   function GetBitmapSubtype(bmiHeader: PBitmapInfoHeader): TGUID; stdcall;
@@ -533,10 +536,12 @@ type
 type
   // DirectShow Exception class
   EDirectShowException = class(Exception)
+  public
     ErrorCode: Integer;
   end;
 
   EDSPackException = class(Exception)
+  public
     ErrorCode: Integer;
   end;
 
@@ -1386,7 +1391,7 @@ end;
 
   { Convert a FCC (Four Char Codes) to Cardinal. A FCC identifie a media type.}
   {$NODEFINE FCC}
-  function FCC(str: String): Cardinal;
+  function FCC(str: AnsiString): Cardinal;
   begin
     Assert(Length(str) >= 4);
     result := PDWORD(str)^;
@@ -1542,6 +1547,8 @@ end;
     if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_MP42) then result := result+'MS-MPEG4' else
     if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_DIVX) then result := result+'DIVX' else
     if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_VOXWARE) then result := result+'VOXWARE_MetaSound' else
+    if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_H264) then result := result+'H264' else
+    if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_AVC1) then result := result+'AVC1' else
        result := result+'UnKnown ';
 
   // format
@@ -4291,16 +4298,23 @@ function EnlargedUnsignedDivide(Dividend: ULARGE_INTEGER; Divisor: ULONG; Remain
 asm
         mov      eax, Dividend.LowPart
         mov      edx, Dividend.HighPart
+{$IFDEF WIN64}
+        mov      rcx, Remainder
+        div      Divisor
+        or       rcx,rcx
+        jz       @@End
+        mov      [rcx],edx
+{$ELSE}
         mov      ecx, Remainder
         div      Divisor
         or       ecx,ecx
         jz       @@End
         mov      [ecx],edx
+{$ENDIF}
 @@End:
 end;
 
 {$ENDIF}
-
 
 function Int32x32To64(a, b: integer): Int64;
 asm
