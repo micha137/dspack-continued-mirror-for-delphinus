@@ -85,7 +85,7 @@ type
     function CritCheckOut: boolean;
   end;
 
-  TBCBaseObject = class(TObJect)
+  TBCBaseObject = class(TObject)
   private
     FName: string;
   public

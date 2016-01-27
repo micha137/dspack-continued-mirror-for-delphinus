@@ -36,6 +36,7 @@ requires
 contains
   BaseClass in '..\src\DSPack\BaseClass.pas',
   DSPack in '..\src\DSPack\DSPack.pas',
-  DXSUtil in '..\src\DSPack\DXSUtil.pas';
+  DXSUtil in '..\src\DSPack\DXSUtil.pas',
+  MediaSampleRingbuffer in '..\src\DSPack\MediaSampleRingbuffer.pas';
 
 end.

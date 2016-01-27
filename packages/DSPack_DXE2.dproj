@@ -108,6 +108,7 @@
         <DCCReference Include="..\src\DSPack\BaseClass.pas"/>
         <DCCReference Include="..\src\DSPack\DSPack.pas"/>
         <DCCReference Include="..\src\DSPack\DXSUtil.pas"/>
+        <DCCReference Include="..\src\DSPack\MediaSampleRingbuffer.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

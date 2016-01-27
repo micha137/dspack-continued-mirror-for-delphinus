@@ -1,8 +1,11 @@
 *.dsk
+*.identcache
 *.tvsconfig
 *.local
 *.res
+*.swp
 *.~*
+*~
 packages/Win32/
 packages/Win64/
 __history

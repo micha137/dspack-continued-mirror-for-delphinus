@@ -63,7 +63,7 @@ type
 
 implementation
 
-uses MediaTypeEditor, BaseFilterEditor, Classes;
+uses MediaTypeEditor, BaseFilterEditor, Classes, MediaSampleRingbuffer;
 
 // *****************************************************************************
 //  TMediaTypePropertyClass
@@ -124,7 +124,7 @@ uses MediaTypeEditor, BaseFilterEditor, Classes;
   procedure Register;
   begin
     RegisterComponents('DSPack', [TFilterGraph, TVideoWindow, TSampleGrabber,
-      TFilter, TASFWriter, TDSTrackBar, TDSVideoWindowEx2]);  
+      TFilter, TASFWriter, TDSTrackBar, TDSVideoWindowEx2, TMediaSampleRingbufferComponent]);
     RegisterPropertyEditor(TypeInfo(TMediaType), nil, '', TMediaTypePropertyClass);
     RegisterPropertyEditor(TypeInfo(TBaseFilter), nil, '', TBaseFilterPropertyClass);
   end;

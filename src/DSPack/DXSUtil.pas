@@ -160,6 +160,12 @@ const
   bits565: array[0..2] of DWord = ($00F800, $0007E0, $00001F);
   bits888: array[0..2] of DWord = ($FF0000, $00FF00, $0000FF);
 
+
+  CLSID_CMPEG2VidDecoderDS: TGUID = '{212690FB-83E5-4526-8FD7-74478B7939CD}';
+  CLSID_FFDShow: TGUID = '{04FE9017-F873-410E-871E-AB91661A4EF7}';
+  CLSID_Haali_Matroska_Mux: TGUID = '{A28F324B-DDC5-4999-AA25-D3A7E25EF7A8}';
+  CLSID_GDCL_MP4_Mux: TGUID = '{5FD85181-E542-4E52-8D9D-5D613C30131B}';
+
 ////////////////////////////////////////////////////////////////////////////////
 // DIVX ressources translated from latest OpenDivx DirectX Codec
 
