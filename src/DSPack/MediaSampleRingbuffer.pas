@@ -181,7 +181,6 @@ constructor TMediaSampleRingbufferComponent.Create(AOwner: TComponent);
 begin
   inherited;
   RingbufferSize := 100;
-  FRingBuffer := TThreadedQueueIMediaSample.Create(RingbufferSize);
 end;
 
 destructor TMediaSampleRingbufferComponent.Destroy;
@@ -238,7 +237,8 @@ begin
 {$ELSE}
           m := TMediaSampleRingbuffer(FBaseFilter);
 {$ENDIF}
-          CheckDSError(m.FInputPin.Disconnect);
+          if Assigned(m.FInputPin) then
+            CheckDSError(m.FInputPin.Disconnect);
         end;
       end;
     foRemoved:
@@ -277,6 +277,8 @@ procedure TMediaSampleRingbufferComponent.SetRingbufferSize(
 begin
   if ARingbufferSize <= 0 then raise Exception.Create('TMediaSampleRingbufferComponent.SetRingbufferSize invalid');
   FRingbufferSize := ARingbufferSize;
+  FreeAndNil(FRingBuffer);
+  FRingBuffer := TThreadedQueueIMediaSample.Create(RingbufferSize);
 end;
 
 function TMediaSampleRingbufferRendererInputPin.GetAllocatorRequirements(
