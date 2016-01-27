@@ -1,9 +1,12 @@
+*.dcu
 *.dsk
+*.exe
 *.identcache
-*.tvsconfig
 *.local
 *.res
+*.stat
 *.swp
+*.tvsconfig
 *.~*
 *~
 packages/Win32/
