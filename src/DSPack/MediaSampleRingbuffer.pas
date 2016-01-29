@@ -314,11 +314,11 @@ begin
   // if the allocator properties requested in
   // GetAllocatorRequirements() above were not honored
   // by the upstream filter, we set them here again
-  if p.cBuffers < m.FMediaSampleRingbufferComponent.FRingbufferSize+1 then begin
-    p.cBuffers := m.FMediaSampleRingbufferComponent.FRingbufferSize+1;
+  if p.cBuffers < m.FMediaSampleRingbufferComponent.FRingbufferSize+m.FMediaSampleRingbufferComponent.InFlightBuffers then begin
+    p.cBuffers := m.FMediaSampleRingbufferComponent.FRingbufferSize+m.FMediaSampleRingbufferComponent.InFlightBuffers;
     Result := pAllocator.SetProperties(p, actual);
     if Failed(Result) then Exit;
-    if actual.cBuffers < m.FMediaSampleRingbufferComponent.FRingbufferSize+1 then begin
+    if actual.cBuffers < m.FMediaSampleRingbufferComponent.FRingbufferSize+m.FMediaSampleRingbufferComponent.InFlightBuffers then begin
       Result := E_FAIL;
       DebugBreak;
     end;
