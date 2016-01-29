@@ -59,9 +59,11 @@ type
     FOnCheckMediaType: TCheckMediaTypeNotify;
     FBaseFilter: IBaseFilter;
     FRingbufferSize: Integer;
+    FInFlightBuffers: Integer;
 
     procedure SetFilterGraph(AFilterGraph: TFilterGraph);
     procedure SetRingbufferSize(ARingbufferSize: Integer);
+    procedure SetInFlightBuffers(AInFlightBuffers: Integer);
 
     // override TComponent.Notification
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -82,7 +84,9 @@ type
     property FilterGraph: TFilterGraph
       read FFilterGraph write SetFilterGraph;
     property OnCheckMediaType: TCheckMediaTypeNotify read FOnCheckMediaType write FOnCheckMediaType;
-    property RingbufferSize: Integer read FRingbufferSize write SetRingbufferSize;
+    property RingbufferSize: Integer read FRingbufferSize write
+    SetRingbufferSize;
+    property InFlightBuffers: Integer read FInFlightBuffers write SetInFlightBuffers;
   end;
 
 implementation
@@ -180,6 +184,7 @@ end;
 constructor TMediaSampleRingbufferComponent.Create(AOwner: TComponent);
 begin
   inherited;
+  InFlightBuffers := 10;
   RingbufferSize := 100;
 end;
 
@@ -272,6 +277,13 @@ begin
   FFilterGraph := AFilterGraph;
 end;
 
+procedure TMediaSampleRingbufferComponent.SetInFlightBuffers(
+  AInFlightBuffers: Integer);
+begin
+  if AInFlightBuffers <= 0 then raise Exception.Create('TMediaSampleRingbufferComponent.SetInFlightBuffers invalid');
+  FInFlightBuffers := AInFlightBuffers;
+end;
+
 procedure TMediaSampleRingbufferComponent.SetRingbufferSize(
   ARingbufferSize: Integer);
 begin
@@ -286,7 +298,8 @@ function TMediaSampleRingbufferRendererInputPin.GetAllocatorRequirements(
 var m: TMediaSampleRingbuffer;
 begin
   m := FRenderer as TMediaSampleRingbuffer;
-  pProps.cBuffers := m.FMediaSampleRingbufferComponent.FRingbufferSize+1;
+  pProps.cBuffers := m.FMediaSampleRingbufferComponent.FRingbufferSize +
+    m.FMediaSampleRingbufferComponent.InFlightBuffers;
   Result := S_OK;
 end;
 
