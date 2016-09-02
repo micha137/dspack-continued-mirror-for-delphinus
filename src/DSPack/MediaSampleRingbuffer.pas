@@ -6,8 +6,8 @@ uses
     BaseClass
   , DSPack
   , DirectShow9
-  , Winapi.Windows
-  , System.Classes
+  , Windows
+  , Classes
   , Generics.Collections
   ;
 
