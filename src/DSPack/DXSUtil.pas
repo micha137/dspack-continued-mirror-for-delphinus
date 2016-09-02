@@ -443,7 +443,7 @@ type
     code, using the current language setting.}
   function GetErrorString(hr: HRESULT): string;
 
-  { This function examine a media type and return a short description like GraphEdit. }
+  { This function examines a media type and returns a short description like GraphEdit. }
   function GetMediaTypeDescription(MediaType: PAMMediaType): string;
 
   { Retrieve the Size needed to store a bitmap }
@@ -845,8 +845,8 @@ type
     procedure   Clear;
     { Remove a media type from the list. }
     procedure   Delete(Index: Integer);
-    { Retrieve a mediaa type. }
-    property    Items[Index: Integer]: TMediaType read GetItem write SetItem;
+    { Retrieve a media type. }
+    property    Items[Index: Integer]: TMediaType read GetItem write SetItem; default;
     { Return a string describing the media type. }
     property    MediaDescription[Index: Integer]: string read GetMediaDescription;
     { Number of items in the list. }
@@ -982,7 +982,7 @@ const
 {$IFDEF VER130}
   function GUIDToString(const GUID: TGUID): string;
   function StringToGUID(const S: string): TGUID;
-  function EnsureRange(const AValue, AMin, AMax: Integer): Integer;  
+  function EnsureRange(const AValue, AMin, AMax: Integer): Integer;
 {$ENDIF}
 // milenko end
 
@@ -1429,9 +1429,11 @@ end;
 
   function GetErrorString(hr: HRESULT): string;
   var buffer: array[0..254] of char;
+    charsreturned: DWORD;
   begin
-    AMGetErrorText(hr,@buffer,255);
-    result := buffer;
+    charsreturned := AMGetErrorText(hr,@buffer,255);
+    if charsreturned<=0 then result := 'Unknown HRESULT code'
+    else result := buffer;
   end;
 
   function GetMediaTypeDescription(MediaType: PAMMediaType): string;
@@ -1860,7 +1862,7 @@ end;
     Size := SIZE_PREHEADER + Header.biSize;
 
     ASSERT(Header.biSize >= sizeof(TBitmapInfoHeader));
-    
+
     // Does this format use a palette, if the number of colours actually used
     // is zero then it is set to the maximum that are allowed for that colour
     // depth (an example is 256 for eight bits). Truecolour formats may also
@@ -2970,7 +2972,7 @@ end;
   var Pin: IPin;
   begin
     Items[Index].ConnectedTo(Pin);
-    Result := (Pin <> nil); 
+    Result := (Pin <> nil);
   end;
 
   function TPinList.GetPin(Index: Integer): IPin;
@@ -3408,7 +3410,7 @@ begin
   begin
     Result := E_POINTER;
     Exit;
-  end;                        
+  end;
 
   PinOut := pPinIn;
 
@@ -3704,7 +3706,7 @@ end;
 //-----------------------------------------------------------------------------
 // Name: GetDXVersion()
 // Desc: This function returns the DirectX version.
-// Arguments: 
+// Arguments:
 //      pdwDirectXVersion - This can be NULL.  If non-NULL, the return value is:
 //              0x00000000 = No DirectX installed
 //              0x00010000 = DirectX 1.0 installed
@@ -3727,7 +3729,7 @@ end;
 //              0x00090002 = DirectX 9.0b installed
 //      strDirectXVersion - Destination string to receive a string name of the DirectX Version.  Can be NULL.
 //      cchDirectXVersion - Size of destination buffer in characters.  Length should be at least 10 chars.
-// Returns: S_OK if the function succeeds.  
+// Returns: S_OK if the function succeeds.
 //          E_FAIL if the DirectX version info couldn't be determined.
 //
 // Please note that this code is intended as a general guideline. Your
