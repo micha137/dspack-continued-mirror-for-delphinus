@@ -5,7 +5,7 @@ interface
 uses
     BaseClass
   , DSPack
-  , Winapi.DirectShow9
+  , DirectShow9
   , Winapi.Windows
   , System.Classes
   , Generics.Collections
