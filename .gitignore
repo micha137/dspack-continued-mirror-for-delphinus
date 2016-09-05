@@ -11,6 +11,7 @@
 *.tvsconfig
 *.~*
 *~
+help/Help.chw
 packages/Win32/
 packages/Win64/
 __history
