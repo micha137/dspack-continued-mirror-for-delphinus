@@ -63,7 +63,10 @@ type
 
 implementation
 
-uses MediaTypeEditor, BaseFilterEditor, Classes, MediaSampleRingbuffer;
+uses MediaTypeEditor, BaseFilterEditor, Classes
+{$IFDEF RTL220_UP} // D2010 didn't have TThreadedQueue<> in Generics.Collections yet
+, MediaSampleRingbuffer
+{$ENDIF};
 
 // *****************************************************************************
 //  TMediaTypePropertyClass
@@ -124,7 +127,11 @@ uses MediaTypeEditor, BaseFilterEditor, Classes, MediaSampleRingbuffer;
   procedure Register;
   begin
     RegisterComponents('DSPack', [TFilterGraph, TVideoWindow, TSampleGrabber,
-      TFilter, TASFWriter, TDSTrackBar, TDSVideoWindowEx2, TMediaSampleRingbufferComponent]);
+      TFilter, TASFWriter, TDSTrackBar, TDSVideoWindowEx2
+{$IFDEF RTL220_UP} // D2010 didn't have TThreadedQueue<> in Generics.Collections yet
+      , TMediaSampleRingbufferComponent
+{$ENDIF}
+      ]);
     RegisterPropertyEditor(TypeInfo(TMediaType), nil, '', TMediaTypePropertyClass);
     RegisterPropertyEditor(TypeInfo(TBaseFilter), nil, '', TBaseFilterPropertyClass);
   end;

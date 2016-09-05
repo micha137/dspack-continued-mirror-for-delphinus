@@ -1,5 +1,6 @@
 *.dcu
 *.dproj
+*.drc
 *.dsk
 *.exe
 *.identcache
