@@ -2277,7 +2277,7 @@ end;
         EnumCat.Next(1, Result, Fetched);
         // martin end
         {$ELSE}
-        EnumCat.Next(1, Result, nil);
+        EnumCat.Next(1, Moniker, nil);
         {$ENDIF}
         Moniker.BindToObject(nil, nil, IID_IBaseFilter, result);
         EnumCat.Reset;
