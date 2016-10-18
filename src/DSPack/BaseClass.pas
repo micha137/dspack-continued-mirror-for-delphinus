@@ -7394,7 +7394,7 @@ begin
       else
         begin
           // S_FALSE returned from Transform is a PRIVATE agreement
-          // We should return NOERROR from Receive() in this cause because returning S_FALSE
+          // We should return NOERROR from Receive() in this case because returning S_FALSE
           // from Receive() means that this is the end of the stream and no more data should
           // be sent.
           if (result = S_FALSE) then
