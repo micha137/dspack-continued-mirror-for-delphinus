@@ -143,7 +143,7 @@ const
   IID_IPersistStream        : TGUID = '{00000109-0000-0000-C000-000000000046}';
   IID_IMoniker              : TGUID = '{0000000F-0000-0000-C000-000000000046}';
 
-  // MS Mepg4 DMO
+  // MS Mpeg4 DMO
   MEDIASUBTYPE_MP42         : TGUID = '{3234504D-0000-0010-8000-00AA00389B71}';
   // DIVX
   MEDIASUBTYPE_DIVX         : TGUID = '{58564944-0000-0010-8000-00AA00389B71}';
@@ -384,7 +384,7 @@ type
   function IntToTimeCode(x : longint): TDsPackDVDTimecode;
 
   { Return a string explaining a filter graph event. }
-  function  GetEventCodeDef(code: longint): string;
+  function GetEventCodeDef(code: longint): string;
 
   { General purpose function to delete a heap allocated TAM_MEDIA_TYPE structure
     which is useful when calling IEnumMediaTypes.Next as the interface
@@ -398,7 +398,7 @@ type
     nearly the same by creating a TMediaType class but as soon as it goes out
     of scope the destructor will delete the memory it allocated
     (this takes a copy of the memory). }
-  function  CreateMediaType(pSrc: PAMMediaType): PAMMediaType;
+  function CreateMediaType(pSrc: PAMMediaType): PAMMediaType;
 
   { The CopyMediaType function copies an AM_MEDIA_TYPE structure into another
     structure, including the format block. This function allocates the memory
@@ -430,13 +430,13 @@ type
     is all GUIDs of the form: XXXXXXXX-0000-0010-8000-00AA00389B71. }
   function FOURCCMap(Fourcc: Cardinal): TGUID;
 
-  { Find the four-character codes wich identifi a codec. }
+  { Find the four-character code which identifies a codec. }
   function GetFOURCC(Fourcc: Cardinal): string;
 
-  { Convert a FCC (Four Char Codes) to Cardinal. A FCC identifies a media type.}
+  { Convert a FCC (Four Char Code) to Cardinal. A FCC identifies a media type.}
   function FCC(str: AnsiString): Cardinal;
 
-  { Create the four-character codes from a Cardinal value. }
+  { Create a four-character code from a Cardinal value. }
   function MAKEFOURCC(ch0, ch1, ch2, ch3: AnsiChar): Cardinal;
 
   { The GetErrorString function retrieves the error message for a given return
@@ -487,14 +487,14 @@ type
     <b>See also: </b> @link:(ShowFilterPropertyPage).}
   function ShowPinPropertyPage(parent: THandle; Pin: IPin): HRESULT;
 
-  { Convert 100 nano sec unit to milisecondes. }
+  { Convert 100 nano sec unit to miliseconds. }
   function RefTimeToMiliSec(RefTime: Int64): Cardinal;
 
-  { Convert milisecondes to 100 nano sec unit}
+  { Convert miliseconds to 100 nano sec unit}
   function MiliSecToRefTime(Milisec: int64): Int64;
 
 {  The mechanism for describing a bitmap format is with the BITMAPINFOHEADER
-   This is really messy to deal with because it invariably has fields that
+   This is really messy to deal with, because it invariably has fields that
    follow it holding bit fields, palettes and the rest. This function gives
    the number of bytes required to hold a VIDEOINFO that represents it. This
    count includes the prefix information (like the rcSource rectangle) the
@@ -507,7 +507,7 @@ type
        CopyMemory(HEADER(pVideoInfo),pbmi,sizeof(BITMAPINFOHEADER)); }
   function GetBitmapFormatSize(const Header: TBitmapInfoHeader): Integer;
 
-  { Retrieve original source rectangle from a TAM_Media_type record.}
+  { Retrieve original source rectangle from a TAMMediaType record.}
   function GetSourceRectFromMediaType(const MediaType: TAMMediaType): TRect;
 
   { TODO -oMichael Andersen: make documentation }
@@ -562,7 +562,7 @@ type
     CLSID        : TGUID;
   end;
 
-  { Usefull class to enumerate availables filters.
+  { Useful class to enumerate available filters.
     See "Filter Enumerator" sample. }
   TSysDevEnum = class
   private
