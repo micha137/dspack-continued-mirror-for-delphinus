@@ -17777,7 +17777,7 @@ begin
   case uMsg of
     WM_STYLECHANGING:
     begin
-      if (wParam = THandle(GWL_EXSTYLE)) then
+      if wParam = GWL_EXSTYLE then
       begin
         lpss := PStyleStruct(lParam);
         lpss.styleNew := lpss.styleNew or WS_EX_CONTROLPARENT;
