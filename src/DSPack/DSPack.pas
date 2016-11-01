@@ -179,7 +179,7 @@ type
     foAdded,     // After the filter is added to graph.
     foRemoving,  // Before the filter is removed from graph.
     foRemoved,   // After the filter is removed from graph.
-    foRefresh    // Designer notification to Refresh the filter .
+    foRefresh    // Designer notification to Refresh the filter.
   );
 
 
@@ -190,7 +190,7 @@ type
     function GetFilter: IBaseFilter;
     { Return the filter name (generally the component name). }
     function GetName: string;
-    { Called by the @link(TFilterGraph) component, this method receive notifications
+    { Called by the @link(TFilterGraph) component, this method receives notifications
       on what the TFilterGraph is doing. if Operation = foGraphEvent then Param is the
       event code received by the FilterGraph.}
     procedure NotifyFilter(operation: TFilterOperation; Param: integer = 0);

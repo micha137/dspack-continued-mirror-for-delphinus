@@ -1,3 +1,6 @@
+*.ax
+*.bpl
+*.dcp
 *.dcu
 *.dproj
 *.drc
@@ -5,6 +8,7 @@
 *.exe
 *.identcache
 *.local
+*.otares
 *.res
 *.stat
 *.swp
