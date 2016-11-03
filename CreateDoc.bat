@@ -1,2 +1,4 @@
-diPasDoc.exe -OHtmlHelp -CHhcContents.txt -Ehelp -I.\src\DSPack -T"Progdigy DSPack Components v2.3.3" -Sfiles.txt
+cd %~dp0
+diPasDoc_Console.exe -OHtmlHelp -CHhcContents.txt -Ehelp -Le -I.\src\DSPack -T"DSPack-continued" -Sfiles.txt
+pause
 

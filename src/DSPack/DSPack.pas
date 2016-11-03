@@ -453,7 +453,7 @@ type
     property AutoCreate: boolean read FAutoCreate write FAutoCreate default False;
 
     { There is 3 modes: gmNormal, gmCapture and gmDVD. <br>
-      See also: @link(GraphInterFace).}
+      See also: @link(QueryInterface).}
     property Mode: TGraphMode read FMode write SetGraphMode default gmNormal;
 
     { if true you can use GraphEdit application to connect with the Filter Graph.}
@@ -1521,15 +1521,15 @@ type
     { Start playback in fullscreen }
     procedure StartFullScreen; overload;
 
-    { Start playback in fullscreen on specifyed Monitor}
+    { Start playback in fullscreen on specified Monitor}
     procedure StartFullScreen(OnMonitor : TMonitor); overload;
 
-    { repporting if you are currently playing in fullscreen. }
+    { reporting if you are currently playing in fullscreen. }
     property FullScreen: boolean read FFullScreen;
 
-    { repporting if you are currently playing on the Desktop. }
+    { reporting if you are currently playing on the Desktop. }
     property DesktopPlayback : Boolean Read FDesktopPlay;
-    { @inherited }
+    { @exclude }
     property Canvas;
 
     { The Colorkey is the color that the Overlay Mixer Filter used by DSVideoWindowEx sees

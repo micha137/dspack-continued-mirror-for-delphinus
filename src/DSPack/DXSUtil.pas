@@ -3,7 +3,7 @@
      *  DSPack 2.3.3                                                     *
      *                                                                   *
      *  home page : http://www.progdigy.com                              *
-     *  email     : hgourvest@progdigy.com                               *
+     *  email     : hgourvest@@progdigy.com                               *
      *   Thanks to Michael Andersen. (DSVideoWindowEx)                   *
      *                                                                   *
      *  date      : 21-02-2003                                           *
@@ -20,11 +20,11 @@
      *  rights and limitations under the License.                        *
      *                                                                   *
      *  Contributor(s)                                                   *
-     *    Peter J. Haas     <DSPack@pjh2.de>                             *
-     *    Andriy Nevhasymyy <a.n@email.com>                              *
-     *    Milenko Mitrovic  <dcoder@dsp-worx.de>                         *
-     *    Michael Andersen  <michael@mechdata.dk>                        *
-     *    Martin Offenwanger <coder@dsplayer.de>                         *
+     *    Peter J. Haas     <DSPack@@pjh2.de>                             *
+     *    Andriy Nevhasymyy <a.n@@email.com>                              *
+     *    Milenko Mitrovic  <dcoder@@dsp-worx.de>                         *
+     *    Michael Andersen  <michael@@mechdata.dk>                        *
+     *    Martin Offenwanger <coder@@dsplayer.de>                         *
      *                                                                   *
      *********************************************************************)
 
@@ -596,7 +596,7 @@ type
     { Call GetBaseFilter to retrieve the IBaseFilter interface corresponding to GUID. }
     function GetBaseFilter(GUID: TGUID): IBaseFilter; overload;
     { Call GetMoniker to retrieve the IMoniker interface corresponding to index.
-      This interface can be used to store a filter with the @link(TBaseFiter) class. }
+      This interface can be used to store a filter with the @link(TFilter) class. }
     function GetMoniker(index: integer): IMoniker;
     { constructor }
     constructor Create; overload;

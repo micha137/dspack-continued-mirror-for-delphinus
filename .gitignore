@@ -15,7 +15,14 @@
 *.tvsconfig
 *.~*
 *~
+help/*.gif
+help/*.htm
+help/*.log
 help/Help.chw
+help/Help.css
+help/Help.hhc
+help/Help.hhk
+help/Help.hhp
 packages/Win32/
 packages/Win64/
 __history
