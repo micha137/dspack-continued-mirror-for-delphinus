@@ -1,0 +1,30 @@
+{
+	"search_pathes":
+	[
+		{
+			"pathes": "src\\DSPack",
+			"platforms": "Win32;Win64"
+		}
+	],
+	"source_folders":
+	[
+		{
+			"folder": "src\\DSPack",
+			"recursive": false,
+			"filter": "*"
+		},
+		{
+			"folder": "Demos",
+			"recursive": true,
+			"filter": "*.*;*"
+		}
+	],
+	"projects":
+	[
+		{
+			"project": "Packages\\DSPackDXE2.groupproj",
+			"compiler_min": 22,
+			"compiler_max": 31
+		}
+	]
+}

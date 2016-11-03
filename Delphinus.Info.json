@@ -1,0 +1,8 @@
+{
+	"id": "{7E76A2DF-106A-4C44-8B2D-BD7816631FB0}",
+	"license_type": "MPL-1.1",
+	"license_file": "MPL-1.1.txt",
+	"platforms": "Win32;Win64",
+	"package_compiler_min": 22,
+	"compiler_min": 22
+}
