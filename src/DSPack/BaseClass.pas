@@ -30,8 +30,8 @@
 {.$DEFINE TRACE}      // Trace Critical Sections (DEBUG must be ON)
 {$DEFINE MESSAGE}    // Use OutputDebugString instead of a File (DEBUG must be ON)
 
-{.$DEFINE PERF}       // Show Performace Counter
-{.$DEFINE VTRANSPERF} // Show additional TBCVideoTransformFilter Performace Counter (PERF must be ON)
+{.$DEFINE PERF}       // Show Performance Counter
+{.$DEFINE VTRANSPERF} // Show additional TBCVideoTransformFilter Performance Counter (PERF must be ON)
 
 {.$DEFINE WITH_PROPERTY_PAGE} // In case you´re not using Forms for PropertyPages and want
                               // smaller FileSizes, disable this. Disabling this will enable
@@ -57,7 +57,7 @@ interface
 uses
   Windows, SysUtils, Classes, Math, ActiveX, Messages, DirectShow9,
 {$IFDEF WITH_PROPERTY_PAGE}
-  Forms,
+  Vcl.Forms,
 {$ENDIF}
   ComObj, mmsystem, DXSUtil;
 
@@ -5472,7 +5472,7 @@ end;
   Override DecideBufferSize to call SetProperties. If the input pin fails
   the GetAllocator call then this will construct a CMemAllocator and call
   DecideBufferSize on that, and if that fails then we are completely hosed.
-  If the you succeed the DecideBufferSize call, we will notify the input
+  If you succeed the DecideBufferSize call, we will notify the input
   pin of the selected allocator. NOTE this is called during Connect() which
   therefore looks after grabbing and locking the object's critical section }
 
@@ -11077,7 +11077,7 @@ begin
   FThread.Free;
 end;
 
-// Grabs a buffer and calls the users processing function.
+// Grabs a buffer and calls the user's processing function.
 // Overridable, so that different delivery styles can be catered for.
 function TBCSourceStream.DoBufferProcessingLoop: HRESULT;
 var
@@ -17636,7 +17636,6 @@ var
 begin
   // Create a temporary property page
   wnd := CreateDialogParam(HInstance, MAKEINTRESOURCE(iResourceID), GetDesktopWindow(), pDlgProc, lParam);
-
   if (wnd = 0) then
   begin
     Result := False;
@@ -17777,7 +17776,7 @@ begin
   case uMsg of
     WM_STYLECHANGING:
     begin
-      if wParam = GWL_EXSTYLE then
+      if wParam = NativeUInt(GWL_EXSTYLE) then
       begin
         lpss := PStyleStruct(lParam);
         lpss.styleNew := lpss.styleNew or WS_EX_CONTROLPARENT;
