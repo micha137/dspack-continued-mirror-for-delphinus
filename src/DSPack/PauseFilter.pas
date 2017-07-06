@@ -51,7 +51,9 @@ begin
   if FPause then begin
     if FSwitchingPauseState then begin
       if Sample.IsSyncPoint<>S_OK then goto forwardit;
+      {$IFDEF DEBUG}
       DbgLog(self, Format('Entering pause at I-frame', [ ] ));
+      {$ENDIF}
       FSkipped := 0;
       FSwitchingPauseState := False;
     end;
@@ -70,11 +72,13 @@ begin
 
     sampleDuration := endTime-startTime;
     FPauseTimes := FPauseTimes + FSkipped * sampleDuration;
+    {$IFDEF DEBUG}
     DbgLog(self, Format('Pausetimes=%d ms (%f Samples, Dampleduration=%d ms skipped=%d samples, last pause duration=%d ms, skipped*SampleDuration=%d ms)',
       [ RefTimeToMiliSec(FPauseTimes), FPauseTimes/sampleDuration,
         RefTimeToMiliSec(sampleDuration), FSkipped,
         RefTimeToMiliSec(startTime - FLastForwardedSampleTimeEnd),
         FSkipped*RefTimeToMiliSec(sampleDuration) ] ));
+    {$ENDIF}
     FSwitchingPauseState := False;
     Sample.SetDiscontinuity(True);
   end;
