@@ -37,6 +37,7 @@ contains
   BaseClass in '..\src\DSPack\BaseClass.pas',
   DSPack in '..\src\DSPack\DSPack.pas',
   DXSUtil in '..\src\DSPack\DXSUtil.pas',
-  MediaSampleRingbuffer in '..\src\DSPack\MediaSampleRingbuffer.pas';
+  MediaSampleRingbuffer in '..\src\DSPack\MediaSampleRingbuffer.pas',
+  PauseFilter in '..\src\DSPack\PauseFilter.pas';
 
 end.
