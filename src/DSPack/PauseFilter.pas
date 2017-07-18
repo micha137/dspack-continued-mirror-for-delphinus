@@ -3,9 +3,12 @@ unit PauseFilter;
 interface
 
 uses
-   BaseClass, DirectShow9;
+   BaseClass, DirectShow9, DSPack;
 
+const
+  CLSID_PauseFilter: TGUID = '{D7F33645-624D-46A5-8E6C-88E853344E55}';
 type
+  {$M+}
   TPauseFilter = class(TBCTransInPlaceFilter)
     function Transform(Sample: IMediaSample): HRESULT; override;
     function CheckInputType(mtIn: PAMMediaType): HRESULT; override;
@@ -14,10 +17,13 @@ type
     FPause, FSwitchingPauseState: Boolean;
     FSkipped: Cardinal;
     procedure SetPause(const APause: Boolean);
+  public
+    constructor Create(Name: PChar; Unk: IUnknown; hr: HResult);
   published
     property ForwardingPause: Boolean read FPause write SetPause stored False;
   end;
 
+procedure ForwardingPause(f: TFilterGraph; const Pause: Boolean);
 
 implementation
 
@@ -30,6 +36,11 @@ function TPauseFilter.CheckInputType(mtIn: PAMMediaType): HRESULT;
 begin
   Result := S_OK;
   FPauseTimes := 0;
+end;
+
+constructor TPauseFilter.Create(Name: PChar; Unk: IInterface; hr: HResult);
+begin
+  inherited Create(Name, Unk, CLSID_PauseFilter, hr);
 end;
 
 procedure TPauseFilter.SetPause(const APause: Boolean);
@@ -88,6 +99,23 @@ begin
   endTime := endTime-FPauseTimes;
   CheckDSError(Sample.SetTime(@startTime, @endTime));
   Result := S_OK;// forward the sample
+end;
+
+procedure ForwardingPause(f: TFilterGraph; const Pause: Boolean);
+var fl: TFilterList;
+  i: Integer;
+  c: TGUID;
+begin
+  fl := TFilterList.Create(f as IFilterGraph);
+  try
+    for i := 0 to fl.Count-1 do begin
+      CheckDSError(fl[i].GetClassID(c));
+      if Not IsEqualGUID(c, CLSID_PauseFilter) then Continue;
+      (fl[i] as TPauseFilter).ForwardingPause := Pause;
+    end;
+  finally
+    FreeAndNil(fl);
+  end;
 end;
 
 end.
