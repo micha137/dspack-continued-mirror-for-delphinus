@@ -4,18 +4,18 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="DSPack_BCB6.bpl"/>
-    <OBJFILES value="DSPack_BCB6.obj ..\src\DSPack\DSUtil.obj ..\src\DSPack\DSPack.obj"/>
+    <OBJFILES value="DSPack_BCB6.obj ..\..\src\DSPack\DSUtil.obj ..\..\src\DSPack\DSPack.obj"/>
     <RESFILES value="DSPack_BCB6.res DSPack.dcr"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
-    <LIBFILES value="..\lib\quartz.lib ..\lib\msdmo.lib ..\lib\WMVCORE.lib ..\lib\AMSTRMID.lib"/>
+    <LIBFILES value="..\..\lib\quartz.lib ..\..\lib\msdmo.lib ..\..\lib\WMVCORE.lib ..\..\lib\AMSTRMID.lib"/>
     <LIBRARIES value="vcldb.lib"/>
     <SPARELIBS value="rtl.lib vcldb.lib DirectX9_BCB6.lib"/>
     <PACKAGES value="rtl.bpi vcl.bpi DirectX9_BCB6.bpi bcbsmp.bpi"/>
     <PATHCPP value=".;"/>
-    <PATHPAS value=".;..\src\DSPack"/>
+    <PATHPAS value=".;..\..\src\DSPack"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
@@ -24,13 +24,13 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="DSPack_BCB6.cpp"/>
-    <INCLUDEPATH value="..\src\DSPack;..\src\Directx9;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="..\src\DSPack;..\src\Directx9;..\lib;$(BCB)\Projects\Lib;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <INCLUDEPATH value="..\..\src\DSPack;..\..\src\Directx9;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\..\src\DSPack;..\..\src\Directx9;..\..\lib;$(BCB)\Projects\Lib;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-I..\src\DSPack -I..\src\Directx9 
+    <IDLCFLAGS value="-I..\..\src\DSPack -I..\..\src\Directx9 
       -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; -I$(BCB)\include 
       -I$(BCB)\include\vcl -src_suffix cpp -D_DEBUG -boa"/>
     <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
@@ -51,17 +51,17 @@
   <FILELIST>
       <FILE FILENAME="DSPack_BCB6.res" FORMNAME="" UNITNAME="DSPack_BCB6.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="DSPack_BCB6.cpp" FORMNAME="" UNITNAME="DSPack_BCB6" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\lib\rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\lib\vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\lib\DirectX9_BCB6.bpi" FORMNAME="" UNITNAME="DirectX9_BCB6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\lib\bcbsmp.bpi" FORMNAME="" UNITNAME="bcbsmp" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\lib\quartz.lib" FORMNAME="" UNITNAME="quartz" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\lib\msdmo.lib" FORMNAME="" UNITNAME="msdmo" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\lib\WMVCORE.lib" FORMNAME="" UNITNAME="WMVCORE" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\src\DSPack\DSUtil.pas" FORMNAME="" UNITNAME="DSUtil" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\src\DSPack\DSPack.pas" FORMNAME="" UNITNAME="DSPack" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\lib\rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\lib\vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\lib\DirectX9_BCB6.bpi" FORMNAME="" UNITNAME="DirectX9_BCB6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\lib\bcbsmp.bpi" FORMNAME="" UNITNAME="bcbsmp" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\lib\quartz.lib" FORMNAME="" UNITNAME="quartz" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\lib\msdmo.lib" FORMNAME="" UNITNAME="msdmo" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\lib\WMVCORE.lib" FORMNAME="" UNITNAME="WMVCORE" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\src\DSPack\DSUtil.pas" FORMNAME="" UNITNAME="DSUtil" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\src\DSPack\DSPack.pas" FORMNAME="" UNITNAME="DSPack" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="DSPack.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\lib\AMSTRMID.lib" FORMNAME="" UNITNAME="AMSTRMID" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\lib\AMSTRMID.lib" FORMNAME="" UNITNAME="AMSTRMID" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

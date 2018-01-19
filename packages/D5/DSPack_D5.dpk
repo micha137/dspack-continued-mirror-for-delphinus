@@ -1,7 +1,8 @@
-package DSPackDesign_D2010;
+package DSPack_D5;
 
-{$R *.res}
-{$ALIGN 8}
+{$R *.RES}
+{$R '..\DSPack.dcr'}
+{$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
 {$DEBUGINFO ON}
@@ -23,19 +24,16 @@ package DSPackDesign_D2010;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'DSPack 2.3: Multimedia Package for Delphi'}
-{$DESIGNONLY}
+{$RUNONLY}
 {$IMPLICITBUILD OFF}
-{$DEFINE DEBUG}
 
 requires
-  rtl,
-  vcl,
-  designide,
-  DSPack_D2010;
+  vcl50,
+  DirectX9_D5;
 
 contains
-  MediaTypeEditor in '..\src\DSPack\MediaTypeEditor.pas' {FormMediaType},
-  BaseFilterEditor in '..\src\DSPack\BaseFilterEditor.pas' {FormBaseFilter},
-  DSEditors in '..\src\DSPack\DSEditors.pas';
+  DSPack in '..\..\src\\DSPack\DSPack.pas',
+  DXSUtil in '..\..\src\\DSPack\DXSUtil.pas',
+  BaseClass in '..\..\src\\DSPack\BaseClass.pas';
 
 end.

@@ -1,7 +1,7 @@
-package DSPack_D2010;
+package DSPack_D7;
 
 {$R *.res}
-{$R 'DSPack.dcr'}
+{$R '..\DSPack.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -30,11 +30,13 @@ package DSPack_D2010;
 requires
   rtl,
   vcl,
-  designide;
+  designide,
+  DirectX9_D7;
 
 contains
-  DSPack in '..\src\DSPack\DSPack.pas',
-  DXSUtil in '..\src\DSPack\DXSUtil.pas',
-  BaseClass in '..\src\DSPack\BaseClass.pas';
+  DSPack in '..\..\src\\DSPack\DSPack.pas',
+  DXSUtil in '..\..\src\\DSPack\DXSUtil.pas',
+  BaseClass in '..\..\src\\DSPack\BaseClass.pas',
+  DxDiag in '..\..\src\\DirectX9\DxDiag.pas';
 
 end.

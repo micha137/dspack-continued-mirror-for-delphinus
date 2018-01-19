@@ -1,7 +1,6 @@
-package DSPackDesign_DXE2;
+package DSPackD;
 
 {$R *.res}
-{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -12,33 +11,32 @@ package DSPackDesign_DXE2;
 {$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION OFF}
+{$OPTIMIZATION ON}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES ON}
+{$STACKFRAMES OFF}
 {$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE DEBUG}
-{$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'DSPack 2.3: Multimedia Package for Delphi'}
+{$LIBSUFFIX '2010'}
 {$DESIGNONLY}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
+{$DEFINE DEBUG}
 
 requires
   rtl,
   vcl,
   designide,
-  DSPack_DXE2;
+  DSPack;
 
 contains
-  BaseFilterEditor in '..\src\DSPack\BaseFilterEditor.pas' {FormBaseFilter},
-  MediaTypeEditor in '..\src\DSPack\MediaTypeEditor.pas' {FormMediaType},
-  DSEditors in '..\src\DSPack\DSEditors.pas';
+  MediaTypeEditor in '..\..\src\\DSPack\MediaTypeEditor.pas' {FormMediaType},
+  BaseFilterEditor in '..\..\src\\DSPack\BaseFilterEditor.pas' {FormBaseFilter},
+  DSEditors in '..\..\src\\DSPack\DSEditors.pas';
 
 end.
-

@@ -1,4 +1,4 @@
-﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
 			<ProjectGuid>{2B7154BA-F5B5-4822-A8CB-CF9AD3371BA3}</ProjectGuid>
 			<MainSource>DSPack_D2010.dpk</MainSource>
@@ -47,9 +47,9 @@
 			<DCCReference Include="rtl.dcp"/>
 			<DCCReference Include="vcl.dcp"/>
 			<DCCReference Include="designide.dcp"/>
-			<DCCReference Include="..\src\DSPack\DSPack.pas"/>
-			<DCCReference Include="..\src\DSPack\DXSUtil.pas"/>
-			<DCCReference Include="..\src\DSPack\BaseClass.pas"/>
+			<DCCReference Include="..\..\src\DSPack\DSPack.pas"/>
+			<DCCReference Include="..\..\src\DSPack\DXSUtil.pas"/>
+			<DCCReference Include="..\..\src\DSPack\BaseClass.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

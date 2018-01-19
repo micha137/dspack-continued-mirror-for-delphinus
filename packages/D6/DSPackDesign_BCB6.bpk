@@ -4,20 +4,20 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="DSPackDesign_BCB6.bpl"/>
-    <OBJFILES value="DSPackDesign_BCB6.obj ..\src\DSPack\BaseFilterEditor.obj 
-      ..\src\DSPack\MediaTypeEditor.obj ..\src\DSPack\DSEditors.obj"/>
+    <OBJFILES value="DSPackDesign_BCB6.obj ..\..\src\DSPack\BaseFilterEditor.obj 
+      ..\..\src\DSPack\MediaTypeEditor.obj ..\..\src\DSPack\DSEditors.obj"/>
     <RESFILES value="DSPackDesign_BCB6.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
-    <RESDEPEN value="$(RESFILES) ..\src\DSPack\BaseFilterEditor.dfm 
-      ..\src\DSPack\MediaTypeEditor.dfm"/>
+    <RESDEPEN value="$(RESFILES) ..\..\src\DSPack\BaseFilterEditor.dfm 
+      ..\..\src\DSPack\MediaTypeEditor.dfm"/>
     <LIBFILES value=""/>
     <LIBRARIES value="vcldb.lib"/>
     <SPARELIBS value="rtl.lib vcldb.lib DirectX9_BCB6.lib DSPack_BCB6.lib"/>
     <PACKAGES value="rtl.bpi vcl.bpi DirectX9_BCB6.bpi DSPack_BCB6.bpi designide.bpi"/>
     <PATHCPP value=".;"/>
-    <PATHPAS value=".;..\src\DSPack"/>
+    <PATHPAS value=".;..\..\src\DSPack"/>
     <PATHRC value=".;"/>
     <PATHASM value=".;"/>
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
@@ -26,13 +26,13 @@
     <USERDEFINES value=""/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="DSPackDesign_BCB6.cpp"/>
-    <INCLUDEPATH value="..\src\DSPack;..\src\DirectX9;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="..\src\DSPack;..\src\DirectX9;..\lib;$(BCB)\Projects\Lib;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <INCLUDEPATH value="..\..\src\DSPack;..\..\src\DirectX9;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\..\src\DSPack;..\..\src\DirectX9;..\..\lib;$(BCB)\Projects\Lib;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-I..\src\DSPack -I..\src\DirectX9 
+    <IDLCFLAGS value="-I..\..\src\DSPack -I..\..\src\DirectX9 
       -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; -I$(BCB)\include 
       -I$(BCB)\include\vcl -src_suffix cpp -D_DEBUG -boa"/>
     <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
@@ -58,9 +58,9 @@
       <FILE FILENAME="DirectX9_BCB6.bpi" FORMNAME="" UNITNAME="DirectX9_BCB6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="DSPack_BCB6.bpi" FORMNAME="" UNITNAME="DSPack_BCB6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="designide.bpi" FORMNAME="" UNITNAME="designide" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\src\DSPack\BaseFilterEditor.pas" FORMNAME="FormBaseFilter" UNITNAME="BaseFilterEditor" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\src\DSPack\MediaTypeEditor.pas" FORMNAME="FormMediaType" UNITNAME="MediaTypeEditor" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\src\DSPack\DSEditors.pas" FORMNAME="" UNITNAME="DSEditors" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\src\DSPack\BaseFilterEditor.pas" FORMNAME="FormBaseFilter" UNITNAME="BaseFilterEditor" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\src\DSPack\MediaTypeEditor.pas" FORMNAME="FormMediaType" UNITNAME="MediaTypeEditor" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\..\src\DSPack\DSEditors.pas" FORMNAME="" UNITNAME="DSEditors" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -124,12 +124,12 @@ c:\program files\borland\cbuilder6\Projects\Bpl\JvUIBC6D.bpl=UIB - Unified Inter
 
 [HistoryLists\hlIncludePath]
 Count=2
-Item0=..\src\DSPack;..\src\DirectX9;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
+Item0=..\..\src\DSPack;..\..\src\DirectX9;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
 Item1=C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\include;$(BCB)\include\vcl
 
 [HistoryLists\hlLibraryPath]
 Count=2
-Item0=..\src\DSPack;..\src\DirectX9;..\lib;$(BCB)\Projects\Lib;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\lib\obj;$(BCB)\lib
+Item0=..\..\src\DSPack;..\..\src\DirectX9;..\..\lib;$(BCB)\Projects\Lib;C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\lib\obj;$(BCB)\lib
 Item1=C:\Program Files\Borland\CBuilder6\Projects;$(BCB)\lib\obj;$(BCB)\lib
 
 [HistoryLists\hlDebugSourcePath]

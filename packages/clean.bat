@@ -1,2 +1,2 @@
-del *.~*;*.dcu;*.obj
+del /s *.~*;*.dcu;*.obj
 exit
