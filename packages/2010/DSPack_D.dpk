@@ -32,7 +32,7 @@ requires
   rtl,
   vcl,
   designide,
-  DSPack;
+  DSPack_R;
 
 contains
   MediaTypeEditor in '..\..\src\\DSPack\MediaTypeEditor.pas' {FormMediaType},

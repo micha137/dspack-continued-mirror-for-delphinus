@@ -14,7 +14,7 @@ type
     FPause, FSwitchingPauseState: Boolean;
     FSkipped: Cardinal;
     procedure SetPause(const APause: Boolean);
-  published
+  public
     property ForwardingPause: Boolean read FPause write SetPause stored False;
   end;
 
