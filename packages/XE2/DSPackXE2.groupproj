@@ -1,6 +1,6 @@
 	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{910B98E0-37E5-434D-AD5B-DE1BE10A36C1}</ProjectGuid>
+			<ProjectGuid>{CA3A5B6E-D069-48C3-87D4-45FEBD41EB07}</ProjectGuid>
 		</PropertyGroup>
 		<ItemGroup>
 			<Projects Include="DSPack_R.dproj">
@@ -21,19 +21,19 @@
 			<MSBuild Projects="DSPack_R.dproj"/>
 		</Target>
 		<Target Name="DSPack_R:Clean">
-			<MSBuild Projects="DSPack_R.dproj" Targets="Clean"/>
+			<MSBuild Targets="Clean" Projects="DSPack_R.dproj"/>
 		</Target>
 		<Target Name="DSPack_R:Make">
-			<MSBuild Projects="DSPack_R.dproj" Targets="Make"/>
+			<MSBuild Targets="Make" Projects="DSPack_R.dproj"/>
 		</Target>
 		<Target Name="DSPack_D">
 			<MSBuild Projects="DSPack_D.dproj"/>
 		</Target>
 		<Target Name="DSPack_D:Clean">
-			<MSBuild Projects="DSPack_D.dproj" Targets="Clean"/>
+			<MSBuild Targets="Clean" Projects="DSPack_D.dproj"/>
 		</Target>
 		<Target Name="DSPack_D:Make">
-			<MSBuild Projects="DSPack_D.dproj" Targets="Make"/>
+			<MSBuild Targets="Make" Projects="DSPack_D.dproj"/>
 		</Target>
 		<Target Name="Build">
 			<CallTarget Targets="DSPack_R;DSPack_D"/>
