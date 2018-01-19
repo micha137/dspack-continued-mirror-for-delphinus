@@ -1843,7 +1843,7 @@ const
   var
     hr: HRESULT;
     Event: Integer;
-    Param1, Param2: {$IFDEF DELPHIXE3_UP}NativeInt{$ELSE}{$IFDEF DELPHI2010_UP}Integer{$ELSE}LONG_PTR{$ENDIF}{$ENDIF};
+    Param1, Param2: {$IFDEF DELPHIX_BERLIN_UP}Integer{$ELSE}{$IFDEF DELPHIXE3_UP}NativeInt{$ELSE}{$IFDEF DELPHI2010_UP}Integer{$ELSE}LONG_PTR{$ENDIF}{$ENDIF}{$ENDIF};
   begin
     if assigned(FMediaEventEx) then
     begin
