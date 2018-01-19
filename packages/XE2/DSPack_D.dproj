@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{57E71FD4-13C3-4914-B5D0-FB17EB9F57A5}</ProjectGuid>
-        <MainSource>DSPackDesign_DXE2.dpk</MainSource>
+        <MainSource>DSPack_D.dpk</MainSource>
         <ProjectVersion>14.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
@@ -133,7 +133,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">DSPackDesign_DXE2.dpk</Source>
+                    <Source Name="MainSource">DSPack_D.dpk</Source>
                 </Source>
                 <VersionInfo>
                     <VersionInfo Name="IncludeVerInfo">True</VersionInfo>

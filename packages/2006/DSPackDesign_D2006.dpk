@@ -34,8 +34,8 @@ requires
   DSPack_D2006;
 
 contains
-  MediaTypeEditor in '..\src\DSPack\MediaTypeEditor.pas' {FormMediaType},
-  BaseFilterEditor in '..\src\DSPack\BaseFilterEditor.pas' {FormBaseFilter},
-  DSEditors in '..\src\DSPack\DSEditors.pas';
+  MediaTypeEditor in '..\..\src\\DSPack\MediaTypeEditor.pas' {FormMediaType},
+  BaseFilterEditor in '..\..\src\\DSPack\BaseFilterEditor.pas' {FormBaseFilter},
+  DSEditors in '..\..\src\\DSPack\DSEditors.pas';
 
 end.

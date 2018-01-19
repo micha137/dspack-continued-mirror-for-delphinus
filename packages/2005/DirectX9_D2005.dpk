@@ -34,12 +34,12 @@ requires
 {%File 'Jedi.inc'}
 
 contains
-  Direct3D9 in '..\src\DirectX9\Direct3D9.pas',
-  DirectDraw in '..\src\DirectX9\DirectDraw.pas',
-  DirectShow9 in '..\src\DirectX9\DirectShow9.pas',
-  DirectSound in '..\src\DirectX9\DirectSound.pas',
-  DXFile in '..\src\DirectX9\DXFile.pas',
-  WMF9 in '..\src\DirectX9\WMF9.pas',
-  DXTypes in '..\src\DirectX9\DXTypes.pas';
+  Direct3D9 in '..\..\src\\DirectX9\Direct3D9.pas',
+  DirectDraw in '..\..\src\\DirectX9\DirectDraw.pas',
+  DirectShow9 in '..\..\src\\DirectX9\DirectShow9.pas',
+  DirectSound in '..\..\src\\DirectX9\DirectSound.pas',
+  DXFile in '..\..\src\\DirectX9\DXFile.pas',
+  WMF9 in '..\..\src\\DirectX9\WMF9.pas',
+  DXTypes in '..\..\src\\DirectX9\DXTypes.pas';
 
 end.

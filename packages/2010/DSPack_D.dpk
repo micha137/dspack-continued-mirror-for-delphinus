@@ -1,4 +1,4 @@
-package DSPackDesign_D2005;
+package DSPack_D;
 
 {$R *.res}
 {$ALIGN 8}
@@ -23,15 +23,16 @@ package DSPackDesign_D2005;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'DSPack 2.3: Multimedia Package for Delphi'}
+{$LIBSUFFIX '2010'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
+{$DEFINE DEBUG}
 
 requires
   rtl,
   vcl,
   designide,
-  DirectX9_D2005,
-  DSPack_D2005;
+  DSPack;
 
 contains
   MediaTypeEditor in '..\..\src\\DSPack\MediaTypeEditor.pas' {FormMediaType},

@@ -1,4 +1,4 @@
-package DSPackR;
+package DSPack_R;
 
 {$R *.res}
 {$R 'DSPack.dcr'}

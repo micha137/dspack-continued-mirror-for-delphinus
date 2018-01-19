@@ -1,7 +1,7 @@
 	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{FF20E2D6-802E-45EE-9A4F-CB54CE93EC0A}</ProjectGuid>
-			<MainSource>DSPackDesign_D2010.dpk</MainSource>
+			<ProjectGuid>{2B7154BA-F5B5-4822-A8CB-CF9AD3371BA3}</ProjectGuid>
+			<MainSource>DSPack_R.dpk</MainSource>
 			<Config Condition="'$(Config)'==''">Débogage</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
 			<ProjectVersion>12.0</ProjectVersion>
@@ -20,13 +20,12 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
-			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+			<RuntimeOnlyPackage>true</RuntimeOnlyPackage>
+			<DCC_DependencyCheckOutputName>C:\Documents and Settings\All Users\Documents\RAD Studio\7.0\Bpl\DSPack_R.bpl</DCC_DependencyCheckOutputName>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;$(DCC_UnitAlias)</DCC_UnitAlias>
-			<DCC_DependencyCheckOutputName>C:\Documents and Settings\All Users\Documents\RAD Studio\7.0\Bpl\DSPackDesign_D2010.bpl</DCC_DependencyCheckOutputName>
 			<DCC_Description>DSPack 2.3: Multimedia Package for Delphi</DCC_Description>
-			<DesignOnlyPackage>true</DesignOnlyPackage>
-			<GenDll>true</GenDll>
 			<DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
+			<GenDll>true</GenDll>
 			<GenPackage>true</GenPackage>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_Platform>x86</DCC_Platform>
@@ -38,23 +37,19 @@
 			<DCC_DebugInformation>false</DCC_DebugInformation>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_2)'!=''">
-			<DCC_MapFile>3</DCC_MapFile>
+			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
 		</PropertyGroup>
 		<ItemGroup>
-			<DelphiCompile Include="DSPackDesign_D2010.dpk">
+			<DelphiCompile Include="DSPack_R.dpk">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
+			<DCCReference Include="DSPack.dcr"/>
 			<DCCReference Include="rtl.dcp"/>
 			<DCCReference Include="vcl.dcp"/>
 			<DCCReference Include="designide.dcp"/>
-			<DCCReference Include="DSPack_D2010.dcp"/>
-			<DCCReference Include="..\..\src\DSPack\MediaTypeEditor.pas">
-				<Form>FormMediaType</Form>
-			</DCCReference>
-			<DCCReference Include="..\..\src\DSPack\BaseFilterEditor.pas">
-				<Form>FormBaseFilter</Form>
-			</DCCReference>
-			<DCCReference Include="..\..\src\DSPack\DSEditors.pas"/>
+			<DCCReference Include="..\..\src\DSPack\DSPack.pas"/>
+			<DCCReference Include="..\..\src\DSPack\DXSUtil.pas"/>
+			<DCCReference Include="..\..\src\DSPack\BaseClass.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -74,7 +69,7 @@
 			<BorlandProject>
 				<Delphi.Personality>
 					<Source>
-						<Source Name="MainSource">DSPackDesign_D2010.dpk</Source>
+						<Source Name="MainSource">DSPack_R.dpk</Source>
 					</Source>
 					<Parameters>
 						<Parameters Name="UseLauncher">False</Parameters>
