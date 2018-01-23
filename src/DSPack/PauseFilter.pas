@@ -49,7 +49,7 @@ begin
 
   // We are entering or leaving a pause:
   // On entering, we will wait for the next keyframe.
-  // On leaving, we will calculate the timestamp difference for the lenght of the last pause at the next key frame
+  // On leaving, we will calculate the timestamp difference for the length of the last pause at the next key frame
   FSwitchingPauseState := True;
 
   FPause := APause;

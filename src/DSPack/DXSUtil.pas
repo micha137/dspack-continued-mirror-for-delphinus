@@ -585,7 +585,7 @@ type
     procedure SelectIndexCategory(index: integer);
     { Call CountCategories to retrieve categories count.}
     property CountCategories: integer read GetCountCategories;
-    { Call CountFilters to retrieve the number of Filte within a Category. }
+    { Call CountFilters to retrieve the number of Filters within a Category. }
     property CountFilters: integer read GetCountFilters;
     { Call Categories to read Category Name and GUID. }
     property Categories[item: integer]: TFilCatNode read GetCategory;
