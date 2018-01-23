@@ -1,0 +1,48 @@
+	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{CA3A5B6E-D069-48C3-87D4-45FEBD41EB07}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="DSPack_R.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="DSPack_D.dproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="DSPack_R">
+			<MSBuild Projects="DSPack_R.dproj"/>
+		</Target>
+		<Target Name="DSPack_R:Clean">
+			<MSBuild Targets="Clean" Projects="DSPack_R.dproj"/>
+		</Target>
+		<Target Name="DSPack_R:Make">
+			<MSBuild Targets="Make" Projects="DSPack_R.dproj"/>
+		</Target>
+		<Target Name="DSPack_D">
+			<MSBuild Projects="DSPack_D.dproj"/>
+		</Target>
+		<Target Name="DSPack_D:Clean">
+			<MSBuild Targets="Clean" Projects="DSPack_D.dproj"/>
+		</Target>
+		<Target Name="DSPack_D:Make">
+			<MSBuild Targets="Make" Projects="DSPack_D.dproj"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="DSPack_R;DSPack_D"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="DSPack_R:Clean;DSPack_D:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="DSPack_R:Make;DSPack_D:Make"/>
+		</Target>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
+	</Project>

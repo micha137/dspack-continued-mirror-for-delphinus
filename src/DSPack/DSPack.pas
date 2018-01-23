@@ -1840,9 +1840,10 @@ const
   end;
 
   procedure TFilterGraph.HandleEvents;
-  var hr: HRESULT;
-      Event: Integer;
-      Param1, Param2: LONG_PTR;
+  var
+    hr: HRESULT;
+    Event: Integer;
+    Param1, Param2: {$IFDEF DELPHI2010_UP}Integer{$ELSE}LONG_PTR{$ENDIF};
   begin
     if assigned(FMediaEventEx) then
     begin
