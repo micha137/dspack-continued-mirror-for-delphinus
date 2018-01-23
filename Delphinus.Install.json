@@ -22,9 +22,59 @@
 	"projects":
 	[
 		{
-			"project": "Packages\\DSPackDXE2.groupproj",
+			"project": "Packages\\XE\\DSPackXE.groupproj",
 			"compiler_min": 22,
+			"compiler_max": 22
+		},
+		{
+			"project": "Packages\\XE2\\DSPackXE2.groupproj",
+			"compiler_min": 23,
+			"compiler_max": 23
+		},
+		{
+			"project": "Packages\\XE3\\DSPackXE3.groupproj",
+			"compiler_min": 24,
+			"compiler_max": 24
+		},
+		{
+			"project": "Packages\\XE4\\DSPackXE4.groupproj",
+			"compiler_min": 25,
+			"compiler_max": 25
+		},
+		{
+			"project": "Packages\\XE5\\DSPackXE2.groupproj",
+			"compiler_min": 26,
+			"compiler_max": 26
+		},
+		{
+			"project": "Packages\\XE6\\DSPackXE6.groupproj",
+			"compiler_min": 27,
+			"compiler_max": 27
+		},
+		{
+			"project": "Packages\\XE7\\DSPackXE7.groupproj",
+			"compiler_min": 28,
+			"compiler_max": 28
+		},
+		{
+			"project": "Packages\\XE8\\DSPackXE8.groupproj",
+			"compiler_min": 29,
+			"compiler_max": 29
+		},
+		{
+			"project": "Packages\\RX\\DSPackRX.groupproj",
+			"compiler_min": 30,
+			"compiler_max": 30
+		},
+		{
+			"project": "Packages\\RX1\\DSPackRX1.groupproj",
+			"compiler_min": 31,
 			"compiler_max": 31
-		}
+		},
+		{
+			"project": "Packages\\RX2\\DSPackRX2.groupproj",
+			"compiler_min": 32,
+			"compiler_max": 32
+		}    
 	]
 }

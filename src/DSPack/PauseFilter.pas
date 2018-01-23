@@ -19,7 +19,6 @@ type
     procedure SetPause(const APause: Boolean);
   public
     constructor Create(Name: PChar; Unk: IUnknown; hr: HResult);
-  published
     property ForwardingPause: Boolean read FPause write SetPause stored False;
   end;
 
