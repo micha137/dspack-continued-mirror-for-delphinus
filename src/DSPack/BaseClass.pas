@@ -4992,9 +4992,18 @@ function TBCBasePin.QueryInternalConnections(var apPin: IPin;
 function TBCBasePin.QueryInternalConnections(out apPin: IPin;
   var nPin: ULONG): HRESULT;
 {$ENDIF}
+{$IFDEF WIN64}
+// Compiled Pascal code under WIN64 set apPin := nil even though @apPin is nil
+// (out parameters are silently initialized to 0 under Win64, resulting in a null pointer dereference, ie crash)
+// We avoid that using the following asm block.
+asm
+  MOV RAX, E_NOTIMPL;
+end;
+{$ELSE}
 begin
   result := E_NOTIMPL;
 end;
+{$ENDIF}
 
 // Return information about the filter we are connect to
 
@@ -9918,7 +9927,7 @@ begin
     {$ENDIF}
   {$ELSE}
     {$IFDEF WIN64}
-    Thread := PHandle(InterlockedExchangePointer(Pointer(FThread), nil))^;
+    Thread := THandle(InterlockedExchangePointer(Pointer(FThread), nil));
     {$ELSE}
     Thread := InterlockedExchange(Integer(FThread), 0);
     {$ENDIF}
