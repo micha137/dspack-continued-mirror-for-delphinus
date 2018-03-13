@@ -69,6 +69,10 @@ const
 
 
 type
+ {$IFNDEF DELPHI2010_UP}
+  LONG_PTR = LongInt;
+ {$ENDIF}
+
   TBCCritSec = class
   private
     FCritSec : TRTLCriticalSection;

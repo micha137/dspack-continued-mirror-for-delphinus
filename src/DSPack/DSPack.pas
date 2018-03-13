@@ -1764,7 +1764,13 @@ const
           if Succeeded(QueryInterface(IMediaEventEx, FMediaEventEx)) then
           begin
             FMediaEventEx.SetNotifyFlags(0); // enable events notification
-            FMediaEventEx.SetNotifyWindow(FHandle,WM_GRAPHNOTIFY,LONG_PTR(FMediaEventEx));
+            FMediaEventEx.SetNotifyWindow(FHandle,WM_GRAPHNOTIFY,
+            {$IFDEF DELPHI2010_UP}
+            LONG_PTR
+            {$ELSE}
+            LONGINT
+            {$ENDIF}
+            (FMediaEventEx));
           end;
 
           // Callbacks
@@ -1876,14 +1882,14 @@ const
     case Event of
       EC_BUFFERING_DATA            : if assigned(FOnGraphBufferingData)           then FOnGraphBufferingData(self,(Param1 = 1));
       EC_CLOCK_CHANGED             : if assigned(FOnGraphClockChanged)            then FOnGraphClockChanged(self);
-      EC_COMPLETE                  : if assigned(FOnGraphComplete)                then FOnGraphComplete(self, Param1, IBaseFilter(Param2));
-      EC_DEVICE_LOST               : if assigned(FOnGraphDeviceLost)              then FOnGraphDeviceLost(self,IUnKnown(Param1),(Param2 = 1));
+      EC_COMPLETE                  : if assigned(FOnGraphComplete)                then FOnGraphComplete(self, Param1, IBaseFilter(Pointer(Param2)));
+      EC_DEVICE_LOST               : if assigned(FOnGraphDeviceLost)              then FOnGraphDeviceLost(self,IUnKnown(Pointer(Param1)),(Param2 = 1));
       EC_END_OF_SEGMENT            : if assigned(FOnGraphEndOfSegment)            then FOnGraphEndOfSegment(self, PReferenceTime(Param1)^, Param2);
       EC_ERROR_STILLPLAYING        : if assigned(FOnGraphErrorStillPlaying)       then FOnGraphErrorStillPlaying(self, Param1);
       EC_ERRORABORT                : if assigned(FOnGraphErrorAbort)              then FOnGraphErrorAbort(self, Param1);
-      EC_FULLSCREEN_LOST           : if assigned(FOnGraphFullscreenLost)          then FOnGraphFullscreenLost(self, IBaseFilter(Param2));
+      EC_FULLSCREEN_LOST           : if assigned(FOnGraphFullscreenLost)          then FOnGraphFullscreenLost(self, IBaseFilter(Pointer(Param2)));
       EC_GRAPH_CHANGED             : if assigned(FOnGraphChanged)                 then FOnGraphChanged(self);
-      EC_OLE_EVENT                 : if assigned(FOnGraphOleEvent)                then FOnGraphOleEvent(self, UnicodeString(Param1), UnicodeString(Param2));
+      EC_OLE_EVENT                 : if assigned(FOnGraphOleEvent)                then FOnGraphOleEvent(self, UnicodeString(Pointer(Param1)), UnicodeString(Pointer(Param2)));
       EC_OPENING_FILE              : if assigned(FOnGraphOpeningFile)             then FOnGraphOpeningFile(self, (Param1 = 1));
       EC_PALETTE_CHANGED           : if assigned(FOnGraphPaletteChanged)          then FOnGraphPaletteChanged(self);
       EC_PAUSED                    : if assigned(FOnGraphPaused)                  then FOnGraphPaused(self, Param1);
@@ -1891,13 +1897,13 @@ const
       EC_SNDDEV_IN_ERROR           : if assigned(FOnGraphSNDDevInError)           then FOnGraphSNDDevInError(self, TSndDevErr(Param1), Param2);
       EC_SNDDEV_OUT_ERROR          : if assigned(FOnGraphSNDDevOutError)          then FOnGraphSNDDevOutError(self, TSndDevErr(Param1), Param2);
       EC_STEP_COMPLETE             : if assigned(FOnGraphStepComplete)            then FOnGraphStepComplete(self);
-      EC_STREAM_CONTROL_STARTED    : if assigned(FOnGraphStreamControlStarted)    then FOnGraphStreamControlStarted(self, IPin(Param1), Param2);
-      EC_STREAM_CONTROL_STOPPED    : if assigned(FOnGraphStreamControlStopped)    then FOnGraphStreamControlStopped(self, IPin(Param1), Param2);
+      EC_STREAM_CONTROL_STARTED    : if assigned(FOnGraphStreamControlStarted)    then FOnGraphStreamControlStarted(self, IPin(Pointer(Param1)), Param2);
+      EC_STREAM_CONTROL_STOPPED    : if assigned(FOnGraphStreamControlStopped)    then FOnGraphStreamControlStopped(self, IPin(Pointer(Param1)), Param2);
       EC_STREAM_ERROR_STILLPLAYING : if assigned(FOnGraphStreamErrorStillPlaying) then FOnGraphStreamErrorStillPlaying(self, Param1, Param2);
       EC_STREAM_ERROR_STOPPED      : if assigned(FOnGraphStreamErrorStopped)      then FOnGraphStreamErrorStopped(self, Param1, Param2);
       EC_USERABORT                 : if assigned(FOnGraphUserAbort)               then FOnGraphUserAbort(self);
       EC_VIDEO_SIZE_CHANGED        : if assigned(FOnGraphVideoSizeChanged)        then FOnGraphVideoSizeChanged(self, TVideoSize(Integer(Param1)).Width, TVideoSize(Integer(Param1)).Height);
-      EC_TIMECODE_AVAILABLE        : if assigned(FOnGraphTimeCodeAvailable)       then FOnGraphTimeCodeAvailable(self,IBaseFilter(Param1), Param2);
+      EC_TIMECODE_AVAILABLE        : if assigned(FOnGraphTimeCodeAvailable)       then FOnGraphTimeCodeAvailable(self,IBaseFilter(Pointer(Param1)), Param2);
       EC_EXTDEVICE_MODE_CHANGE     : if assigned(FOnGraphEXTDeviceModeChange)     then FOnGraphEXTDeviceModeChange(self, Param1, Param2);
       EC_CLOCK_UNSET               : if assigned(FOnGraphClockUnset)              then FOnGraphClockUnset(self);
       EC_VMR_RENDERDEVICE_SET      : if assigned(FOnGraphVMRRenderDevice)         then FOnGraphVMRRenderDevice(self, TVMRRenderDevice(Param1)) ;
