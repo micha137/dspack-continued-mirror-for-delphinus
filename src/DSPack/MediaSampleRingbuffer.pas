@@ -91,9 +91,14 @@ type
 
 implementation
 
+{$I dspack.inc}
+
 uses
     DXSUtil
   , SysUtils
+{$IFDEF DELPHIX_BERLIN_UP}
+  , System.Rtti
+{$ENDIF}
   ;
 
 function TMediaSampleRingbuffer.CheckMediaType(MediaType: PAMMediaType): HResult;
@@ -332,6 +337,7 @@ var
   base: TThreadedQueue<IMediaSample>;
   v: TValue;
 begin
+  base := self;
   v := TRttiContext.Create.GetType(TThreadedQueue<IMediaSample>).GetField('FQueue').GetValue(Base);
   result := TArrayIMediaSample(v.AsClass);
 {$ELSE}
@@ -346,6 +352,7 @@ var
   base: TThreadedQueue<IMediaSample>;
   v: TValue;
 begin
+  base := self;
   v := TRttiContext.Create.GetType(TThreadedQueue<IMediaSample>).GetField('FQueueOffset').GetValue(Base);
   result := integer(v.AsInteger);
 {$ELSE}
