@@ -1,4 +1,4 @@
-	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
 			<ProjectGuid>{FF20E2D6-802E-45EE-9A4F-CB54CE93EC0A}</ProjectGuid>
 			<MainSource>DSPack_D.dpk</MainSource>
@@ -6,7 +6,7 @@
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
 			<ProjectVersion>12.0</ProjectVersion>
 		</PropertyGroup>
-		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+		<PropertyGroup Condition="'$(Config)'=='Basis' or '$(Base)'!=''">
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
@@ -20,9 +20,10 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DllSuffix>2010</DllSuffix>
 			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;$(DCC_UnitAlias)</DCC_UnitAlias>
-			<DCC_DependencyCheckOutputName>C:\Documents and Settings\All Users\Documents\RAD Studio\7.0\Bpl\DSPack_D.bpl</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>..\..\..\..\..\..\..\Public\Documents\RAD Studio\7.0\Bpl\DSPack_D2010.bpl</DCC_DependencyCheckOutputName>
 			<DCC_Description>DSPack 2.3: Multimedia Package for Delphi</DCC_Description>
 			<DesignOnlyPackage>true</DesignOnlyPackage>
 			<GenDll>true</GenDll>
@@ -55,10 +56,10 @@
 				<Form>FormBaseFilter</Form>
 			</DCCReference>
 			<DCCReference Include="..\..\src\DSPack\DSEditors.pas"/>
-			<BuildConfiguration Include="Base">
+			<BuildConfiguration Include="Basis">
 				<Key>Base</Key>
 			</BuildConfiguration>
-			<BuildConfiguration Include="Debug">
+			<BuildConfiguration Include="Débogage">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
 			</BuildConfiguration>

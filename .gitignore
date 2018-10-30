@@ -27,3 +27,5 @@ packages/Win32/
 packages/Win64/
 __history
 
+*.cfg
+*.dof

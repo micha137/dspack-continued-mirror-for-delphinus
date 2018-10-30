@@ -1,7 +1,6 @@
 package DSPack_R;
 
 {$R *.res}
-{$R 'DSPack.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -34,8 +33,8 @@ requires
   designide;
 
 contains
-  DSPack in '..\..\src\\DSPack\DSPack.pas',
-  DXSUtil in '..\..\src\\DSPack\DXSUtil.pas',
-  BaseClass in '..\..\src\\DSPack\BaseClass.pas';
+  DSPack in '..\..\src\DSPack\DSPack.pas',
+  DXSUtil in '..\..\src\DSPack\DXSUtil.pas',
+  BaseClass in '..\..\src\DSPack\BaseClass.pas';
 
 end.
