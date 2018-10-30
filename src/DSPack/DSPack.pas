@@ -4685,7 +4685,7 @@ const
     FNoScreenSaver := False;
     FIdleCursor := 0;
     if (csDesigning in componentstate) then Exit;
-    FFullScreenControl := TForm.Create(nil);
+    FFullScreenControl := TForm.Create(self);
     FFullScreenControl.Color := Color;
     FFullScreenControl.DefaultMonitor := dmDesktop;
     FFullScreenControl.BorderStyle := bsNone;
