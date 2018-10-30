@@ -1245,7 +1245,7 @@ type
     function OnActivate: HRESULT; virtual;
     function OnDeactivate: HRESULT; virtual;
     function OnApplyChanges: HRESULT; virtual;
-    function OnReceiveMessage(hwndDlg: Thandle; uMsg: Cardinal; wParam: WPARAM; lParam: LPARAM): Integer; virtual;
+    function OnReceiveMessage(hwndDlg: Thandle; uMsg: Cardinal; wParam1: WPARAM; lParam: LPARAM): Integer; virtual;
     // IPropertyPage
     function SetPageSite(const pageSite: IPropertyPageSite): HResult; stdcall;
     function Activate(hwndParent: HWnd; const rc: TRect; bModal: BOOL): HResult; stdcall;
@@ -17774,7 +17774,7 @@ begin
   Result := NOERROR;
 end;
 
-function TBCBasePropertyPage.OnReceiveMessage(hwndDlg: Thandle; uMsg: Cardinal; wParam: WPARAM; lParam: LPARAM): Integer;
+function TBCBasePropertyPage.OnReceiveMessage(hwndDlg: Thandle; uMsg: Cardinal; wParam1: WPARAM; lParam: LPARAM): Integer;
 var
   PropertyPage: TBCBasePropertyPage;
   lpss: PStyleStruct;
@@ -17789,7 +17789,7 @@ begin
   case uMsg of
     WM_STYLECHANGING:
     begin
-      if wParam = NativeUInt(GWL_EXSTYLE) then
+      if wParam1 = WPARAM(GWL_EXSTYLE) then
       begin
         lpss := PStyleStruct(lParam);
         lpss.styleNew := lpss.styleNew or WS_EX_CONTROLPARENT;
@@ -17799,7 +17799,7 @@ begin
     end;
   end;
 
-  Result := DefWindowProc(hwndDlg, uMsg, wParam, lParam);
+  Result := DefWindowProc(hwndDlg, uMsg, wParam1, lParam);
 end;
 
 // IPropertyPage
