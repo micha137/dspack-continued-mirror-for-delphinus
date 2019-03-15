@@ -80,6 +80,7 @@ type
     Constructor Create(AOwner: TComponent); override;
     Destructor Destroy; override;
     function QueryInterface(const IID: TGUID; out Obj): HResult; override; stdcall;
+    procedure Clear;
   published
     property FilterGraph: TFilterGraph
       read FFilterGraph write SetFilterGraph;
@@ -184,6 +185,13 @@ begin
   FreeMediaType(@FMediaSampleRingbufferComponent.FMediaType);
   CopyMediaType(@FMediaSampleRingbufferComponent.FMediaType, MediaType);
   result := NOERROR;
+end;
+
+procedure TMediaSampleRingbufferComponent.Clear;
+var s: IMediaSample;
+begin
+  while FRingBuffer.QueueSize>0 do
+    s := FRingBuffer.PopItem;
 end;
 
 constructor TMediaSampleRingbufferComponent.Create(AOwner: TComponent);
