@@ -1457,7 +1457,7 @@ end;
     if IsEqualGUID(MediaType.majortype,MEDIATYPE_Timecode)      then result := result+'Timecode'      else
     if IsEqualGUID(MediaType.majortype,MEDIATYPE_URL_STREAM)    then result := result+'URL_STREAM'    else
     if IsEqualGUID(MediaType.majortype,MEDIATYPE_Video)         then result := result+'Video'         else
-       result := result+'UnKnown ';
+       result := result+'Unknown ';
     // sub types
     result := result + ' - Sub Type: ';
     if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_CLPL) then result := result+'CLPL' else
@@ -1559,7 +1559,7 @@ end;
     if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_VOXWARE) then result := result+'VOXWARE_MetaSound' else
     if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_H264) then result := result+'H264' else
     if IsEqualGUID(MediaType.subtype,MEDIASUBTYPE_AVC1) then result := result+'AVC1' else
-       result := result+'UnKnown ';
+       result := result+'Unknown ';
 
   // format
     result := result+ ' Format: ';
