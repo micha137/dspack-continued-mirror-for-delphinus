@@ -342,12 +342,20 @@ function TThreadedQueueIMediaSampleHelper.GetQueue: TArrayIMediaSample;
 // https://stackoverflow.com/questions/9410485/how-do-i-use-class-helpers-to-access-strict-private-members-of-a-class
 {$IFDEF DELPHIX_BERLIN_UP}
 var
-  base: TThreadedQueue<IMediaSample>;
+  base: TThreadedQueueIMediaSample;
   v: TValue;
+  f: TRttiField;
+  p: PPointer;
 begin
   base := self;
-  v := TRttiContext.Create.GetType(TThreadedQueue<IMediaSample>).GetField('FQueue').GetValue(Base);
-  result := TArrayIMediaSample(v.AsClass);
+  f := TRttiContext.Create.GetType(TThreadedQueueIMediaSample).GetField('FQueue');
+  v := f.GetValue(Base);
+  if v.IsArray then begin
+    p := v.GetReferenceToRawData;
+    Result := TArrayIMediaSample(p^)
+  end
+  else
+    Result := TArrayIMediaSample(v.AsClass);
 {$ELSE}
 begin
   Result := TArrayIMediaSample(FQueue);
@@ -362,7 +370,7 @@ var
 begin
   base := self;
   v := TRttiContext.Create.GetType(TThreadedQueue<IMediaSample>).GetField('FQueueOffset').GetValue(Base);
-  result := integer(v.AsInteger);
+  result := v.AsInteger;
 {$ELSE}
 begin
   Result := FQueueOffset;
