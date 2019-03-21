@@ -9013,7 +9013,7 @@ begin
 
   // DCoder: removing CONTROLPARENT is also the reason for non responding
   // PropertyPages when using ShowMessage and TComboBox.
-  if (aMsg.Msg = WM_STYLECHANGING) and (aMsg.WParam = GWL_EXSTYLE) then
+  if (aMsg.Msg = WM_STYLECHANGING) and (aMsg.WParam = NativeUInt(GWL_EXSTYLE)) then
   begin
     lpss := PStyleStruct(aMsg.LParam);
     lpss.styleNew := lpss.styleNew or WS_EX_CONTROLPARENT;
@@ -15162,7 +15162,7 @@ begin
     if FAILED(Result) then Exit;
 
     FState := TM_Exit;
-    Result := CallWorker(Cardinal(TM_Exit));
+    CallWorker(Cardinal(TM_Exit));// ignore return value
 
     FReader.EndFlush;
 
@@ -15809,7 +15809,6 @@ var
   Packet : TBCAdvisePacket;
 begin
   p_prev := FHead;
-  p_n := nil;
 
   FSerialize.Lock;
   try
@@ -17086,8 +17085,6 @@ begin
   //UNREFERENCED_PARAMETER(pStartTime);
   //UNREFERENCED_PARAMETER(pEndTime);
   //UNREFERENCED_PARAMETER(dwFlags);
-  //TBCMediaSample *pSample;
-  pSample := nil;
   ppBuffer:=nil;
   {$IFNDEF COMPILER8_UP}
   Result := E_UNEXPECTED; // Delphi 7 and below -> undefined return value fix ...
@@ -17099,8 +17096,7 @@ begin
     //CAutoLock cObjectLock(this);
     Lock;
     try
-      (* Check we are committed *)
-      if (not FCommitted) then
+      if not FCommitted then
       begin
         Result := VFW_E_NOT_COMMITTED;
         Exit;
@@ -17310,12 +17306,13 @@ begin
     ASSERT(pRequest.cbBuffer > 0);
 
     (*  Check the alignment requested *)
-    if (pRequest.cbAlign <> 1) then
+    if pRequest.cbAlign <> 1 then
     begin
       {$IFDEF DEBUG}
       DbgLog('Alignment requested was 0x' + inttohex(pRequest.cbAlign, 8) + ', not 1');
       {$ENDIF}
       Result := VFW_E_BADALIGN;
+      Exit;
     end;
 
     (* Can't do this if already committed, there is an argument that says we
@@ -17324,7 +17321,7 @@ begin
        person who is holding the samples. Therefore it is not unreasonable
        for them to free all their samples before changing the requirements *)
 
-    if (FCommitted) then
+    if FCommitted then
     begin
       Result := VFW_E_ALREADY_COMMITTED;
       Exit;
@@ -17332,7 +17329,7 @@ begin
 
     (* Must be no outstanding buffers *)
 
-    if (FAllocated <> FFree.GetCount) then
+    if FAllocated <> FFree.GetCount then
     begin
       Result := VFW_E_BUFFERS_OUTSTANDING;
       Exit;
