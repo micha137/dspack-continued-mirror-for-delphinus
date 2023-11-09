@@ -284,7 +284,11 @@ begin
           Exit;
         end;
 
-        CopyMemory(MediaType, FReader.LoadType, SizeOf(TAMMediaType));
+        if Not Assigned(MediaType) then begin
+          Result := E_POINTER;
+          Exit;
+        end;
+        CopyMediaType(MediaType, FReader.LoadType);
         Result := S_OK;
       end;
 end;
